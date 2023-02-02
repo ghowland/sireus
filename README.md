@@ -14,9 +14,10 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 
 ### Sireus Bots and Bot Groups
 
-- A Bot Group is defined statically to create Bots.  
-- Bots can be statically created, but it is preferred to create the Bots dynamically from monitoring data
+- A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or servies (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
+- Bots are suggested to be created dynamically from monitoring data
+- Bots can also be created statically, for less dynamic services (ex: Kafka)
 - Bot Groups and Bots have arbitrary variables set with timeouts to ensure the data is not stale
-- Triggers for common functions, such as a Bot disappearing from monitoring data (stale or missing)
-- Commands are meant to execute against a service or web API, host (ex: bash), or to update internal Sireus data for more complex conditional testing.  This allows building up more complex state variables, which are easier to read in the conditional logic.
+- Triggers to execute commands for common functions, such as a Bot's data disappearing from monitoring data (stale or missing)
+- Commands are meant to execute against a service or web API, host (ex: bash), or to update internal Sireus data for more complex conditional testing.  This allows building up more complex state variables, which are easier to read and reason about in the conditional logic.
 
