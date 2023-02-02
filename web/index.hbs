@@ -1,4 +1,3 @@
-{{> 'partials/header_common' }}
 <section class="section">
     <div class="container">
         <h1 class="title">
@@ -8,6 +7,8 @@
             {{bot.Name}}
         </p>
         <p>
+
+Bot: {{botinfo bot}}
 
 {{#each bot.Actions}} <!-- Action:Start -->
 
@@ -24,4 +25,3 @@
         </p>
     </div>
 </section>
-{{> 'partials/footer_common' }}

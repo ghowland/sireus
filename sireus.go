@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/aymerick/raymond"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/handlebars"
 	"os"
@@ -79,6 +80,10 @@ func main() {
 	// Handlebars Engine for Fiber
 	engine := handlebars.New("./web", ".hbs")
 
+	raymond.RegisterHelper("botinfo", func(bot Bot) string {
+		return bot.Name + "  Actions: " + string(len(bot.Actions))
+	})
+
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -88,7 +93,7 @@ func main() {
 		return c.Render("index", fiber.Map{
 			"info": "Testing 123!",
 			"bot":  bot,
-		})
+		}, "layouts/main_common")
 	})
 
 	app.Listen(":3000")
