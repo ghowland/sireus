@@ -54,7 +54,7 @@ An Action has N Considerations, made from the following data:
 - Value Range: 0 to 100
 - Curve:
 
-![Curve Example](/docs/images/curve_example.png)
+![Curve Example](/docs/images/curve_example.PNG)
 
 The Value Function Result (60) in the Value Range (0 to 100) = 0.6
 
