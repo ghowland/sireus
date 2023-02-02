@@ -1,5 +1,5 @@
 # sireus
-## Sireus - SRE Utility System - Dynamic Bot management for SRE and DevOps commands
+## Sireus - SRE Utility System - Dynamic Bot for execution SRE and DevOps commands conditionally
 
 ### Sireus goals
 
