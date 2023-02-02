@@ -27,7 +27,10 @@ type Bot struct {
 	Actions []Action `json:"actions"`
 }
 
-var action_path string = "config/action.json"
+type CurveData struct {
+	Name   string    `json:"name"`
+	Values []float32 `json:"values"`
+}
 
 func Check(e error) {
 	if e != nil {
@@ -52,6 +55,9 @@ func GetActionsHtml(bot Bot) string {
 	return output
 }
 
+var action_path string = "config/action.json"
+var curve_path_format string = "config/curves/%s.json"
+
 func main() {
 	actionData, err := os.ReadFile((action_path))
 	Check(err)
@@ -60,7 +66,14 @@ func main() {
 
 	json.Unmarshal([]byte(actionData), &bot)
 
-	fmt.Println(bot)
+	curve_path := fmt.Sprintf(curve_path_format, bot.Actions[0].Considerations[0].CurveName)
+	curveData, err := os.ReadFile((curve_path))
+	Check(err)
+
+	var curve_data CurveData
+	json.Unmarshal([]byte(curveData), &curve_data)
+
+	fmt.Println(curve_data)
 
 	app := fiber.New()
 

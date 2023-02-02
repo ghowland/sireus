@@ -10,14 +10,14 @@
 				{
 					"name": "Consider A",
 					"weight": 7.0,
-					"curve": "IncSigmoid",
+					"curve": "inc_sigmoid",
 					"range_start": 0,
 					"range_end": 100
 				},
 				{
 					"name": "Consider Boolean",
 					"weight": 2.0,
-					"curve": "IncBoolean",
+					"curve": "inc_boolean",
 					"range_start": 0,
 					"range_end": 1
 				}
