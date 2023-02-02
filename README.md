@@ -1,5 +1,5 @@
 # sireus
-## Sireus - SRE Utility System - Utility AI for executing SRE and DevOps commands & API calls
+## Sireus - SRE Utility System - Utility AI for prioritizing and conditionally executing SRE and DevOps commands & API calls
 
 ### Sireus goals
 
