@@ -1,6 +1,7 @@
 # sireus
 ## Sireus - SRE Utility System - Dynamic Bot manager for executing SRE and DevOps commands conditionally
 
+<img align="right" src="docs/images/sireus_logo.jpg">
 Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.
 
 ### Sireus Goals
