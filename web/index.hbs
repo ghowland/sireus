@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-</head>
-<body>
+{{> 'partials/header_common' }}
 <section class="section">
     <div class="container">
         <h1 class="title">
@@ -18,18 +9,19 @@
         </p>
         <p>
 
-  {{#each bot.Actions}}
-  <h2>Action: {{Name}} - {{Weight}}</h2>
+{{#each bot.Actions}} <!-- Action:Start -->
 
-  {{#each Considerations}}
-  <h3>Consider: {{Name}} - {{Weight}} -- {{CurveName}}</h3>
+<h2>Action: {{Name}} - {{Weight}}</h2>
 
-  {{/each}}
+{{#each Considerations}} <!-- Action Consideration:Start -->
 
-  {{/each}}
+<h3>Consider: {{Name}} - {{Weight}} -- {{CurveName}}</h3>
+
+{{/each}} <!-- Action Consideration:End -->
+
+{{/each}} <!-- Action:End -->
 
         </p>
     </div>
 </section>
-</body>
-</html>
+{{> 'partials/footer_common' }}
