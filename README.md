@@ -1,5 +1,5 @@
 # sireus
-<img align="right" width="200" src="docs/images/sireus_logo.png">
+<img align="right" width="30%" src="docs/images/sireus_logo.png">
 
 ## Sireus - SRE Utility System - Dynamic Bot manager for executing SRE and DevOps commands conditionally
 
