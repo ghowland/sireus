@@ -7,5 +7,11 @@ fi
 
 
 go build -o build/sireus sireus.go
-./build/sireus
+
+if [ $? -eq 0 ] ; then
+	echo "Running"
+	./build/sireus
+else
+	echo "Failed to build, will not run."
+fi
 

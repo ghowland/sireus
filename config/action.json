@@ -1,0 +1,27 @@
+{
+	"name": "Bot Service X",
+	"actions":
+	[
+		{
+			"name": "Action XYZ",
+			"weight": 2.0,
+			"weight_min": 0,
+			"considerations": [
+				{
+					"name": "Consider A",
+					"weight": 7.0,
+					"curve": "IncSigmoid",
+					"range_start": 0,
+					"range_end": 100
+				},
+				{
+					"name": "Consider Boolean",
+					"weight": 2.0,
+					"curve": "IncBoolean",
+					"range_start": 0,
+					"range_end": 1
+				}
+			]
+		}
+	]
+}
