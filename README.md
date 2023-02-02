@@ -26,9 +26,9 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - **Bot Group**: A collection of Bots, for executing Actions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
 - **Bot**: A collection of Variable Data and Actions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
 - **Action**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
-- **Score**: This is the priority of execution.  Given a set of potential Actions, we rank them from highest to lowest score, executing the highest score, and never execute Actions with a score of 0.
-- **Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
-- **Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to an "Action Command".
+- **Action Score**: This is the priority of execution.  Given a set of potential Actions, we rank them from highest to lowest score, executing the highest score, and never execute Actions with a score of 0.
+- **Action Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
+- **Action Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to an "Action Command".
 
 ### How a Utility System or "Utility AI" works
 
