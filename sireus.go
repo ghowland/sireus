@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/handlebars"
 	"os"
 )
 
@@ -75,10 +76,19 @@ func main() {
 
 	fmt.Println(curve_data)
 
-	app := fiber.New()
+	// Handlebars Engine for Fiber
+	engine := handlebars.New("./web", ".hbs")
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString(GetActionsHtml(bot))
+		//return c.SendString(GetActionsHtml(bot))
+		return c.Render("index", fiber.Map{
+			"info": "Testing 123!",
+			"bot":  bot,
+		})
 	})
 
 	app.Listen(":3000")
