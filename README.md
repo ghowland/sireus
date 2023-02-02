@@ -14,7 +14,7 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 
 ### Sireus Bots and Bot Groups
 
-- A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or servies (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
+- A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or services (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
 - Bots are suggested to be created dynamically from monitoring data
 - Bots can also be created statically, for less dynamic services (ex: Kafka)
 - Bot Groups and Bots have arbitrary variables set with timeouts to ensure the data is not stale
@@ -45,7 +45,7 @@ An Action has N Considerations, made from the following data:
 - **Weight**: Per-consideration weight, so each consideration can have higher or lower weight than others
 - **Value Function**: A function or command to execute to get a value (float)
 - **Value Range**: A range of data ranges to test the result of the consideration's function output.  ex: 0.0-1.0, 0-100, 35-999.  This is the Floor and the Ceiling of the Value Function output.
-- **Curve**: A curve to apply Value Function output.  The 2D Curve data goes from 0-1 on X and Y axis.  X is the Value Function Range position, and Y will multipled by the Weight to give the final Score.
+- **Curve**: A curve to apply Value Function output.  The 2D Curve data goes from 0-1 on X and Y axis.  X is the Value Function Range position, and Y will be multiplied by the Weight to give the final Score.
 
 **Example a Single Consideration:**
 
@@ -64,7 +64,7 @@ The Curve Result (0.71) is multiplied by the Weight (5): 0.71 * 5 = 3.55 Conside
 
 #### Action Final Scores from Multiple Considerations
 
-In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multipled by the Action Weight to get a final Action Score.
+In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multiplied by the Action Weight to get a final Action Score.
 
 **Example of an Action with Multiple Considerations:**
 
@@ -75,7 +75,7 @@ In the above single Consideration Data, we had a single Consideration Score of 3
 
 When all the Actions have had their Final Scores calculated, if 5.32 is the highest score, then that action will be executed.  
 
-For a given Action, if **any** of the Considerations have a score of zero, then the entire Final Action Score is zero.  This allows any Consideration to make an Aciton invalid.
+For a given Action, if **any** of the Considerations have a score of zero, then the entire Final Action Score is zero.  This allows any Consideration to make an Action invalid.
 
 #### Why so many steps to get to a Final Action Score?
 
