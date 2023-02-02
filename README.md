@@ -37,3 +37,42 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Action will be executed.
 
 ![Bot Group](/docs/images/bot_group.png)
+
+#### Action Consideration Data
+
+An Action has N Considerations, made from the following data:
+
+- **Weight**: Per-consideration weight, so each consideration can have higher or lower weight than others
+- **Value Function**: A function or command to execute to get a value (float)
+- **Value Range**: A range of data ranges to test the result of the consideration's function output.  ex: 0.0-1.0, 0-100, 35-999.  This is the Floor and the Ceiling of the Value Function output.
+- **Curve**: A curve to apply Value Function output.  The 2D Curve data goes from 0-1 on X and Y axis.  X is the Value Function Range position, and Y will multipled by the Weight to give the final Score.
+
+**Example a Single Consideration:**
+
+- Weight: 5.0
+- Value Function Result: 60
+- Value Range: 0 to 100
+- Curve:
+
+![Bot Group](/docs/images/curve_example.png)
+
+The Value Function Result (60) in the Value Range (0 to 100) = 0.6
+
+In the Curve, with the X=0.6 the Y value is about 0.71.
+
+The Curve Result (0.71) is multiplied by the Weight (5): 0.71 * 5 = 3.55 Consideration Score
+
+#### Action Final Scores from Multiple Considerations
+
+In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multipled by the Action Weight to get a final Action Score.
+
+**Example of an Action with Multiple Considerations:**
+
+- **Action**: Send API Remediation
+- **Action Weight**: 2.0
+- **Final Calculated Scores for all Considerations**: 2.6
+- **Final Action Score**: 5.2
+
+When all the Actions have had their Final Scores calculated, if 5.2 is the highest score, then that action will be executed.  
+
+For a given Action, if **any** of the Considerations have a score of zero, then the entire Final Action Score is zero.  This allows any Consideration to make an Aciton invalid.
