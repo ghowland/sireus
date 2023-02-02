@@ -17,18 +17,18 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or services (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
 - Bots are suggested to be created dynamically from monitoring data
 - Bots can also be created statically, for less dynamic services (ex: Kafka)
-- Bot Groups and Bots have arbitrary variables set with timeouts to ensure the data is not stale
+- Bot Groups and Bots have arbitrary variables set with timeouts to ensure execution doesn't occur from stale data
 - Triggers to execute commands for common functions, such as a Bot's data disappearing from monitoring data (stale or missing)
 - Commands are meant to execute against a service or web API, host (ex: bash), or to update internal Sireus data for more complex conditional testing.  This allows building up more complex state variables, which are easier to read and reason about in the conditional logic.
 
 ### Terminology
 
-- **Bot Group**: A collection of Bots, for executing Actions, based on conditional scoring.
-- **Bot**: A collection of Actions, which contain conditional scoring information based on monitoring queries, which then executes a command.
-- **Action**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected
-- **Score**: This is the priority of execution.  Given a set of potential commands, we rank them from highest to lowest score, executing the highest score, and never executing scores of 0.
-- **Consideration**: These are essentially conditions, but can be a range of data, instead of only boolean.
-- **Command**: Executing 1 or more: bash-type OS level or a service or web API.  Generalizing all of these to "Command"
+- **Bot Group**: A collection of Bots, for executing Actions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
+- **Bot**: A collection of Variable Data and Actions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
+- **Action**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
+- **Score**: This is the priority of execution.  Given a set of potential Actions, we rank them from highest to lowest score, executing the highest score, and never execute Actions with a score of 0.
+- **Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
+- **Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to an "Action Command".
 
 ### How a Utility System or "Utility AI" works
 
