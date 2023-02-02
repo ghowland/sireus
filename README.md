@@ -58,7 +58,7 @@ An Action has N Considerations, made from the following data:
 
 Given a Value Function Result (60) in the Value Range (0 to 100) = 0.6
 
-In the Curve, with the X=0.6 the Y value = \~0.71
+In the Curve, with the X=0.6 the Y value = 0.71
 
 The Curve Result (0.71) is multiplied by the Weight (5): 0.71 * 5 = 3.55 Consideration Score
 
