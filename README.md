@@ -21,3 +21,5 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - Triggers to execute commands for common functions, such as a Bot's data disappearing from monitoring data (stale or missing)
 - Commands are meant to execute against a service or web API, host (ex: bash), or to update internal Sireus data for more complex conditional testing.  This allows building up more complex state variables, which are easier to read and reason about in the conditional logic.
 
+### How a Utility System or "Utility AI" works
+
