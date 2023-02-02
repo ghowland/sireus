@@ -68,12 +68,12 @@ In the above single Consideration Data, we had a single Consideration Score of 3
 
 **Example of an Action with Multiple Considerations:**
 
-- **Action**: Send API Remediation
-- **Action Weight**: 2.0
-- **Final Calculated Scores for all Considerations**: 2.6
-- **Final Action Score**: 5.2
+- **Action**: Send API Remediation XYZ
+- **Action Weight**: 1.5
+- **Final Calculated Scores for all Considerations**: 3.55
+- **Final Action Score**: 5.32
 
-When all the Actions have had their Final Scores calculated, if 5.2 is the highest score, then that action will be executed.  
+When all the Actions have had their Final Scores calculated, if 5.32 is the highest score, then that action will be executed.  
 
 For a given Action, if **any** of the Considerations have a score of zero, then the entire Final Action Score is zero.  This allows any Consideration to make an Aciton invalid.
 
@@ -82,3 +82,5 @@ For a given Action, if **any** of the Considerations have a score of zero, then 
 The reason to have all of these steps is to be able to control exactly how important any given consideration test is to executing that action, and to provide multiple ways to invalidate the action (any consideration with a 0 score).
 
 The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
+
+Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
