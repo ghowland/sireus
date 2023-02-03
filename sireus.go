@@ -117,6 +117,24 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App {
 	return app
 }
 
+func GetCurveDataX(curve_data CurveData) string {
+	var x_array []float32
+
+	for i := 0; i < len(curve_data.Values); i++ {
+		x_array = append(x_array, float32(i)*0.01)
+	}
+
+	output, err := json.Marshal(x_array)
+	Check(err)
+	return string(output)
+}
+
+func GetCurveDataY(curve_data CurveData) string {
+	output, err := json.Marshal(curve_data.Values)
+	Check(err)
+	return string(output)
+}
+
 func main() {
 	app_config := LoadConfig()
 
@@ -135,12 +153,16 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		//return c.SendString(GetActionsHtml(bot))
 		return c.Render("index", fiber.Map{
-			"info":       "Testing 123!",
-			"bot":        bot,
-			"title":      "Sireus",
-			"curve_data": curve_data,
-			"test_one":   true,
-			"test_two":   false,
+			"info":            "Testing 123!",
+			"bot":             bot,
+			"title":           "Sireus",
+			"curve_data":      curve_data,
+			"test_one":        true,
+			"test_two":        false,
+			"plot_x":          GetCurveDataX(curve_data),
+			"plot_y":          GetCurveDataY(curve_data),
+			"plot_selected_x": 0.7,
+			"plot_selected_y": 0.856363,
 		}, "layouts/main_common")
 	})
 
