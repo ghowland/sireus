@@ -12,10 +12,10 @@
 
 
         $(document).click(function(e) {
-            $('html')
-                    .not($('html').has($(e.target)))
+            $('.block')
+                    .not($('.block').has($(e.target)))
                     .children('.dropdown')
-                    .removeClass('is-open');
+                    .removeClass('is-active');
         });
 
         //$('<footer>Appended with Cash</footer>').appendTo ( document.body );
