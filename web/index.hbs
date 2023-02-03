@@ -1,4 +1,5 @@
 <section class="section">
+    {{> 'partials/breadcrumbs_common' }}
     <div class="container">
         <h1 class="title is-1">
             {{info}}
@@ -17,7 +18,7 @@
 
                     {{#each Considerations}} <!-- Action Consideration:Start -->
 
-                        <h3>Consider: {{Name}} - {{Weight}} -- {{CurveName}}</h3>
+                        <p>Consider: <span class="tag is-info">{{Name}}</span> - {{Weight}} -- <span class="tag is-info">{{CurveName}}</span></p>
 
                     {{/each}} <!-- Action Consideration:End -->
 
@@ -26,13 +27,58 @@
             </div>
         </div>
 
-        {{#if test_one}}
-            <p class="content">Active</p>
-        {{else if test_two}}
-            <p class="content">Inactive</p>
-        {{else}}
-            <p class="content">Unknown</p>
-        {{/if}}
+        <div class="block">
+        <div class="notification is-info">
+            <button class="delete"></button>
+            {{#if test_one}}
+                <p class="content">Notice: Active</p>
+            {{else if test_two}}
+                <p class="content">Notice: Inactive</p>
+            {{else}}
+                <p class="content">Notice: Unknown</p>
+            {{/if}}
+        </div>
+        </div>
+
+        <div class="tags">
+            <span class="tag is-success">Tag 1
+                <button class="delete is-small"></button>
+            </span>
+            <span class="tag is-info">Tag 2</span>
+            <span class="tag is-warning">Tag 3</span>
+        </div>
+
+        <div class="field is-grouped is-grouped-multiline">
+
+            <div class="control">
+                <div class="tags has-addons">
+                    <span class="tag is-success">Start Infospan></span>
+                    <span class="tag is-info">End Info<button class="delete is-small"></button></span>
+                </div>
+            </div>
+
+            <div class="control">
+                <div class="tags has-addons">
+                    <span class="tag is-success">More</span>
+                    <span class="tag is-info">Here<button class="delete is-small"></button></span>
+                </div>
+            </div>
+
+            <div class="control">
+                <div class="tags has-addons">
+                    <a class="tag is-link">Easier</a>
+                    <a class="tag is-delete"></a>
+                </div>
+            </div>
+
+            <div class="control">
+                <div class="tags has-addons">
+                    <a class="tag is-link">Like This</a>
+                    <a class="tag is-delete"></a>
+                </div>
+            </div>
+
+        </div>
 
         {{#unless license}}
             <p class="content">Opposite of If = Unless</p>
@@ -56,12 +102,12 @@
                     </div>
                     <footer class="card-footer">
                         <div class="card-footer-item">
-                            <a href="#" class="button is-success">
+                            <a href="#" class="button is-success is-outlined">
                                 <i class="fa fa-thumbs-up"></i>
                             </a>
                         </div>
                         <div class="card-footer-item">
-                            <a href="#" class="button is-danger">
+                            <a href="#" class="button is-danger is-outlined">
                                 <i class="fa fa-thumbs-down"></i>
                             </a>
                         </div>
@@ -81,12 +127,12 @@
                     </div>
                     <footer class="card-footer">
                         <div class="card-footer-item">
-                            <a href="#" class="button is-success">
+                            <a href="#" class="button is-success is-outlined">
                                 <i class="fa fa-thumbs-up"></i>
                             </a>
                         </div>
                         <div class="card-footer-item">
-                            <a href="#" class="button is-danger">
+                            <a href="#" class="button is-danger is-outlined">
                                 <i class="fa fa-thumbs-down"></i>
                             </a>
                         </div>
