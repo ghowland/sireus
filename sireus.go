@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/aymerick/raymond"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/template/handlebars"
+	"net/http"
 	"os"
 )
 
@@ -141,6 +143,11 @@ func main() {
 			"test_two":   false,
 		}, "layouts/main_common")
 	})
+
+	// Provide a minimal config
+	app.Use(filesystem.New(filesystem.Config{
+		Root: http.Dir("./web_static"),
+	}))
 
 	app.Listen(":3000")
 }

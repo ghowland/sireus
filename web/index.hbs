@@ -1,6 +1,7 @@
+{{> 'partials/navbar_common' }}
+
 <section class="section">
     {{> 'partials/breadcrumbs_common' }}
-    <div class="container">
         <h1 class="title is-1">
             {{info}}
         </h1>
@@ -52,7 +53,7 @@
 
             <div class="control">
                 <div class="tags has-addons">
-                    <span class="tag is-success">Start Infospan></span>
+                    <span class="tag is-success">Start Infospan</span>
                     <span class="tag is-info">End Info<button class="delete is-small"></button></span>
                 </div>
             </div>
@@ -146,5 +147,56 @@
             </div> <!-- Column:End -->
         </div>
 
+        <div class="block">
+            <article class="message">
+                <div class="message-header has-text-primary">About This Bot</div>
+                <div class="message-body has-text-white has-background-warning-dark">
+                    Stuff goes around and around
+
+
+                </div>
+            </article>
+        </div>
+
+
+    <div class="dropdown">
+        <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <span>Button Here</span>
+                <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                </span>
+            </button>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item">
+                    Overview
+                </a>
+                <a href="#" class="dropdown-item">
+                    Modifiers
+                </a>
+                <a href="#" class="dropdown-item">
+                    Grid
+                </a>
+                <a href="#" class="dropdown-item">
+                    Form
+                </a>
+                <a href="#" class="dropdown-item">
+                    Elements
+                </a>
+                <a href="#" class="dropdown-item">
+                    Components
+                </a>
+                <a href="#" class="dropdown-item">
+                    Layout
+                </a>
+                <hr class="dropdown-divider">
+                <a href="#" class="dropdown-item">
+                    More
+                </a>
+            </div>
+        </div>
     </div>
+
 </section>
