@@ -158,43 +158,508 @@
             </article>
         </div>
 
-
-    <div class="dropdown">
-        <div class="dropdown-trigger">
-            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
-                <span>Button Here</span>
-                <span class="icon is-small">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                </span>
-            </button>
+    <div class="block">
+        <div class="dropdown">
+            <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3">
+                    <span>Button Here</span>
+                    <span class="icon is-small">
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </span>
+                </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                <div class="dropdown-content">
+                    <a href="#" class="dropdown-item">
+                        Overview
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Modifiers
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Grid
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Form
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Elements
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Components
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        Layout
+                    </a>
+                    <hr class="dropdown-divider">
+                    <a href="#" class="dropdown-item">
+                        More
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="dropdown-menu" id="dropdown-menu3" role="menu">
-            <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                    Overview
-                </a>
-                <a href="#" class="dropdown-item">
-                    Modifiers
-                </a>
-                <a href="#" class="dropdown-item">
-                    Grid
-                </a>
-                <a href="#" class="dropdown-item">
-                    Form
-                </a>
-                <a href="#" class="dropdown-item">
-                    Elements
-                </a>
-                <a href="#" class="dropdown-item">
-                    Components
-                </a>
-                <a href="#" class="dropdown-item">
-                    Layout
-                </a>
-                <hr class="dropdown-divider">
-                <a href="#" class="dropdown-item">
-                    More
-                </a>
+    </div>
+
+    <div class="block">
+        <nav class="pagination" role="navigation" aria-label="pagination">
+            <a class="pagination-previous">Previous</a>
+            <a class="pagination-next">Next page</a>
+            <ul class="pagination-list">
+                <li>
+                    <a class="pagination-link" aria-label="Goto page 1">1</a>
+                </li>
+                <li>
+                    <span class="pagination-ellipsis">&hellip;</span>
+                </li>
+                <li>
+                    <a class="pagination-link" aria-label="Goto page 45">45</a>
+                </li>
+                <li>
+                    <a class="pagination-link is-current" aria-label="Page 46" aria-current="page">46</a>
+                </li>
+                <li>
+                    <a class="pagination-link" aria-label="Goto page 47">47</a>
+                </li>
+                <li>
+                    <span class="pagination-ellipsis">&hellip;</span>
+                </li>
+                <li>
+                    <a class="pagination-link" aria-label="Goto page 86">86</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="block">
+        <article class="panel is-success">
+            <p class="panel-heading">
+                Success
+            </p>
+            <p class="panel-tabs">
+                <a class="is-active">All</a>
+                <a>Public</a>
+                <a>Private</a>
+                <a>Sources</a>
+                <a>Forks</a>
+            </p>
+            <div class="panel-block">
+                <p class="control has-icons-left">
+                    <input class="input is-success" type="text" placeholder="Search">
+                    <span class="icon is-left">
+        <i class="fas fa-search" aria-hidden="true"></i>
+        </span>
+                </p>
+            </div>
+            <a class="panel-block is-active">
+        <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+        </span>
+                bulma
+            </a>
+            <a class="panel-block">
+        <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+        </span>
+                marksheet
+            </a>
+            <a class="panel-block">
+        <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+        </span>
+                minireset.css
+            </a>
+            <a class="panel-block">
+        <span class="panel-icon">
+        <i class="fas fa-book" aria-hidden="true"></i>
+        </span>
+                jgthms.github.io
+            </a>
+        </article>
+    </div>
+
+    <div class="block">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><abbr title="Position">Pos</abbr></th>
+                <th>Team</th>
+                <th><abbr title="Played">Pld</abbr></th>
+                <th><abbr title="Won">W</abbr></th>
+                <th><abbr title="Drawn">D</abbr></th>
+                <th><abbr title="Lost">L</abbr></th>
+                <th><abbr title="Goals for">GF</abbr></th>
+                <th><abbr title="Goals against">GA</abbr></th>
+                <th><abbr title="Goal difference">GD</abbr></th>
+                <th><abbr title="Points">Pts</abbr></th>
+                <th>Qualification or relegation</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <th><abbr title="Position">Pos</abbr></th>
+                <th>Team</th>
+                <th><abbr title="Played">Pld</abbr></th>
+                <th><abbr title="Won">W</abbr></th>
+                <th><abbr title="Drawn">D</abbr></th>
+                <th><abbr title="Lost">L</abbr></th>
+                <th><abbr title="Goals for">GF</abbr></th>
+                <th><abbr title="Goals against">GA</abbr></th>
+                <th><abbr title="Goal difference">GD</abbr></th>
+                <th><abbr title="Points">Pts</abbr></th>
+                <th>Qualification or relegation</th>
+            </tr>
+            </tfoot>
+            <tbody>
+            <tr>
+                <th>1</th>
+                <td><a href="https://en.wikipedia.org/wiki/Leicester_City_F.C." title="Leicester City F.C.">Leicester City</a> <strong>(C)</strong>
+                </td>
+                <td>38</td>
+                <td>23</td>
+                <td>12</td>
+                <td>3</td>
+                <td>68</td>
+                <td>36</td>
+                <td>+32</td>
+                <td>81</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Group_stage" title="2016–17 UEFA Champions League">Champions League group stage</a></td>
+            </tr>
+            <tr>
+                <th>2</th>
+                <td><a href="https://en.wikipedia.org/wiki/Arsenal_F.C." title="Arsenal F.C.">Arsenal</a></td>
+                <td>38</td>
+                <td>20</td>
+                <td>11</td>
+                <td>7</td>
+                <td>65</td>
+                <td>36</td>
+                <td>+29</td>
+                <td>71</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Group_stage" title="2016–17 UEFA Champions League">Champions League group stage</a></td>
+            </tr>
+            <tr>
+                <th>3</th>
+                <td><a href="https://en.wikipedia.org/wiki/Tottenham_Hotspur_F.C." title="Tottenham Hotspur F.C.">Tottenham Hotspur</a></td>
+                <td>38</td>
+                <td>19</td>
+                <td>13</td>
+                <td>6</td>
+                <td>69</td>
+                <td>35</td>
+                <td>+34</td>
+                <td>70</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Group_stage" title="2016–17 UEFA Champions League">Champions League group stage</a></td>
+            </tr>
+            <tr class="is-selected">
+                <th>4</th>
+                <td><a href="https://en.wikipedia.org/wiki/Manchester_City_F.C." title="Manchester City F.C.">Manchester City</a></td>
+                <td>38</td>
+                <td>19</td>
+                <td>9</td>
+                <td>10</td>
+                <td>71</td>
+                <td>41</td>
+                <td>+30</td>
+                <td>66</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Champions_League#Play-off_round" title="2016–17 UEFA Champions League">Champions League play-off round</a></td>
+            </tr>
+            <tr>
+                <th>5</th>
+                <td><a href="https://en.wikipedia.org/wiki/Manchester_United_F.C." title="Manchester United F.C.">Manchester United</a></td>
+                <td>38</td>
+                <td>19</td>
+                <td>9</td>
+                <td>10</td>
+                <td>49</td>
+                <td>35</td>
+                <td>+14</td>
+                <td>66</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Europa_League#Group_stage" title="2016–17 UEFA Europa League">Europa League group stage</a></td>
+            </tr>
+            <tr>
+                <th>6</th>
+                <td><a href="https://en.wikipedia.org/wiki/Southampton_F.C." title="Southampton F.C.">Southampton</a></td>
+                <td>38</td>
+                <td>18</td>
+                <td>9</td>
+                <td>11</td>
+                <td>59</td>
+                <td>41</td>
+                <td>+18</td>
+                <td>63</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Europa_League#Group_stage" title="2016–17 UEFA Europa League">Europa League group stage</a></td>
+            </tr>
+            <tr>
+                <th>7</th>
+                <td><a href="https://en.wikipedia.org/wiki/West_Ham_United_F.C." title="West Ham United F.C.">West Ham United</a></td>
+                <td>38</td>
+                <td>16</td>
+                <td>14</td>
+                <td>8</td>
+                <td>65</td>
+                <td>51</td>
+                <td>+14</td>
+                <td>62</td>
+                <td>Qualification for the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_UEFA_Europa_League#Third_qualifying_round" title="2016–17 UEFA Europa League">Europa League third qualifying round</a></td>
+            </tr>
+            <tr>
+                <th>8</th>
+                <td><a href="https://en.wikipedia.org/wiki/Liverpool_F.C." title="Liverpool F.C.">Liverpool</a></td>
+                <td>38</td>
+                <td>16</td>
+                <td>12</td>
+                <td>10</td>
+                <td>63</td>
+                <td>50</td>
+                <td>+13</td>
+                <td>60</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>9</th>
+                <td><a href="https://en.wikipedia.org/wiki/Stoke_City_F.C." title="Stoke City F.C.">Stoke City</a></td>
+                <td>38</td>
+                <td>14</td>
+                <td>9</td>
+                <td>15</td>
+                <td>41</td>
+                <td>55</td>
+                <td>−14</td>
+                <td>51</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>10</th>
+                <td><a href="https://en.wikipedia.org/wiki/Chelsea_F.C." title="Chelsea F.C.">Chelsea</a></td>
+                <td>38</td>
+                <td>12</td>
+                <td>14</td>
+                <td>12</td>
+                <td>59</td>
+                <td>53</td>
+                <td>+6</td>
+                <td>50</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>11</th>
+                <td><a href="https://en.wikipedia.org/wiki/Everton_F.C." title="Everton F.C.">Everton</a></td>
+                <td>38</td>
+                <td>11</td>
+                <td>14</td>
+                <td>13</td>
+                <td>59</td>
+                <td>55</td>
+                <td>+4</td>
+                <td>47</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>12</th>
+                <td><a href="https://en.wikipedia.org/wiki/Swansea_City_A.F.C." title="Swansea City A.F.C.">Swansea City</a></td>
+                <td>38</td>
+                <td>12</td>
+                <td>11</td>
+                <td>15</td>
+                <td>42</td>
+                <td>52</td>
+                <td>−10</td>
+                <td>47</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>13</th>
+                <td><a href="https://en.wikipedia.org/wiki/Watford_F.C." title="Watford F.C.">Watford</a></td>
+                <td>38</td>
+                <td>12</td>
+                <td>9</td>
+                <td>17</td>
+                <td>40</td>
+                <td>50</td>
+                <td>−10</td>
+                <td>45</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>14</th>
+                <td><a href="https://en.wikipedia.org/wiki/West_Bromwich_Albion_F.C." title="West Bromwich Albion F.C.">West Bromwich Albion</a></td>
+                <td>38</td>
+                <td>10</td>
+                <td>13</td>
+                <td>15</td>
+                <td>34</td>
+                <td>48</td>
+                <td>−14</td>
+                <td>43</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>15</th>
+                <td><a href="https://en.wikipedia.org/wiki/Crystal_Palace_F.C." title="Crystal Palace F.C.">Crystal Palace</a></td>
+                <td>38</td>
+                <td>11</td>
+                <td>9</td>
+                <td>18</td>
+                <td>39</td>
+                <td>51</td>
+                <td>−12</td>
+                <td>42</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>16</th>
+                <td><a href="https://en.wikipedia.org/wiki/A.F.C._Bournemouth" title="A.F.C. Bournemouth">AFC Bournemouth</a></td>
+                <td>38</td>
+                <td>11</td>
+                <td>9</td>
+                <td>18</td>
+                <td>45</td>
+                <td>67</td>
+                <td>−22</td>
+                <td>42</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>17</th>
+                <td><a href="https://en.wikipedia.org/wiki/Sunderland_A.F.C." title="Sunderland A.F.C.">Sunderland</a></td>
+                <td>38</td>
+                <td>9</td>
+                <td>12</td>
+                <td>17</td>
+                <td>48</td>
+                <td>62</td>
+                <td>−14</td>
+                <td>39</td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>18</th>
+                <td><a href="https://en.wikipedia.org/wiki/Newcastle_United_F.C." title="Newcastle United F.C.">Newcastle United</a> <strong>(R)</strong>
+                </td>
+                <td>38</td>
+                <td>9</td>
+                <td>10</td>
+                <td>19</td>
+                <td>44</td>
+                <td>65</td>
+                <td>−21</td>
+                <td>37</td>
+                <td>Relegation to the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_Football_League_Championship" title="2016–17 Football League Championship">Football League Championship</a></td>
+            </tr>
+            <tr>
+                <th>19</th>
+                <td><a href="https://en.wikipedia.org/wiki/Norwich_City_F.C." title="Norwich City F.C.">Norwich City</a> <strong>(R)</strong>
+                </td>
+                <td>38</td>
+                <td>9</td>
+                <td>7</td>
+                <td>22</td>
+                <td>39</td>
+                <td>67</td>
+                <td>−28</td>
+                <td>34</td>
+                <td>Relegation to the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_Football_League_Championship" title="2016–17 Football League Championship">Football League Championship</a></td>    </tr>
+            <tr>
+                <th>20</th>
+                <td><a href="https://en.wikipedia.org/wiki/Aston_Villa_F.C." title="Aston Villa F.C.">Aston Villa</a> <strong>(R)</strong>
+                </td>
+                <td>38</td>
+                <td>3</td>
+                <td>8</td>
+                <td>27</td>
+                <td>27</td>
+                <td>76</td>
+                <td>−49</td>
+                <td>17</td>
+                <td>Relegation to the <a href="https://en.wikipedia.org/wiki/2016%E2%80%9317_Football_League_Championship" title="2016–17 Football League Championship">Football League Championship</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="block">
+        <div class="field">
+            <label class="label">Name</label>
+            <div class="control">
+                <input class="input" type="text" placeholder="Text input">
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Username</label>
+            <div class="control has-icons-left has-icons-right">
+                <input class="input is-success" type="text" placeholder="Text input" value="bulma">
+                <span class="icon is-small is-left">
+      <i class="fas fa-user"></i>
+    </span>
+                <span class="icon is-small is-right">
+      <i class="fas fa-check"></i>
+    </span>
+            </div>
+            <p class="help is-success">This username is available</p>
+        </div>
+
+        <div class="field">
+            <label class="label">Email</label>
+            <div class="control has-icons-left has-icons-right">
+                <input class="input is-danger" type="email" placeholder="Email input" value="hello@">
+                <span class="icon is-small is-left">
+      <i class="fas fa-envelope"></i>
+    </span>
+                <span class="icon is-small is-right">
+      <i class="fas fa-exclamation-triangle"></i>
+    </span>
+            </div>
+            <p class="help is-danger">This email is invalid</p>
+        </div>
+
+        <div class="field">
+            <label class="label">Subject</label>
+            <div class="control">
+                <div class="select">
+                    <select>
+                        <option>Select dropdown</option>
+                        <option>With options</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label">Message</label>
+            <div class="control">
+                <textarea class="textarea" placeholder="Textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="control">
+                <label class="checkbox">
+                    <input type="checkbox">
+                    I agree to the <a href="#">terms and conditions</a>
+                </label>
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="control">
+                <label class="radio">
+                    <input type="radio" name="question">
+                    Yes
+                </label>
+                <label class="radio">
+                    <input type="radio" name="question">
+                    No
+                </label>
+            </div>
+        </div>
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-link">Submit</button>
+            </div>
+            <div class="control">
+                <button class="button is-link is-light">Cancel</button>
             </div>
         </div>
     </div>
