@@ -9,6 +9,15 @@
                 $(obj).toggleClass('is-active');
             });
         });
+
+
+        $(document).click(function(e) {
+            $('html')
+                    .not($('html').has($(e.target)))
+                    .children('.dropdown')
+                    .removeClass('is-open');
+        });
+
         //$('<footer>Appended with Cash</footer>').appendTo ( document.body );
     });
 </script>
