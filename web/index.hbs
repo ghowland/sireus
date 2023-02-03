@@ -664,7 +664,40 @@
         </div>
     </div>
 
-    <div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+    <button class="button" onclick="$('#modal1').addClass('is-active')">
+        Open Modal 1
+    </button>
+
+    <button class="button" onclick="$('#modal2').addClass('is-active')">
+        Open Modal 2
+    </button>
+
+    <div class="modal" id="modal1">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <!-- Any other Bulma elements you want -->
+            <div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+
+        </div>
+        <button class="modal-close is-large" aria-label="close" onclick="$('#modal1').removeClass('is-active')"></button>
+    </div>
+
+    <div class="modal" id="modal2">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Modal title</p>
+                <button class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                This is where I describe all the cool things going on!
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success">Save changes</button>
+                <button class="button">Cancel</button>
+            </footer>
+        </div>
+    </div>
 
     <script>
         var trace1 = {
