@@ -150,20 +150,22 @@ func main() {
 
 	app := CreateWebApp(engine)
 
+	page_data_map := fiber.Map{
+		"info":            "Testing 123!",
+		"bot":             bot,
+		"title":           "Sireus",
+		"curve_data":      curve_data,
+		"test_one":        true,
+		"test_two":        false,
+		"plot_x":          GetCurveDataX(curve_data),
+		"plot_y":          GetCurveDataY(curve_data),
+		"plot_selected_x": 0.7,
+		"plot_selected_y": 0.856363,
+	}
+
 	app.Get("/", func(c *fiber.Ctx) error {
 		//return c.SendString(GetActionsHtml(bot))
-		return c.Render("index", fiber.Map{
-			"info":            "Testing 123!",
-			"bot":             bot,
-			"title":           "Sireus",
-			"curve_data":      curve_data,
-			"test_one":        true,
-			"test_two":        false,
-			"plot_x":          GetCurveDataX(curve_data),
-			"plot_y":          GetCurveDataY(curve_data),
-			"plot_selected_x": 0.7,
-			"plot_selected_y": 0.856363,
-		}, "layouts/main_common")
+		return c.Render("index", page_data_map, "layouts/main_common")
 	})
 
 	// Provide a minimal config
