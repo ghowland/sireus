@@ -1,44 +1,49 @@
 <section class="section">
     <div class="container">
-        <h1 class="title is-primary">
+        <h1 class="title is-1">
             {{info}}
         </h1>
         <p class="subtitle">
             {{bot.Name}}
         </p>
 
-Bot: {{botinfo bot}}
+        <div class="block">
+            <div class="box">
+                <h1 class="title is-big">Bot: {{botinfo bot}}</h1>
 
-{{#each bot.Actions}} <!-- Action:Start -->
+                {{#each bot.Actions}} <!-- Action:Start -->
 
-<h2>Action: {{Name}} - {{Weight}}</h2>
+                    <h2>Action: {{Name}} - {{Weight}}</h2>
 
-{{#each Considerations}} <!-- Action Consideration:Start -->
+                    {{#each Considerations}} <!-- Action Consideration:Start -->
 
-<h3>Consider: {{Name}} - {{Weight}} -- {{CurveName}}</h3>
+                        <h3>Consider: {{Name}} - {{Weight}} -- {{CurveName}}</h3>
 
-{{/each}} <!-- Action Consideration:End -->
+                    {{/each}} <!-- Action Consideration:End -->
 
-{{/each}} <!-- Action:End -->
+                {{/each}} <!-- Action:End -->
+
+            </div>
+        </div>
 
         {{#if test_one}}
-            Active<br>
+            <p class="content">Active</p>
         {{else if test_two}}
-            Inactive<br>
+            <p class="content">Inactive</p>
         {{else}}
-            Unknown<br>
+            <p class="content">Unknown</p>
         {{/if}}
 
         {{#unless license}}
-            Opposite of If = Unless<br>
+            <p class="content">Opposite of If = Unless</p>
         {{/unless}}
 
-        {{#equal bot.Name "Bot Service X"}}Botname is Service X<br>{{/equal}}
+        {{#equal bot.Name "Bot Service X"}}<p class="content is-small">Botname is Service X</p>{{/equal}}
 
 
         {{#each bot.Actions as |action actionIndex|}}
             {{#each action.Considerations as |consider considerIndex|}}
-                Consider: {{consider.Name}} ID: {{considerIndex}}<br>
+                <p class="content is-medium">Consider: {{consider.Name}} ID: {{considerIndex}}</p>
             {{/each}}
         {{/each}}
 
@@ -61,7 +66,7 @@ Bot: {{botinfo bot}}
                             </a>
                         </div>
                         <div class="card-footer-item">
-                            <a href="#" class="button is-info">
+                            <a href="#" class="button is-info is-outlined">
                                 <i class="fa fa-cloud"></i>
                             </a>
                         </div>
@@ -86,7 +91,7 @@ Bot: {{botinfo bot}}
                             </a>
                         </div>
                         <div class="card-footer-item">
-                            <a href="#" class="button is-info">
+                            <a href="#" class="button is-warning is-outlined is-inverted">
                                 <i class="fa fa-cloud"></i>
                             </a>
                         </div>
