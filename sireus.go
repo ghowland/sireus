@@ -145,6 +145,7 @@ func main() {
 	json.Unmarshal([]byte(actionData), &bot)
 
 	curve_data := LoadCurveData(app_config, bot.Actions[0].Considerations[0].CurveName)
+	curve_data2 := LoadCurveData(app_config, bot.Actions[0].Considerations[1].CurveName)
 
 	engine := CreateHandlebarsEngine(app_config)
 
@@ -161,11 +162,21 @@ func main() {
 		"plot_y":          GetCurveDataY(curve_data),
 		"plot_selected_x": 0.7,
 		"plot_selected_y": 0.856363,
+		"plot_title":      curve_data.Name,
+
+		"plot2_x":          GetCurveDataX(curve_data2),
+		"plot2_y":          GetCurveDataY(curve_data2),
+		"plot2_selected_x": 0.7,
+		"plot2_selected_y": 0.856363,
+		"plot2_title":      curve_data2.Name,
 	}
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		//return c.SendString(GetActionsHtml(bot))
 		return c.Render("index", page_data_map, "layouts/main_common")
+	})
+
+	app.Get("/test", func(c *fiber.Ctx) error {
+		return c.Render("test", page_data_map, "layouts/main_common")
 	})
 
 	// Provide a minimal config

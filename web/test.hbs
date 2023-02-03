@@ -664,16 +664,12 @@
         </div>
     </div>
 
-    <button class="button" onclick="SetupPlot1(); $('#modal1').addClass('is-active')">
-        Open Modal Plot 1
-    </button>
-
-    <button class="button" onclick="SetupPlot2(); $('#modal1').addClass('is-active')">
-        Open Modal Plot 2
+    <button class="button" onclick="$('#modal1').addClass('is-active')">
+        Open Modal 1
     </button>
 
     <button class="button" onclick="$('#modal2').addClass('is-active')">
-        Open Modal Card
+        Open Modal 2
     </button>
 
     <div class="modal" id="modal1">
@@ -685,7 +681,6 @@
         </div>
         <button class="modal-close is-large" aria-label="close" onclick="$('#modal1').removeClass('is-active')"></button>
     </div>
-
 
     <div class="modal" id="modal2">
         <div class="modal-background"></div>
@@ -705,31 +700,39 @@
     </div>
 
     <script>
-        function SetupPlot1()
-        {
-            var title = '{{plot_title}}';
+        var trace1 = {
+            x: {{plot_x}},//[1, 2, 3, 4, 5],
+            y: {{plot_y}},//[1, 3, 2, 3, 1],
+            // mode: 'lines+markers',
+            mode: 'lines',
+            name: 'Curve',
+            line: {shape: 'linear'},
+            type: 'scatter'
+        };
 
-            var plot_x = {{plot_x}};
-            var plot_y = {{plot_y}};
+        var trace2 = {
+            x: [{{plot_selected_x}}],
+            y: [{{plot_selected_y}}],
+            // mode: 'lines+markers',
+            mode: 'markers',
+            name: 'Data Point',
+            line: {shape: 'linear'},
+            type: 'scatter'
+        };
 
-            var plot_selected_x = {{plot_selected_x}};
-            var plot_selected_y = {{plot_selected_y}};
+        var data = [trace1, trace2];
 
-            CreatePlot('plot', title, plot_x, plot_y, plot_selected_x, plot_selected_y);
-        }
+        var layout = {
+            title:'inc_smooth',
+            legend: {
+                y: 0.5,
+                //traceorder: 'reversed',
+                font: {size: 16},
+                yref: 'paper'
+            }};
 
-        function SetupPlot2()
-        {
-            var title = '{{plot2_title}}';
+        Plotly.newPlot('plot', data, layout);
 
-            var plot_x = {{plot2_x}};
-            var plot_y = {{plot2_y}};
-
-            var plot_selected_x = {{plot2_selected_x}};
-            var plot_selected_y = {{plot2_selected_y}};
-
-            CreatePlot('plot', title, plot_x, plot_y, plot_selected_x, plot_selected_y);
-        }
     </script>
 
 </section>
