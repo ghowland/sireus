@@ -75,7 +75,9 @@ func LoadConfig() AppConfig {
 	return app_config
 }
 
-func LoadCurveData(path string) CurveData {
+func LoadCurveData(app_config AppConfig, name string) CurveData {
+	path := fmt.Sprintf(app_config.CurvePathFormat, name)
+
 	curveData, err := os.ReadFile((path))
 	Check(err)
 
@@ -122,8 +124,7 @@ func main() {
 	var bot Bot
 	json.Unmarshal([]byte(actionData), &bot)
 
-	curve_path := fmt.Sprintf(app_config.CurvePathFormat, bot.Actions[0].Considerations[0].CurveName)
-	curve_data := LoadCurveData(curve_path)
+	curve_data := LoadCurveData(app_config, bot.Actions[0].Considerations[0].CurveName)
 
 	engine := CreateHandlebarsEngine(app_config)
 
@@ -136,9 +137,10 @@ func main() {
 			"bot":        bot,
 			"title":      "Sireus",
 			"curve_data": curve_data,
+			"test_one":   true,
+			"test_two":   false,
 		}, "layouts/main_common")
 	})
 
 	app.Listen(":3000")
-
 }

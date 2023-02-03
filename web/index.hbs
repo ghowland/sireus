@@ -1,12 +1,11 @@
 <section class="section">
     <div class="container">
-        <h1 class="title">
+        <h1 class="title is-primary">
             {{info}}
         </h1>
         <p class="subtitle">
             {{bot.Name}}
         </p>
-        <p>
 
 Bot: {{botinfo bot}}
 
@@ -22,6 +21,79 @@ Bot: {{botinfo bot}}
 
 {{/each}} <!-- Action:End -->
 
-        </p>
+        {{#if test_one}}
+            Active<br>
+        {{else if test_two}}
+            Inactive<br>
+        {{else}}
+            Unknown<br>
+        {{/if}}
+
+        {{#unless license}}
+            Opposite of If = Unless<br>
+        {{/unless}}
+
+        {{#equal bot.Name "Bot Service X"}}Botname is Service X<br>{{/equal}}
+
+
+        {{#each bot.Actions as |action actionIndex|}}
+            {{#each action.Considerations as |consider considerIndex|}}
+                Consider: {{consider.Name}} ID: {{considerIndex}}<br>
+            {{/each}}
+        {{/each}}
+
+        <div class="columns">
+            <div class="column"> <!-- Column:Start -->
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="title is-primary">Something</h2>
+                        <h3 class="subtitle">Else</h3>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-success">
+                                <i class="fa fa-thumbs-up"></i>
+                            </a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-danger">
+                                <i class="fa fa-thumbs-down"></i>
+                            </a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-info">
+                                <i class="fa fa-cloud"></i>
+                            </a>
+                        </div>
+                    </footer>
+                </div>
+            </div> <!-- Column:End -->
+            <div class="column"> <!-- Column:Start -->
+                <div class="card">
+                    <div class="card-content">
+                        <h2 class="title is-primary">Other</h2>
+                        <h3 class="subtitle">Thing</h3>
+                    </div>
+                    <footer class="card-footer">
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-success">
+                                <i class="fa fa-thumbs-up"></i>
+                            </a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-danger">
+                                <i class="fa fa-thumbs-down"></i>
+                            </a>
+                        </div>
+                        <div class="card-footer-item">
+                            <a href="#" class="button is-info">
+                                <i class="fa fa-cloud"></i>
+                            </a>
+                        </div>
+                    </footer>
+                </div>
+            </div> <!-- Column:End -->
+        </div>
+
     </div>
 </section>
