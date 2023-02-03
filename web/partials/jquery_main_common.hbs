@@ -1,0 +1,14 @@
+<script>
+    $(function () {
+        // We can tell the DOM loaded and Query has initialized
+        $('html').addClass ( 'dom-loaded' );
+
+        // Makes all the dropdowns work
+        $('.dropdown').each(function(i, obj) {
+            $(obj).click(function(event) {
+                $(obj).toggleClass('is-active');
+            });
+        });
+        //$('<footer>Appended with Cash</footer>').appendTo ( document.body );
+    });
+</script>
