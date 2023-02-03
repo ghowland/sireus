@@ -8,7 +8,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/template/handlebars"
 	"net/http"
+	"net/url"
 	"os"
+	"strconv"
 )
 
 type ActionConsideration struct {
@@ -86,6 +88,8 @@ func LoadCurveData(app_config AppConfig, name string) CurveData {
 	var curve_data CurveData
 	json.Unmarshal([]byte(curveData), &curve_data)
 
+	//log.Println("Load Curve Data: ", curve_data.Name)
+
 	return curve_data
 }
 
@@ -117,22 +121,76 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App {
 	return app
 }
 
-func GetCurveDataX(curve_data CurveData) string {
+func GetCurveDataX(curve_data CurveData) []float32 {
 	var x_array []float32
 
 	for i := 0; i < len(curve_data.Values); i++ {
 		x_array = append(x_array, float32(i)*0.01)
 	}
 
-	output, err := json.Marshal(x_array)
-	Check(err)
-	return string(output)
+	return x_array
 }
 
-func GetCurveDataY(curve_data CurveData) string {
-	output, err := json.Marshal(curve_data.Values)
+func GetCurveValue(curve_data CurveData, x float32) float32 {
+
+	for i := 0; i < len(curve_data.Values); i++ {
+		cur_pos_x := float32(i) * 0.01
+		if x <= cur_pos_x {
+			return curve_data.Values[i]
+		}
+	}
+
+	return curve_data.Values[len(curve_data.Values)-1]
+}
+
+func ParseContextBody(c *fiber.Ctx) map[string]string {
+	values, err := url.ParseQuery(string(c.Body()))
 	Check(err)
-	return string(output)
+
+	obj := map[string]string{}
+	for k, v := range values {
+		if len(v) > 0 {
+			obj[k] = v[0]
+		}
+	}
+
+	return obj
+}
+
+func GetAPIPlotData(app_config AppConfig, c *fiber.Ctx) string {
+	input := ParseContextBody(c)
+	//log.Println("Get API Plot Data: ", input)
+
+	if input["name"] == "" {
+		failure_result := map[string]interface{}{
+			"_failure": "Name not found, aborting",
+		}
+		failure_json, _ := json.Marshal(failure_result)
+		return string(failure_json)
+	}
+
+	curve_data := LoadCurveData(app_config, input["name"])
+
+	map_data := map[string]interface{}{
+		"title":  curve_data.Name,
+		"plot_x": GetCurveDataX(curve_data),
+		"plot_y": curve_data.Values,
+	}
+
+	x_pos, err := strconv.ParseFloat(input["x"], 32)
+	Check(err)
+
+	if x_pos >= 0 {
+		map_data["plot_selected_x"] = x_pos
+		map_data["plot_selected_y"] = GetCurveValue(curve_data, float32(x_pos))
+	}
+
+	json_output, _ := json.Marshal(map_data)
+	json_string := string(json_output)
+
+	//log.Println("Get API Plot Result: ", json_string)
+
+	return json_string
 }
 
 func main() {
@@ -144,32 +202,21 @@ func main() {
 	var bot Bot
 	json.Unmarshal([]byte(actionData), &bot)
 
-	curve_data := LoadCurveData(app_config, bot.Actions[0].Considerations[0].CurveName)
-	curve_data2 := LoadCurveData(app_config, bot.Actions[0].Considerations[1].CurveName)
-
 	engine := CreateHandlebarsEngine(app_config)
 
 	app := CreateWebApp(engine)
 
 	page_data_map := fiber.Map{
-		"info":            "Testing 123!",
-		"bot":             bot,
-		"title":           "Sireus",
-		"curve_data":      curve_data,
-		"test_one":        true,
-		"test_two":        false,
-		"plot_x":          GetCurveDataX(curve_data),
-		"plot_y":          GetCurveDataY(curve_data),
-		"plot_selected_x": 0.7,
-		"plot_selected_y": 0.856363,
-		"plot_title":      curve_data.Name,
-
-		"plot2_x":          GetCurveDataX(curve_data2),
-		"plot2_y":          GetCurveDataY(curve_data2),
-		"plot2_selected_x": 0.7,
-		"plot2_selected_y": 0.856363,
-		"plot2_title":      curve_data2.Name,
+		"info":     "Testing 123!",
+		"bot":      bot,
+		"title":    "Sireus",
+		"test_one": true,
+		"test_two": false,
 	}
+
+	app.Post("/api/plot", func(c *fiber.Ctx) error {
+		return c.SendString(GetAPIPlotData(app_config, c))
+	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", page_data_map, "layouts/main_common")
@@ -179,7 +226,7 @@ func main() {
 		return c.Render("test", page_data_map, "layouts/main_common")
 	})
 
-	// Provide a minimal config
+	// Static Files: JS, Images
 	app.Use(filesystem.New(filesystem.Config{
 		Root: http.Dir("./web_static"),
 	}))

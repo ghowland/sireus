@@ -664,11 +664,11 @@
         </div>
     </div>
 
-    <button class="button" onclick="SetupPlot1(); $('#modal1').addClass('is-active')">
+    <button class="button" onclick="GetPlot('inc_middle', 0.7)">
         Open Modal Plot 1
     </button>
 
-    <button class="button" onclick="SetupPlot2(); $('#modal1').addClass('is-active')">
+    <button class="button" onclick="GetPlot('inc_ramp', 0.66)">
         Open Modal Plot 2
     </button>
 
@@ -705,31 +705,22 @@
     </div>
 
     <script>
-        function SetupPlot1()
+        function GetPlot(name, xPos)
         {
-            var title = '{{plot_title}}';
+            if (xPos == undefined) xPos = -1;
 
-            var plot_x = {{plot_x}};
-            var plot_y = {{plot_y}};
-
-            var plot_selected_x = {{plot_selected_x}};
-            var plot_selected_y = {{plot_selected_y}};
-
-            CreatePlot('plot', title, plot_x, plot_y, plot_selected_x, plot_selected_y);
+            RPC('/api/plot', {'name': name, 'x': xPos}, SetupPlot);
         }
 
-        function SetupPlot2()
+        function SetupPlot(data)
         {
-            var title = '{{plot2_title}}';
+            // alert('running Setup Plot: ' + JSON.stringify(data));
 
-            var plot_x = {{plot2_x}};
-            var plot_y = {{plot2_y}};
+            CreatePlot('plot', data['title'], data['plot_x'], data['plot_y'], data['plot_selected_x'], data['plot_selected_y']);
 
-            var plot_selected_x = {{plot2_selected_x}};
-            var plot_selected_y = {{plot2_selected_y}};
-
-            CreatePlot('plot', title, plot_x, plot_y, plot_selected_x, plot_selected_y);
+            $('#modal1').addClass('is-active')
         }
+
     </script>
 
 </section>

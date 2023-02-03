@@ -1,8 +1,8 @@
 function CreatePlot(element_id, title, plot_x, plot_y, plot_selected_x, plot_selected_y)
 {
     var trace1 = {
-        x: plot_x,//[1, 2, 3, 4, 5],
-        y: plot_y,//[1, 3, 2, 3, 1],
+        x: plot_x,
+        y: plot_y,
         // mode: 'lines+markers',
         mode: 'lines',
         name: 'Curve',
@@ -28,7 +28,7 @@ function CreatePlot(element_id, title, plot_x, plot_y, plot_selected_x, plot_sel
     }
 
     var layout = {
-        title:'inc_smooth',
+        title: title,
         legend: {
             y: 0.5,
             //traceorder: 'reversed',
