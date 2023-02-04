@@ -2,33 +2,33 @@
 
 <section class="section">
     {{> 'partials/breadcrumbs_common' }}
-        <h1 class="title is-1">
-            {{info}}
-        </h1>
-        <p class="subtitle">
-            {{bot.Name}}
-        </p>
+    <h1 class="title is-1">
+        {{info}}
+    </h1>
+    <p class="subtitle">
+        {{bot.Name}}
+    </p>
 
-        <div class="block">
-            <div class="box">
-                <h1 class="title is-big">Bot: {{botinfo bot}}</h1>
+    <div class="block">
+        <div class="box">
+            <h1 class="title is-big">Bot: {{botinfo bot}}</h1>
 
-                {{#each bot.Actions}} <!-- Action:Start -->
+            {{#each bot.Actions}} <!-- Action:Start -->
 
-                    <h2>Action: {{Name}} - {{Weight}}</h2>
+                <h2>Action: {{Name}} - {{Weight}}</h2>
 
-                    {{#each Considerations}} <!-- Action Consideration:Start -->
+                {{#each Considerations}} <!-- Action Consideration:Start -->
 
-                        <p>Consider: <span class="tag is-info">{{Name}}</span> - {{Weight}} -- <span class="tag is-info">{{CurveName}}</span></p>
+                    <p>Consider: <span class="tag is-info">{{Name}}</span> - {{Weight}} -- <span class="tag is-info">{{CurveName}}</span></p>
 
-                    {{/each}} <!-- Action Consideration:End -->
+                {{/each}} <!-- Action Consideration:End -->
 
-                {{/each}} <!-- Action:End -->
+            {{/each}} <!-- Action:End -->
 
-            </div>
         </div>
+    </div>
 
-        <div class="block">
+    <div class="block">
         <div class="notification is-info">
             <button class="delete"></button>
             {{#if test_one}}
@@ -39,124 +39,124 @@
                 <p class="content">Notice: Unknown</p>
             {{/if}}
         </div>
-        </div>
+    </div>
 
-        <div class="tags">
+    <div class="tags">
             <span class="tag is-success">Tag 1
                 <button class="delete is-small"></button>
             </span>
-            <span class="tag is-info">Tag 2</span>
-            <span class="tag is-warning">Tag 3</span>
+        <span class="tag is-info">Tag 2</span>
+        <span class="tag is-warning">Tag 3</span>
+    </div>
+
+    <div class="field is-grouped is-grouped-multiline">
+
+        <div class="control">
+            <div class="tags has-addons">
+                <span class="tag is-success">Start Infospan</span>
+                <span class="tag is-info">End Info<button class="delete is-small"></button></span>
+            </div>
         </div>
 
-        <div class="field is-grouped is-grouped-multiline">
-
-            <div class="control">
-                <div class="tags has-addons">
-                    <span class="tag is-success">Start Infospan</span>
-                    <span class="tag is-info">End Info<button class="delete is-small"></button></span>
-                </div>
+        <div class="control">
+            <div class="tags has-addons">
+                <span class="tag is-success">More</span>
+                <span class="tag is-info">Here<button class="delete is-small"></button></span>
             </div>
-
-            <div class="control">
-                <div class="tags has-addons">
-                    <span class="tag is-success">More</span>
-                    <span class="tag is-info">Here<button class="delete is-small"></button></span>
-                </div>
-            </div>
-
-            <div class="control">
-                <div class="tags has-addons">
-                    <a class="tag is-link">Easier</a>
-                    <a class="tag is-delete"></a>
-                </div>
-            </div>
-
-            <div class="control">
-                <div class="tags has-addons">
-                    <a class="tag is-link">Like This</a>
-                    <a class="tag is-delete"></a>
-                </div>
-            </div>
-
         </div>
 
-        {{#unless license}}
-            <p class="content">Opposite of If = Unless</p>
-        {{/unless}}
+        <div class="control">
+            <div class="tags has-addons">
+                <a class="tag is-link">Easier</a>
+                <a class="tag is-delete"></a>
+            </div>
+        </div>
 
-        {{#equal bot.Name "Bot Service X"}}<p class="content is-small">Botname is Service X</p>{{/equal}}
+        <div class="control">
+            <div class="tags has-addons">
+                <a class="tag is-link">Like This</a>
+                <a class="tag is-delete"></a>
+            </div>
+        </div>
+
+    </div>
+
+    {{#unless license}}
+        <p class="content">Opposite of If = Unless</p>
+    {{/unless}}
+
+    {{#equal bot.Name "Bot Service X"}}<p class="content is-small">Botname is Service X</p>{{/equal}}
 
 
-        {{#each bot.Actions as |action actionIndex|}}
-            {{#each action.Considerations as |consider considerIndex|}}
-                <p class="content is-medium">Consider: {{consider.Name}} ID: {{considerIndex}}</p>
-            {{/each}}
+    {{#each bot.Actions as |action actionIndex|}}
+        {{#each action.Considerations as |consider considerIndex|}}
+            <p class="content is-medium">Consider: {{consider.Name}} ID: {{considerIndex}}</p>
         {{/each}}
+    {{/each}}
 
-        <div class="columns">
-            <div class="column"> <!-- Column:Start -->
-                <div class="card">
-                    <div class="card-content">
-                        <h2 class="title is-primary">Something</h2>
-                        <h3 class="subtitle">Else</h3>
+    <div class="columns">
+        <div class="column"> <!-- Column:Start -->
+            <div class="card">
+                <div class="card-content">
+                    <h2 class="title is-primary">Something</h2>
+                    <h3 class="subtitle">Else</h3>
+                </div>
+                <footer class="card-footer">
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-success is-outlined">
+                            <i class="fa fa-thumbs-up"></i>
+                        </a>
                     </div>
-                    <footer class="card-footer">
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-success is-outlined">
-                                <i class="fa fa-thumbs-up"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-danger is-outlined">
-                                <i class="fa fa-thumbs-down"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-info is-outlined">
-                                <i class="fa fa-cloud"></i>
-                            </a>
-                        </div>
-                    </footer>
-                </div>
-            </div> <!-- Column:End -->
-            <div class="column"> <!-- Column:Start -->
-                <div class="card">
-                    <div class="card-content">
-                        <h2 class="title is-primary">Other</h2>
-                        <h3 class="subtitle">Thing</h3>
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-danger is-outlined">
+                            <i class="fa fa-thumbs-down"></i>
+                        </a>
                     </div>
-                    <footer class="card-footer">
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-success is-outlined">
-                                <i class="fa fa-thumbs-up"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-danger is-outlined">
-                                <i class="fa fa-thumbs-down"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-warning is-outlined is-inverted">
-                                <i class="fa fa-cloud"></i>
-                            </a>
-                        </div>
-                    </footer>
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-info is-outlined">
+                            <i class="fa fa-cloud"></i>
+                        </a>
+                    </div>
+                </footer>
+            </div>
+        </div> <!-- Column:End -->
+        <div class="column"> <!-- Column:Start -->
+            <div class="card">
+                <div class="card-content">
+                    <h2 class="title is-primary">Other</h2>
+                    <h3 class="subtitle">Thing</h3>
                 </div>
-            </div> <!-- Column:End -->
-        </div>
+                <footer class="card-footer">
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-success is-outlined">
+                            <i class="fa fa-thumbs-up"></i>
+                        </a>
+                    </div>
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-danger is-outlined">
+                            <i class="fa fa-thumbs-down"></i>
+                        </a>
+                    </div>
+                    <div class="card-footer-item">
+                        <a href="#" class="button is-warning is-outlined is-inverted">
+                            <i class="fa fa-cloud"></i>
+                        </a>
+                    </div>
+                </footer>
+            </div>
+        </div> <!-- Column:End -->
+    </div>
 
-        <div class="block">
-            <article class="message">
-                <div class="message-header has-text-primary">About This Bot</div>
-                <div class="message-body has-text-white has-background-warning-dark">
-                    Stuff goes around and around
+    <div class="block">
+        <article class="message">
+            <div class="message-header has-text-primary">About This Bot</div>
+            <div class="message-body has-text-white has-background-warning-dark">
+                Stuff goes around and around
 
 
-                </div>
-            </article>
-        </div>
+            </div>
+        </article>
+    </div>
 
     <div class="block">
         <div class="dropdown">
@@ -664,12 +664,16 @@
         </div>
     </div>
 
-    <button class="button" onclick="$('#modal1').addClass('is-active')">
-        Open Modal 1
+    <button class="button" onclick="GetPlot('inc_middle', 0.7)">
+        Open Modal Plot 1
+    </button>
+
+    <button class="button" onclick="GetPlot('inc_ramp', 0.66)">
+        Open Modal Plot 2
     </button>
 
     <button class="button" onclick="$('#modal2').addClass('is-active')">
-        Open Modal 2
+        Open Modal Card
     </button>
 
     <div class="modal" id="modal1">
@@ -681,6 +685,7 @@
         </div>
         <button class="modal-close is-large" aria-label="close" onclick="$('#modal1').removeClass('is-active')"></button>
     </div>
+
 
     <div class="modal" id="modal2">
         <div class="modal-background"></div>
@@ -700,38 +705,21 @@
     </div>
 
     <script>
-        var trace1 = {
-            x: {{plot_x}},//[1, 2, 3, 4, 5],
-            y: {{plot_y}},//[1, 3, 2, 3, 1],
-            // mode: 'lines+markers',
-            mode: 'lines',
-            name: 'Curve',
-            line: {shape: 'linear'},
-            type: 'scatter'
-        };
+        function GetPlot(name, xPos)
+        {
+            if (xPos == undefined) xPos = -1;
 
-        var trace2 = {
-            x: [{{plot_selected_x}}],
-            y: [{{plot_selected_y}}],
-            // mode: 'lines+markers',
-            mode: 'markers',
-            name: 'Data Point',
-            line: {shape: 'linear'},
-            type: 'scatter'
-        };
+            RPC('/api/plot', {'name': name, 'x': xPos}, SetupPlot);
+        }
 
-        var data = [trace1, trace2];
+        function SetupPlot(data)
+        {
+            // alert('running Setup Plot: ' + JSON.stringify(data));
 
-        var layout = {
-            title:'inc_smooth',
-            legend: {
-                y: 0.5,
-                //traceorder: 'reversed',
-                font: {size: 16},
-                yref: 'paper'
-            }};
+            CreatePlot('plot', data['title'], data['plot_x'], data['plot_y'], data['plot_selected_x'], data['plot_selected_y']);
 
-        Plotly.newPlot('plot', data, layout);
+            $('#modal1').addClass('is-active')
+        }
 
     </script>
 
