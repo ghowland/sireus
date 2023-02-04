@@ -16,5 +16,7 @@
 
 gitsync.sh
 
+.idea/
+
 build/
 
