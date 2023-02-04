@@ -1,9 +1,9 @@
 {
-	"name": "Bot Service X",
+	"name": "Service X",
 	"actions":
 	[
 		{
-			"name": "Action XYZ",
+			"name": "Action Y",
 			"weight": 2.0,
 			"weight_min": 0,
 			"considerations": [
