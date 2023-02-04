@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aymerick/raymond"
+	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/template/handlebars"
@@ -16,40 +18,7 @@ import (
 	"time"
 )
 
-type ActionConsideration struct {
-	Name       string  `json:"name"`
-	Weight     float32 `json:"weight"`
-	CurveName  string  `json:"curve"`
-	RangeStart float32 `json:"range_start"`
-	RangeEnd   float32 `json:"range_end"`
-}
-
-type Action struct {
-	Name           string                `json:"name"`
-	Info           string                `json:"info"`
-	Weight         float32               `json:"weight"`
-	WeightMin      float32               `json:"weight_min"`
-	Considerations []ActionConsideration `json:"considerations"`
-}
-
-type Bot struct {
-	Name    string   `json:"name"`
-	Info    string   `json:"info"`
-	Actions []Action `json:"actions"`
-}
-
-type CurveData struct {
-	Name   string    `json:"name"`
-	Values []float32 `json:"values"`
-}
-
-func Check(e error) {
-	if e != nil {
-		panic(e)
-	}
-}
-
-func GetActionsHtml(bot Bot) string {
+func GetActionsHtml(bot appdata.Bot) string {
 	output := ""
 
 	output += fmt.Sprintf("Bot: %s\n", bot.Name)
@@ -66,39 +35,9 @@ func GetActionsHtml(bot Bot) string {
 	return output
 }
 
-type AppConfig struct {
-	WebPath         string `json:"web_path"`
-	ActionPath      string `json:"action_path"`
-	CurvePathFormat string `json:"curve_path_format"`
-}
-
 var app_config_path = "config/config.json"
 
-func LoadConfig() AppConfig {
-	app_config_data, err := os.ReadFile((app_config_path))
-	Check(err)
-
-	var app_config AppConfig
-	json.Unmarshal([]byte(app_config_data), &app_config)
-
-	return app_config
-}
-
-func LoadCurveData(app_config AppConfig, name string) CurveData {
-	path := fmt.Sprintf(app_config.CurvePathFormat, name)
-
-	curveData, err := os.ReadFile((path))
-	Check(err)
-
-	var curve_data CurveData
-	json.Unmarshal([]byte(curveData), &curve_data)
-
-	//log.Println("Load Curve Data: ", curve_data.Name)
-
-	return curve_data
-}
-
-func CreateHandlebarsEngine(app_config AppConfig) *handlebars.Engine {
+func CreateHandlebarsEngine(app_config appdata.AppConfig) *handlebars.Engine {
 	// Handlebars Engine for Fiber
 	engine := handlebars.New(app_config.WebPath, ".hbs")
 
@@ -111,11 +50,11 @@ func CreateHandlebarsEngine(app_config AppConfig) *handlebars.Engine {
 	//// Layout defines the variable name that is used to yield templates within layouts
 	//engine.Layout("embed") // Optional. Default: "embed"
 
-	raymond.RegisterHelper("botinfo", func(bot Bot) string {
+	raymond.RegisterHelper("botinfo", func(bot appdata.Bot) string {
 		return fmt.Sprintf("%s  Actions: %d", bot.Name, len(bot.Actions))
 	})
 
-	raymond.RegisterHelper("ifconsiderlength", func(considerations []ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("ifconsiderlength", func(considerations []appdata.ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
 		//log.Println("ifconsiderlength: ", len(considerations), " Count: ", count)
 
 		if len(considerations) >= count {
@@ -136,7 +75,7 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App {
 	return app
 }
 
-func GetCurveDataX(curve_data CurveData) []float32 {
+func GetCurveDataX(curve_data appdata.CurveData) []float32 {
 	var x_array []float32
 
 	for i := 0; i < len(curve_data.Values); i++ {
@@ -146,7 +85,7 @@ func GetCurveDataX(curve_data CurveData) []float32 {
 	return x_array
 }
 
-func GetCurveValue(curve_data CurveData, x float32) float32 {
+func GetCurveValue(curve_data appdata.CurveData, x float32) float32 {
 
 	for i := 0; i < len(curve_data.Values); i++ {
 		cur_pos_x := float32(i) * 0.01
@@ -160,7 +99,7 @@ func GetCurveValue(curve_data CurveData, x float32) float32 {
 
 func ParseContextBody(c *fiber.Ctx) map[string]string {
 	values, err := url.ParseQuery(string(c.Body()))
-	Check(err)
+	util.Check(err)
 
 	obj := map[string]string{}
 	for k, v := range values {
@@ -172,7 +111,7 @@ func ParseContextBody(c *fiber.Ctx) map[string]string {
 	return obj
 }
 
-func GetAPIPlotData(app_config AppConfig, c *fiber.Ctx) string {
+func GetAPIPlotData(app_config appdata.AppConfig, c *fiber.Ctx) string {
 	input := ParseContextBody(c)
 	//log.Println("Get API Plot Data: ", input)
 
@@ -184,7 +123,7 @@ func GetAPIPlotData(app_config AppConfig, c *fiber.Ctx) string {
 		return string(failure_json)
 	}
 
-	curve_data := LoadCurveData(app_config, input["name"])
+	curve_data := appdata.LoadCurveData(app_config, input["name"])
 
 	map_data := map[string]interface{}{
 		"title":  curve_data.Name,
@@ -193,7 +132,7 @@ func GetAPIPlotData(app_config AppConfig, c *fiber.Ctx) string {
 	}
 
 	x_pos, err := strconv.ParseFloat(input["x"], 32)
-	Check(err)
+	util.Check(err)
 
 	if x_pos >= 0 {
 		map_data["plot_selected_x"] = x_pos
@@ -220,25 +159,25 @@ func QueryPrometheus(host string, port int, query string, time_start time.Time, 
 	log.Print("Prom URL: ", url)
 
 	resp, err := http.Get(url)
-	Check(err)
+	util.Check(err)
 
 	body, err := ioutil.ReadAll(resp.Body)
-	Check(err)
+	util.Check(err)
 
 	//log.Print("Prom Result: ", string(body))
 
 	var json_result_int interface{}
 	err = json.Unmarshal(body, &json_result_int)
-	Check(err)
+	util.Check(err)
 	json_result := json_result_int.(map[string]interface{})
 
 	return json_result
 }
 
-func ExtractBotsFromPromData(data map[string]interface{}, bot_key string) map[string]Bot {
+func ExtractBotsFromPromData(data map[string]interface{}, bot_key string) map[string]appdata.Bot {
 	//log.Print("Extra From: ", data)
 
-	bots := make(map[string]Bot)
+	bots := make(map[string]appdata.Bot)
 
 	result_items := data["data"].(map[string]interface{})["result"].([]interface{})
 
@@ -251,7 +190,7 @@ func ExtractBotsFromPromData(data map[string]interface{}, bot_key string) map[st
 
 		_, exists := bots[name]
 		if !exists {
-			bots[name] = Bot{
+			bots[name] = appdata.Bot{
 				Name: name,
 			}
 		}
@@ -270,12 +209,12 @@ func main() {
 	prom_data := QueryPrometheus("localhost", 9090, "query_range?query=windows_service_status", start_time, 60)
 	ExtractBotsFromPromData(prom_data, "name")
 
-	app_config := LoadConfig()
+	app_config := appdata.LoadConfig(app_config_path)
 
 	actionData, err := os.ReadFile((app_config.ActionPath))
-	Check(err)
+	util.Check(err)
 
-	var bot Bot
+	var bot appdata.Bot
 	json.Unmarshal([]byte(actionData), &bot)
 
 	engine := CreateHandlebarsEngine(app_config)
