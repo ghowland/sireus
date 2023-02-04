@@ -36,7 +36,6 @@ func main() {
 	app := webapp.CreateWebApp(engine)
 
 	pageDataMap := fiber.Map{
-		"info":     "Testing 123!",
 		"bot":      bot,
 		"title":    "Sireus",
 		"test_one": true,
