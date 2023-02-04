@@ -1,3 +1,19 @@
+function GetPlot(name, xPos)
+{
+    if (xPos == undefined) xPos = -1;
+
+    RPC('/api/plot', {'name': name, 'x': xPos}, SetupPlot);
+}
+
+function SetupPlot(data)
+{
+    // alert('running Setup Plot: ' + JSON.stringify(data));
+
+    CreatePlot('plot', data['title'], data['plot_x'], data['plot_y'], data['plot_selected_x'], data['plot_selected_y']);
+
+    $('#modal_plot').addClass('is-active')
+}
+
 function CreatePlot(element_id, title, plot_x, plot_y, plot_selected_x, plot_selected_y)
 {
     var trace1 = {

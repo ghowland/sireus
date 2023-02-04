@@ -30,6 +30,7 @@ type Action struct {
 
 type Bot struct {
 	Name    string   `json:"name"`
+	Info    string   `json:"info"`
 	Actions []Action `json:"actions"`
 }
 
@@ -108,6 +109,16 @@ func CreateHandlebarsEngine(app_config AppConfig) *handlebars.Engine {
 
 	raymond.RegisterHelper("botinfo", func(bot Bot) string {
 		return bot.Name + "  Actions: " + string(len(bot.Actions))
+	})
+
+	raymond.RegisterHelper("ifconsiderlength", func(considerations []ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
+		//log.Println("ifconsiderlength: ", len(considerations), " Count: ", count)
+
+		if len(considerations) >= count {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
 	})
 
 	return engine

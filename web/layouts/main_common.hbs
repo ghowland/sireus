@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.33.1/plotly.min.js"></script>
+
     <script src="js/web_rpc.js"></script>
     <script src="js/sireus_plot.js"></script>
     <script src="js/sireus_util.js"></script>
@@ -36,6 +38,7 @@
 </head>
 <body>
 <div class="container">
+{{> 'partials/navbar_common' }}
 
 {{embed}}
 
@@ -47,6 +50,15 @@
             </p>
         </div>
     </footer>
+
+
+    <div class="modal" id="modal_plot">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+        </div>
+        <button class="modal-close is-large" aria-label="close" onclick="$('#modal_plot').removeClass('is-active')"></button>
+    </div>
 
 </div>
 </body>

@@ -1,0 +1,41 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Consideration Name">Name</abbr></th>
+            <th><abbr title="Scoring Weight">Weight</abbr></th>
+            <th><abbr title="Range End Start">Start</abbr></th>
+            <th><abbr title="Range Value End">End</abbr></th>
+            <th><abbr title="Curve">Curve</abbr></th>
+        </tr>
+        </thead>
+        {{#ifconsiderlength Considerations 10}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Consideration Name">Name</abbr></th>
+                <th><abbr title="Scoring Weight">Weight</abbr></th>
+                <th><abbr title="Range End Start">Start</abbr></th>
+                <th><abbr title="Range Value End">End</abbr></th>
+                <th><abbr title="Curve">Curve</abbr></th>
+            </tr>
+            </tfoot>
+        {{/ifconsiderlength}}
+        <tbody>
+        </tbody>
+
+        {{#each action.Considerations as |consider considerIndex|}} <!-- Action Consideration:Start -->
+
+            <tr>
+                <th>{{consider.Name}}</th>
+                <td>{{consider.Weight}}</td>
+                <td>{{consider.RangeStart}}</td>
+                <td>{{consider.RangeEnd}}</td>
+                <td><button class="button is-small" onclick="GetPlot('{{consider.CurveName}}')">{{consider.CurveName}}</button></td>
+            </tr>
+
+
+        {{/each}} <!-- Action Consideration:End -->
+
+    </table>
+</div>
