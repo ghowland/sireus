@@ -1,13 +1,25 @@
+BINARY_NAME=sireus
+
 run:
-	@go build -o build/sireus code/sireus.go || (echo "Build failed: $$?"; exit 1)
-	./build/sireus
+	@go build -o build/${BINARY_NAME} code/sireus.go || (echo "Build failed: $$?"; exit 1)
+	./build/${BINARY_NAME}
 
 test:
-	@go test $(go list ./... | grep -v /example/)
+	@go test ./code/...
 
 cov:
-	@go test -coverprofile=coverage.txt -covermode=atomic $(go list ./... | grep -v /example/)
+	@go test -coverprofile=coverage.txt -covermode=atomic ./code/...
 
 coverage:
 	$(MAKE) cov
 	@go tool cover -html=coverage.txt
+
+vet:
+	@go vet ./code/
+
+clean:
+	go clean
+	rm -f ./build/${BINARY_NAME}
+	rm -f coverage.txt
+	@echo Clean done
+

@@ -3,6 +3,7 @@
   <component name="GoImports">
     <option name="excludedPackages">
       <array>
+        <option value="github.com/stretchr/testify" />
         <option value="https://github.com/gofiber/fiber" />
         <option value="https://github.com/gofiber/template" />
         <option value="https://github.com/stretchr/testify" />

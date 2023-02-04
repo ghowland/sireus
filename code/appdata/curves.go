@@ -1,5 +1,32 @@
 package appdata
 
+import (
+	"encoding/json"
+	"fmt"
+	"github.com/ghowland/sireus/code/util"
+	"os"
+)
+
+type CurveData struct {
+	Name   string    `json:"name"`
+	Values []float32 `json:"values"`
+}
+
+func LoadCurveData(app_config AppConfig, name string) CurveData {
+	path := fmt.Sprintf(app_config.CurvePathFormat, name)
+
+	curveData, err := os.ReadFile((path))
+	util.Check(err)
+
+	var curve_data CurveData
+	err = json.Unmarshal([]byte(curveData), &curve_data)
+	util.Check(err)
+
+	//log.Println("Load Curve Data: ", curve_data.Name)
+
+	return curve_data
+}
+
 func GetCurveDataX(curve_data CurveData) []float32 {
 	var x_array []float32
 
