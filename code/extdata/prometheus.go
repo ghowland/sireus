@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-func QueryPrometheus(host string, port int, query string, time_start time.Time, duration int) map[string]interface{} {
-	start := time_start.UTC().Format(time.RFC3339)
+func QueryPrometheus(host string, port int, query string, timeStart time.Time, duration int) map[string]interface{} {
+	start := timeStart.UTC().Format(time.RFC3339)
 
-	end := time_start.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
+	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
 
 	//start := time_start.Format()
 
@@ -30,27 +30,27 @@ func QueryPrometheus(host string, port int, query string, time_start time.Time, 
 
 	//log.Print("Prom Result: ", string(body))
 
-	var json_result_int interface{}
-	err = json.Unmarshal(body, &json_result_int)
+	var jsonResultInt interface{}
+	err = json.Unmarshal(body, &jsonResultInt)
 	util.Check(err)
-	json_result := json_result_int.(map[string]interface{})
+	jsonResult := jsonResultInt.(map[string]interface{})
 
-	return json_result
+	return jsonResult
 }
 
-func ExtractBotsFromPromData(data map[string]interface{}, bot_key string) map[string]appdata.Bot {
+func ExtractBotsFromPromData(data map[string]interface{}, botKey string) map[string]appdata.Bot {
 	//log.Print("Extra From: ", data)
 
 	bots := make(map[string]appdata.Bot)
 
-	result_items := data["data"].(map[string]interface{})["result"].([]interface{})
+	resultItems := data["data"].(map[string]interface{})["result"].([]interface{})
 
-	for _, result_item := range result_items {
-		item := result_item.(map[string]interface{})
+	for _, resultItem := range resultItems {
+		item := resultItem.(map[string]interface{})
 		metric := item["metric"].(map[string]interface{})
 		//log.Print("Item: ", metric)
 
-		name := metric[bot_key].(string)
+		name := metric[botKey].(string)
 
 		_, exists := bots[name]
 		if !exists {

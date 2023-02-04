@@ -13,11 +13,12 @@ type AppConfig struct {
 }
 
 func LoadConfig(path string) AppConfig {
-	app_config_data, err := os.ReadFile(path)
+	appConfigData, err := os.ReadFile(path)
 	util.Check(err)
 
-	var app_config AppConfig
-	json.Unmarshal([]byte(app_config_data), &app_config)
+	var appConfig AppConfig
+	err = json.Unmarshal(appConfigData, &appConfig)
+	util.Check(err)
 
-	return app_config
+	return appConfig
 }

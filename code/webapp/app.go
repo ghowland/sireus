@@ -8,9 +8,9 @@ import (
 	"github.com/gofiber/template/handlebars"
 )
 
-func CreateHandlebarsEngine(app_config appdata.AppConfig) *handlebars.Engine {
+func CreateHandlebarsEngine(appConfig appdata.AppConfig) *handlebars.Engine {
 	// Handlebars Engine for Fiber
-	engine := handlebars.New(app_config.WebPath, ".hbs")
+	engine := handlebars.New(appConfig.WebPath, ".hbs")
 
 	// Reload the templates on each render, good for development
 	engine.Reload(true) // Optional. Default: false

@@ -12,39 +12,39 @@ type CurveData struct {
 	Values []float32 `json:"values"`
 }
 
-func LoadCurveData(app_config AppConfig, name string) CurveData {
-	path := fmt.Sprintf(app_config.CurvePathFormat, name)
+func LoadCurveData(appConfig AppConfig, name string) CurveData {
+	path := fmt.Sprintf(appConfig.CurvePathFormat, name)
 
-	curveData, err := os.ReadFile((path))
+	curveDataInput, err := os.ReadFile(path)
 	util.Check(err)
 
-	var curve_data CurveData
-	err = json.Unmarshal([]byte(curveData), &curve_data)
+	var curveData CurveData
+	err = json.Unmarshal(curveDataInput, &curveData)
 	util.Check(err)
 
 	//log.Println("Load Curve Data: ", curve_data.Name)
 
-	return curve_data
+	return curveData
 }
 
-func GetCurveDataX(curve_data CurveData) []float32 {
-	var x_array []float32
+func GetCurveDataX(curveData CurveData) []float32 {
+	var xArray []float32
 
-	for i := 0; i < len(curve_data.Values); i++ {
-		x_array = append(x_array, float32(i)*0.01)
+	for i := 0; i < len(curveData.Values); i++ {
+		xArray = append(xArray, float32(i)*0.01)
 	}
 
-	return x_array
+	return xArray
 }
 
-func GetCurveValue(curve_data CurveData, x float32) float32 {
+func GetCurveValue(curveData CurveData, x float32) float32 {
 
-	for i := 0; i < len(curve_data.Values); i++ {
-		cur_pos_x := float32(i) * 0.01
-		if x <= cur_pos_x {
-			return curve_data.Values[i]
+	for i := 0; i < len(curveData.Values); i++ {
+		curPosX := float32(i) * 0.01
+		if x <= curPosX {
+			return curveData.Values[i]
 		}
 	}
 
-	return curve_data.Values[len(curve_data.Values)-1]
+	return curveData.Values[len(curveData.Values)-1]
 }
