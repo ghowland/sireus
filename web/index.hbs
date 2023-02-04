@@ -1,81 +1,27 @@
 <section class="section">
 {{> 'partials/breadcrumbs_common' }}
     <h1 class="title is-1">
-        {{bot.Name}}
+        Bot: {{bot.Name}}
     </h1>
     <p class="subtitle">
         {{bot.Info}}
     </p>
 
-
     <div class="block">
-            <div class="box">
-                <h1 class="title is-big">Bot: {{botinfo bot}}</h1>
+        <div class="box">
+            <h1 class="title is-big">Queries</h1>
 
-                {{#each bot.Actions as |action actionIndex|}} <!-- Action:Start -->
+            <h1 class="title is-big">Data</h1>
 
-                    <h2>Action: {{action.Name}} - {{action.Weight}} </h2>
-
-                    {{> 'partials/consider/table' }}
-
-
-                {{/each}} <!-- Action:End -->
-
-            </div>
         </div>
+    </div>
 
-        <div class="columns">
-            <div class="column"> <!-- Column:Start -->
-                <div class="card">
-                    <div class="card-content">
-                        <h2 class="title is-primary">Something</h2>
-                        <h3 class="subtitle">Else</h3>
-                    </div>
-                    <footer class="card-footer">
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-success is-outlined">
-                                <i class="fa fa-thumbs-up"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-danger is-outlined">
-                                <i class="fa fa-thumbs-down"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-info is-outlined">
-                                <i class="fa fa-cloud"></i>
-                            </a>
-                        </div>
-                    </footer>
-                </div>
-            </div> <!-- Column:End -->
-
-            <div class="column"> <!-- Column:Start -->
-                <div class="card">
-                    <div class="card-content">
-                        <h2 class="title is-primary">Other</h2>
-                        <h3 class="subtitle">Thing</h3>
-                    </div>
-                    <footer class="card-footer">
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-success is-outlined">
-                                <i class="fa fa-thumbs-up"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-danger is-outlined">
-                                <i class="fa fa-thumbs-down"></i>
-                            </a>
-                        </div>
-                        <div class="card-footer-item">
-                            <a href="#" class="button is-warning is-outlined is-inverted">
-                                <i class="fa fa-cloud"></i>
-                            </a>
-                        </div>
-                    </footer>
-                </div>
-            </div> <!-- Column:End -->
-        </div>
+    <div class="columns">
+        {{#each bot.Actions as |action actionIndex|}} <!-- Action:Start -->
+        <div class="column"> <!-- Column:Start -->
+            {{> 'partials/action/card' }}
+        </div> <!-- Column:End -->
+        {{/each}} <!-- Action:End -->
+    </div>
 
 </section>

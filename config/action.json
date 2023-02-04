@@ -5,6 +5,7 @@
 	[
 		{
 			"name": "Action Y",
+			"info": "Try to fix this thing by doing something",
 			"weight": 2.0,
 			"weight_min": 0,
 			"considerations": [
@@ -12,6 +13,28 @@
 					"name": "Consider A",
 					"weight": 7.0,
 					"curve": "inc_sigmoid",
+					"range_start": 0,
+					"range_end": 100
+				},
+				{
+					"name": "Consider Boolean",
+					"weight": 2.0,
+					"curve": "inc_boolean",
+					"range_start": 0,
+					"range_end": 1
+				}
+			]
+		},
+		{
+			"name": "Action Z",
+			"info": "Try to fix this thing by doing something",
+			"weight": 2.0,
+			"weight_min": 0,
+			"considerations": [
+				{
+					"name": "Consider B",
+					"weight": 7.0,
+					"curve": "inc_smooth",
 					"range_start": 0,
 					"range_end": 100
 				},

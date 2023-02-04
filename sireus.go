@@ -23,6 +23,7 @@ type ActionConsideration struct {
 
 type Action struct {
 	Name           string                `json:"name"`
+	Info           string                `json:"info"`
 	Weight         float32               `json:"weight"`
 	WeightMin      float32               `json:"weight_min"`
 	Considerations []ActionConsideration `json:"considerations"`
@@ -108,7 +109,7 @@ func CreateHandlebarsEngine(app_config AppConfig) *handlebars.Engine {
 	//engine.Layout("embed") // Optional. Default: "embed"
 
 	raymond.RegisterHelper("botinfo", func(bot Bot) string {
-		return bot.Name + "  Actions: " + string(len(bot.Actions))
+		return fmt.Sprintf("%s  Actions: %d", bot.Name, len(bot.Actions))
 	})
 
 	raymond.RegisterHelper("ifconsiderlength", func(considerations []ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
