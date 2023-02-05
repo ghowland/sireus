@@ -53,11 +53,14 @@
       "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
       "required_states": [
         "Operation.Normal"
       ],
-      "required_lock_timers": [
-        "Single Bot Lock"
+      "set_bot_states": [
+        "Operation.Problem"
       ],
       "considerations": [
         {
@@ -90,11 +93,14 @@
       "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
       "required_states": [
         "Operation.Normal"
       ],
-      "required_lock_timers": [
-        "Single Bot Lock"
+      "set_bot_states": [
+        "Operation.Problem"
       ],
       "considerations": [
         {
