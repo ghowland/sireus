@@ -6,9 +6,25 @@ import (
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
 	"io"
+	"log"
 	"net/http"
 	"time"
 )
+
+type PrometheusResponseDataResult struct {
+	Metric map[string]string `json:"metric"`
+	Values [][]string        `json:"values"`
+}
+
+type PrometheusResponseData struct {
+	ResultType string                       `json:"resultType"`
+	Result     PrometheusResponseDataResult `json:"result"`
+}
+
+type PrometheusResponse struct {
+	Status string                 `json:"status"`
+	Data   PrometheusResponseData `json:"data"`
+}
 
 func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) map[string]interface{} {
 	start := timeStart.UTC().Format(time.RFC3339)
@@ -25,7 +41,7 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 	body, err := io.ReadAll(resp.Body)
 	util.Check(err)
 
-	//log.Print("Prom Result: ", string(body))
+	log.Print("Prom Result: ", string(body))
 
 	var jsonResultInt interface{}
 	err = json.Unmarshal(body, &jsonResultInt)

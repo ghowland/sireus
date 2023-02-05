@@ -18,6 +18,7 @@
     {
       "type": 0,
       "name": "running",
+      "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "running",
       "bool_range_start": 1,

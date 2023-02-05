@@ -161,8 +161,9 @@ func (bvt BotVariableType) String() string {
 type BotVariable struct {
 	Type           BotVariableType `json:"type"`
 	Name           string          `json:"name"`
+	BotKey         string          `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
 	QueryName      string          `json:"query_name"`
-	QueryKey       string          `json:"query_key"`
+	QueryKey       string          `json:"query_key"` // Metric key to extract
 	BoolRangeStart float32         `json:"bool_range_start"`
 	BoolRangeEnd   float32         `json:"bool_range_end"`
 	BoolInvert     bool            `json:"bool_invert"`

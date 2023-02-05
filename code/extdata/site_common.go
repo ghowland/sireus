@@ -3,14 +3,14 @@ package extdata
 import (
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
-	"log"
 	"time"
 )
 
 func UpdateSiteBotGroups(site *appdata.Site) {
 	for index, _ := range site.BotGroups {
-		UpdateBotGroupFromPrometheus(site, index) //TODO(ghowland): Test each Bot Group query extractor for source
-		log.Printf("RETURN: Bots after Prom Update: %s  Count: %d", site.BotGroups[index].Name, len(site.BotGroups[index].Bots))
+		UpdateBotGroupFromPrometheus(site, index)
+
+		UpdateBotsFromQueries(site, index)
 	}
 }
 
@@ -25,6 +25,29 @@ func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
 	promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
 
 	site.BotGroups[botGroupIndex].Bots = ExtractBotsFromPromData(promData, "name")
+}
 
-	//log.Printf("Bots after Prom Update: %s  Count: %d", botGroup.Name, len(botGroup.Bots))
+func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
+	/*
+		botGroup := site.BotGroups[botGroupIndex]
+
+		// Loop over all Bot Group Queries
+		for _, query := range botGroup.Queries {
+			queryServer, err := appdata.GetQueryServer(*site, query.QueryServer)
+			util.Check(err)
+
+			startTime := time.Now().Add(time.Duration(-60))
+			promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
+
+			//for _,
+
+			// Loop through all the Variables, for every Bot.  In a Bot Group, all Bots are expected to have the same vars
+			for _, variable := range botGroup.Variables {
+				for _, bot := range botGroup.Bots {
+
+				}
+			}
+
+		}
+	*/
 }
