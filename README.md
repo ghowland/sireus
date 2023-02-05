@@ -9,14 +9,14 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 
 ### Sireus Goals
 
-- Bots execute commands or API calls, designed for SRE and DevOps environments
-- Fits into stack between monitoring and alerting.  Ex: Prometheus -> Sireus -> Alert Manager
+- Bots execute commands or API calls, designed for SRE and DevOps environments.
+- Fits into stack between monitoring and alerting.  Ex: Prometheus -> Sireus -> Alert Manager.
 - Works with existing software stack, with minimal configuration.  Architecture agnostic.
-- Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus)
-- Bots have rulesets for prioritizing conditional commands to respond to detected issues
+- Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus).
+- Bots have rulesets for prioritizing conditional commands to respond to detected issues.
 - Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data
 - Locking commands per Bot or Bot Group, to stop conflicting commands from running at once, or within a window to verify results of previous commands.
-- Uses the ["Utility AI" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information 
+- Uses the ["Utility AI" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.
 
 ### Sireus Bots and Bot Groups
 
