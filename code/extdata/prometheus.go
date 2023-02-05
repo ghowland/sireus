@@ -11,12 +11,12 @@ import (
 	"time"
 )
 
-func QueryPrometheus(host string, port int, query string, timeStart time.Time, duration int) map[string]interface{} {
+func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) map[string]interface{} {
 	start := timeStart.UTC().Format(time.RFC3339)
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
 
-	url := fmt.Sprintf("http://%s:%d/api/v1/%s&start=%s&end=%s&step=15s", host, port, query, start, end)
+	url := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), query, start, end)
 
 	log.Print("Prom URL: ", url)
 
@@ -36,7 +36,7 @@ func QueryPrometheus(host string, port int, query string, timeStart time.Time, d
 	return jsonResult
 }
 
-func ExtractBotsFromPromData(data map[string]interface{}, botKey string) map[string]appdata.Bot {
+func ExtractBotsFromPromData(data map[string]interface{}, botKey string) []appdata.Bot {
 	//log.Print("Extra From: ", data)
 
 	bots := make(map[string]appdata.Bot)
@@ -56,19 +56,16 @@ func ExtractBotsFromPromData(data map[string]interface{}, botKey string) map[str
 				Name: name,
 			}
 		}
-
-		//log.Print("Bot: ", name)
 	}
-
 	//log.Print("Bots: ", bots)
 
-	return bots
-}
-
-func GetPrometheusQueryType(queryType appdata.BotQueryType) string {
-	switch queryType {
-	case appdata.Range:
-		return "query_range"
+	// Add all the bots to a final array.  The map allowed us to ensure no duplicate entries, as that is allowed.
+	botArray := []appdata.Bot{}
+	for _, bot := range bots {
+		botArray = append(botArray, bot)
 	}
-	return "invalid"
+
+	log.Print("Bots: ", botArray)
+
+	return botArray
 }

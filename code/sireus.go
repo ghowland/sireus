@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"log"
 	"net/http"
-	"time"
 )
 
 // TODO(ghowland): Handle config file as CLI arg
@@ -16,14 +15,12 @@ var appConfigPath = "config/config.json"
 
 func main() {
 	log.Print("Starting Sireus server...")
-	
-	startTime := time.Now().Add(time.Duration(-60))
-	promData := extdata.QueryPrometheus("localhost", 9090, "query_range?query=windows_service_status", startTime, 60)
-	extdata.ExtractBotsFromPromData(promData, "name")
 
 	appConfig := appdata.LoadConfig(appConfigPath)
 
 	site := appdata.LoadSiteConfig(appConfig)
+	extdata.UpdateSiteBotGroups(&site)
+	log.Printf("OUTSIDE: Bots after Prom Update: %s  Count: %d", site.BotGroups[0].Name, len(site.BotGroups[0].Bots))
 
 	engine := webapp.CreateHandlebarsEngine(appConfig)
 

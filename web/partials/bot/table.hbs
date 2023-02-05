@@ -8,7 +8,7 @@
             <th><abbr title="Current State Values">States</abbr></th>
         </tr>
         </thead>
-        {{#if_bot_length Bots 10}}
+        {{#if_bot_length botGroup.Bots 10}}
             <tfoot>
             <tr>
                 <th><abbr title="Consideration Name">Name</abbr></th>
@@ -20,7 +20,7 @@
         <tbody>
         </tbody>
 
-        {{#each action.Bots as |bot botIndex|}} <!-- Action Consideration:Start -->
+        {{#each botGroup.Bots as |bot botIndex|}} <!-- Action Consideration:Start -->
 
             <tr>
                 <th>{{bot.Name}}</th>
