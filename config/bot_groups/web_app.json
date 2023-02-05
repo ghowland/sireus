@@ -50,6 +50,7 @@
     {
       "name": "Action Y",
       "info": "Try to fix this thing by doing something",
+      "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0,
       "required_states": [
@@ -86,6 +87,7 @@
     {
       "name": "Action Z",
       "info": "Try to fix this thing by doing something",
+      "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0,
       "required_states": [

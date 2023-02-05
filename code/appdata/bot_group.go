@@ -62,6 +62,7 @@ type ActionCommand struct {
 type Action struct {
 	Name               string                `json:"name"`
 	Info               string                `json:"info"`
+	IsDisabled         bool                  `json:"is_disabled"` // When testing changes, disable with modifying config
 	Weight             float32               `json:"weight"`
 	WeightMin          float32               `json:"weight_min"`
 	RequiredStates     []string              `json:"required_states"`
@@ -81,6 +82,7 @@ type Bot struct {
 	Info string `json:"info"`
 
 	VariableValues []BotVariableValue
+	StateValues    []string
 	CommandHistory []ActionCommandResult
 	LockTimers     []BotLockTimer
 }

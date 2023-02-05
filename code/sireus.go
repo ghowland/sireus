@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/webapp"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
+	"log"
 	"net/http"
 	"time"
 )
@@ -14,7 +15,8 @@ import (
 var appConfigPath = "config/config.json"
 
 func main() {
-
+	log.Print("Starting Sireus server...")
+	
 	startTime := time.Now().Add(time.Duration(-60))
 	promData := extdata.QueryPrometheus("localhost", 9090, "query_range?query=windows_service_status", startTime, 60)
 	extdata.ExtractBotsFromPromData(promData, "name")

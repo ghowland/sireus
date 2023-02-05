@@ -15,6 +15,7 @@
 # vendor/
 
 gitsync.sh
+run.sh
 
 .idea/
 

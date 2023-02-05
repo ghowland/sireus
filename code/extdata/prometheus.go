@@ -16,8 +16,6 @@ func QueryPrometheus(host string, port int, query string, timeStart time.Time, d
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
 
-	//start := time_start.Format()
-
 	url := fmt.Sprintf("http://%s:%d/api/v1/%s&start=%s&end=%s&step=15s", host, port, query, start, end)
 
 	log.Print("Prom URL: ", url)
@@ -62,7 +60,7 @@ func ExtractBotsFromPromData(data map[string]interface{}, botKey string) map[str
 		//log.Print("Bot: ", name)
 	}
 
-	log.Print("Bots: ", bots)
+	//log.Print("Bots: ", bots)
 
 	return bots
 }
