@@ -38,6 +38,9 @@ type ActionCommandResult struct {
 	ResultStatus  string
 	ResultContent string
 	HostExecOn    string
+	Started       time.Time
+	Finished      time.Time
+	Score         float32
 }
 
 type ActionCommand struct {
@@ -64,11 +67,11 @@ type BotVariableValue struct {
 }
 
 type Bot struct {
-	Name    string   `json:"name"`
-	Info    string   `json:"info"`
-	Actions []Action `json:"actions"`
+	Name string `json:"name"`
+	Info string `json:"info"`
 
 	VariableValues []BotVariableValue
+	CommandHistory []ActionCommandResult
 }
 
 type BotQueryType int64
@@ -155,7 +158,7 @@ type BotGroup struct {
 	RemovedBots []string
 }
 
-type BotQueryServer struct {
+type QueryServer struct {
 	Type         BotQueryType  `json:"type"`
 	Name         string        `json:"name"`
 	Info         string        `json:"info"`
@@ -166,8 +169,8 @@ type BotQueryServer struct {
 }
 
 type Site struct {
-	Name         string           `json:"name"`
-	Paths        []string         `json:"paths"`
-	QueryServers []BotQueryServer `json:"query_servers"`
+	Name         string        `json:"name"`
+	Paths        []string      `json:"paths"`
+	QueryServers []QueryServer `json:"query_servers"`
 	BotGroups    []BotGroup
 }

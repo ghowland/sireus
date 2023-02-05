@@ -5,6 +5,8 @@
 
 Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.
 
+![Sireus Stack Position](/docs/images/sireus_stack_pos_exec.png)
+
 ### Sireus Goals
 
 - Bots execute commands or API calls, designed for SRE and DevOps environments
@@ -38,7 +40,7 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - Each Action has a set of Considerations (Conditions that are not just boolean) which create a Score.
 - The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Action will be executed.
 
-![Bot Group](/docs/images/bot_group.png)
+![Bot Action Execution](/docs/images/bot_action_execution.png)
 
 #### Action Consideration Data
 
@@ -86,3 +88,7 @@ The reason to have all of these steps is to be able to control exactly how impor
 The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
 
 Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
+
+## Data Structure
+
+![Data Structure](/docs/images/data_structures.png)
