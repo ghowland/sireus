@@ -57,7 +57,7 @@ func main() {
 
 	// Static Files: JS, Images
 	app.Use(filesystem.New(filesystem.Config{
-		Root: http.Dir("./web_static"),
+		Root: http.Dir("./static_web"),
 	}))
 
 	_ = app.Listen(":3000")

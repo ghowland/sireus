@@ -1,0 +1,34 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Consideration Name">Name</abbr></th>
+            <th><abbr title="Information">Info</abbr></th>
+            <th><abbr title="Current State Values">States</abbr></th>
+        </tr>
+        </thead>
+        {{#if_bot_length botGroup.Bots 10}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Consideration Name">Name</abbr></th>
+                <th><abbr title="Information">Info</abbr></th>
+                <th><abbr title="Current State Values">States</abbr></th>
+            </tr>
+            </tfoot>
+        {{/if_bot_length}}
+        <tbody>
+        </tbody>
+
+        {{#each botGroup.Bots as |bot botIndex|}} <!-- Action Consideration:Start -->
+
+            <tr>
+                <th>{{bot.Name}}</th>
+                <td>{{bot.Info}}</td>
+                <td>{{format_array_string_csv bot.StateValues}}</td>
+            </tr>
+
+        {{/each}} <!-- Action Consideration:End -->
+
+    </table>
+</div>
