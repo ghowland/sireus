@@ -5,27 +5,24 @@
         <tr>
             <th><abbr title="Consideration Name">Name</abbr></th>
             <th><abbr title="Information">Info</abbr></th>
-            <th><abbr title="Current State Values">States</abbr></th>
         </tr>
         </thead>
-        {{#if_bot_length botGroup.Bots 10}}
+        {{#if_bot_group_length site.BotGroups 10}}
             <tfoot>
             <tr>
                 <th><abbr title="Consideration Name">Name</abbr></th>
                 <th><abbr title="Information">Info</abbr></th>
-                <th><abbr title="Current State Values">States</abbr></th>
             </tr>
             </tfoot>
-        {{/if_bot_length}}
+        {{/if_bot_group_length}}
         <tbody>
         </tbody>
 
-        {{#each botGroup.Bots as |bot botIndex|}} <!-- Action Consideration:Start -->
+        {{#each site.BotGroups as |bot_group bot_groupIndex|}} <!-- Action Consideration:Start -->
 
             <tr>
-                <th>{{bot.Name}}</th>
-                <td>{{bot.Info}}</td>
-                <td>{{format_array_string_csv bot.StateValues}}</td>
+                <th><a href="bot_group?bot_group_id={{bot_group.Name}}">{{bot_group.Name}}</a></th>
+                <td>{{bot_group.Info}}</td>
             </tr>
 
         {{/each}} <!-- Action Consideration:End -->

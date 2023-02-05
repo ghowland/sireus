@@ -54,3 +54,21 @@ func GetQuery(botGroup BotGroup, queryName string) (BotQuery, error) {
 	}
 	return BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
 }
+
+func GetBotGroup(site Site, botGroupName string) (BotGroup, error) {
+	for _, botGroup := range site.BotGroups {
+		if botGroup.Name == botGroupName {
+			return botGroup, nil
+		}
+	}
+	return BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
+}
+
+func GetBot(site Site, botGroup BotGroup, botName string) (Bot, error) {
+	for _, bot := range botGroup.Bots {
+		if bot.Name == botName {
+			return bot, nil
+		}
+	}
+	return Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
+}

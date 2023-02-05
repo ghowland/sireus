@@ -23,7 +23,7 @@
         {{#each botGroup.Bots as |bot botIndex|}} <!-- Action Consideration:Start -->
 
             <tr>
-                <th>{{bot.Name}}</th>
+                <th><a href="/bot?bot_id={{bot.Name}}&bot_group_id={{botGroup.Name}}">{{bot.Name}}</a></th>
                 <td>{{bot.Info}}</td>
                 <td>{{format_array_string_csv bot.StateValues}}</td>
             </tr>

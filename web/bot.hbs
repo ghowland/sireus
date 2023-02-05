@@ -1,17 +1,14 @@
 <section class="section">
 {{> 'partials/breadcrumbs_common' }}
     <h1 class="title is-1">
-        Bot: {{botGroup.Name}}
+        Bot: {{bot.Name}}
     </h1>
     <p class="subtitle">
-        {{botGroup.Info}}
+        {{bot.Info}}
     </p>
 
     <div class="block">
         <div class="box">
-            <h1 class="title is-big">Queries</h1>
-            {{> 'partials/query/table' }}
-
             <h1 class="title is-big">Variables</h1>
             {{> 'partials/variable/table' }}
 
@@ -31,14 +28,5 @@
         </div> <!-- Column:End -->
         {{/each}} <!-- Action:End -->
     </div>
-
-    <div class="block">
-        <div class="box">
-            <h1 class="title is-big">Bots</h1>
-            {{> 'partials/bot/table' }}
-
-        </div>
-    </div>
-
 
 </section>
