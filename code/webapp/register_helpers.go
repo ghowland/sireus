@@ -1,19 +1,12 @@
 package webapp
 
 import (
-	"fmt"
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
 )
 
 func RegisterHandlebarsHelpers() {
-	//TEST:REMOVE: Not actually useful, just demo.  Remove once I have a real version of this that is a better demo
-	//NOTE(ghowalnd): This demo could use Partials for rendering too, so it's not hard coding anything
-	raymond.RegisterHelper("botinfo", func(bot appdata.BotGroup) string {
-		return fmt.Sprintf("%s  Actions: %d", bot.Name, len(bot.Actions))
-	})
-
 	// Testing Length of Arrays for the different structs
 	RegisterHandlebarsHelpers_IfArrayLength()
 
