@@ -5,17 +5,23 @@
               <i class="fa fa-home" aria-hidden="true"></i>
             </span>
             <span>Overwatch</span></a></li>
+        {{#if bot_group_id}}
         <li><a href="#">
             <span class="icon is-small">
               <i class="fa-solid fa-cubes" aria-hidden="true"></i>
             </span>
             <span>Bot Group Y</span></a></li>
+        {{/if}}
+        {{#if bot_id}}
         <li><a href="#">
             <span class="icon is-small">
               <i class="fa-solid fa-cube"></i>
             </span>
             <span>{{bot.Name}}</span></a>
         </li>
+        {{/if}}
+        {{#if page_type}}
         <li class="is-active"><a href="#" aria-current="page">Configuration</a></li>
+        {{/if}}
     </ul>
 </nav>
