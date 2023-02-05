@@ -5,7 +5,7 @@
 
 Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.
 
-<img width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
+<img align="center" width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
 ### Sireus Goals
 
@@ -40,7 +40,7 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 - Each Action has a set of Considerations (Conditions that are not just boolean) which create a Score.
 - The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Action will be executed.
 
-<img width="70%" src="docs/images/bot_action_execution.png" alt="Bot Action Execution">
+<img align="center" width="70%" src="docs/images/bot_action_execution.png" alt="Bot Action Execution">
 
 #### Action Consideration Data
 
