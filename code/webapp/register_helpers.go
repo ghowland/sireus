@@ -22,7 +22,7 @@ func RegisterHandlebarsHelpers() {
 }
 
 func RegisterHandlebarsHelpers_FormatData() {
-	//format_query
+	// Queries
 	raymond.RegisterHelper("format_query_web", func(site appdata.Site, item appdata.BotQuery) string {
 		queryServer, err := appdata.GetQueryServer(site, item.QueryServer)
 		util.Check(err)
@@ -30,6 +30,11 @@ func RegisterHandlebarsHelpers_FormatData() {
 			"query": item.Query,
 		}
 		return util.HandlebarFormatText(queryServer.WebUrlFormat, mapData)
+	})
+
+	// Variables
+	raymond.RegisterHelper("format_variable_type", func(item appdata.BotVariable) string {
+		return item.Type.String()
 	})
 }
 

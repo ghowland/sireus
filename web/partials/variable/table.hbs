@@ -1,0 +1,47 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Name">Name</abbr></th>
+            <th><abbr title="Type">Type</abbr></th>
+            <th><abbr title="Query Name">Query Name</abbr></th>
+            <th><abbr title="Query Key">Query Key</abbr></th>
+            <th><abbr title="Boolean Range Start">Range Start</abbr></th>
+            <th><abbr title="Boolean Range End">Range End</abbr></th>
+            <th><abbr title="Invert Boolean Result">Invert</abbr></th>
+        </tr>
+        </thead>
+        {{#if_variable_length Variables 10}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Name">Name</abbr></th>
+                <th><abbr title="Type">Type</abbr></th>
+                <th><abbr title="Query Name">Query Name</abbr></th>
+                <th><abbr title="Query Key">Query Key</abbr></th>
+                <th><abbr title="Boolean Range Start">Range Start</abbr></th>
+                <th><abbr title="Boolean Range End">Range End</abbr></th>
+                <th><abbr title="Invert Boolean Result">Invert</abbr></th>
+            </tr>
+            </tfoot>
+        {{/if_variable_length}}
+        <tbody>
+        </tbody>
+
+        {{#each botGroup.Variables as |variable variableIndex|}} <!-- Query:Start -->
+
+            <tr>
+                <th>{{variable.Name}}</th>
+                <th>{{format_variable_type variable}}</th>
+                <th>{{variable.QueryName}}</th>
+                <th>{{variable.QueryKey}}</th>
+                <th>{{variable.BoolRangeStart}}</th>
+                <th>{{variable.BoolRangeEnd}}</th>
+                <th>{{variable.BoolInvert}}</th>
+            </tr>
+
+
+        {{/each}} <!-- Query:End -->
+
+    </table>
+</div>
