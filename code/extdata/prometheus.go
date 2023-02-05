@@ -6,7 +6,6 @@ import (
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
@@ -18,7 +17,7 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 
 	url := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), query, start, end)
 
-	log.Print("Prom URL: ", url)
+	//log.Print("Prom URL: ", url)
 
 	resp, err := http.Get(url)
 	util.Check(err)
@@ -65,7 +64,7 @@ func ExtractBotsFromPromData(data map[string]interface{}, botKey string) []appda
 		botArray = append(botArray, bot)
 	}
 
-	log.Print("Bots: ", botArray)
+	//log.Print("Bots: ", botArray)
 
 	return botArray
 }

@@ -20,7 +20,6 @@ func main() {
 
 	site := appdata.LoadSiteConfig(appConfig)
 	extdata.UpdateSiteBotGroups(&site)
-	log.Printf("OUTSIDE: Bots after Prom Update: %s  Count: %d", site.BotGroups[0].Name, len(site.BotGroups[0].Bots))
 
 	engine := webapp.CreateHandlebarsEngine(appConfig)
 
@@ -37,7 +36,19 @@ func main() {
 	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", pageDataMap, "layouts/main_common")
+		return c.Render("overwatch", pageDataMap, "layouts/main_common")
+	})
+
+	app.Get("/site", func(c *fiber.Ctx) error {
+		return c.Render("site", pageDataMap, "layouts/main_common")
+	})
+
+	app.Get("/bot_group", func(c *fiber.Ctx) error {
+		return c.Render("bot_group", pageDataMap, "layouts/main_common")
+	})
+
+	app.Get("/bot", func(c *fiber.Ctx) error {
+		return c.Render("bot", pageDataMap, "layouts/main_common")
 	})
 
 	app.Get("/test", func(c *fiber.Ctx) error {
