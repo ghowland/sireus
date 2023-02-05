@@ -178,6 +178,7 @@ type BotGroup struct {
 	LockTimers       []BotLockTimer            `json:"lock_timers"`
 	BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
 	BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
+	ActionScoreMin   float32                   `json:"action_score_min"` // Minimum score to execute Action
 	Actions          []Action                  `json:"actions"`
 	Bots             []Bot
 

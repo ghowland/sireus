@@ -46,6 +46,7 @@
   ],
   "bot_timeout_stale": 60,
   "bot_timeout_remove": 120,
+  "action_score_min": 0.6,
   "actions": [
     {
       "name": "Action Y",
