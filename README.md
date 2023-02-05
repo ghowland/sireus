@@ -5,7 +5,7 @@
 
 Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.
 
-<img width="50%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
+<img width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
 ### Sireus Goals
 
