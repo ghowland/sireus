@@ -51,20 +51,23 @@ type ActionCommandResult struct {
 }
 
 type ActionCommand struct {
-	Type           ActionCommandType `json:"type"`
-	Content        string            `json:"content"`
-	SuccessStatus  int               `json:"success_status"`
-	SuccessContent string            `json:"success_content"`
-	HostExecKey    string            `json:"host_exec_key"`
+	Type              ActionCommandType `json:"type"`
+	Content           string            `json:"content"`
+	SuccessStatus     int               `json:"success_status"`
+	SuccessContent    string            `json:"success_content"`
+	LockTimerDuration util.Duration     `json:"lock_timer_duration"`
+	HostExecKey       string            `json:"host_exec_key"` // Sireus Client presents this key to get commands to run
 }
 
 type Action struct {
-	Name           string                `json:"name"`
-	Info           string                `json:"info"`
-	Weight         float32               `json:"weight"`
-	WeightMin      float32               `json:"weight_min"`
-	Command        ActionCommand         `json:"command"`
-	Considerations []ActionConsideration `json:"considerations"`
+	Name               string                `json:"name"`
+	Info               string                `json:"info"`
+	Weight             float32               `json:"weight"`
+	WeightMin          float32               `json:"weight_min"`
+	RequiredStates     []string              `json:"required_states"`
+	RequiredLockTimers []string              `json:"required_lock_timers"`
+	Considerations     []ActionConsideration `json:"considerations"`
+	Command            ActionCommand         `json:"command"`
 }
 
 type BotVariableValue struct {
@@ -175,8 +178,8 @@ type BotGroup struct {
 	BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
 	States           []BotForwardSequenceState `json:"states"`
 	LockTimers       []BotLockTimer            `json:"lock_timers"`
-	BotTimeoutStale  time.Duration             `json:"bot_timeout_stale"`
-	BotTimeoutRemove time.Duration             `json:"bot_timeout_remove"`
+	BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
+	BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
 	Actions          []Action                  `json:"actions"`
 	Bots             []Bot
 
@@ -209,7 +212,7 @@ type QueryServer struct {
 	AuthUser            string          `json:"auth_user"`
 	AuthSecret          string          `json:"auth_secret"`
 	DefaultStep         string          `json:"default_step"`
-	DefaultDataDuration time.Duration   `json:"default_data_duration"`
+	DefaultDataDuration util.Duration   `json:"default_data_duration"`
 	WebUrlFormat        string          `json:"web_url_format"`
 }
 

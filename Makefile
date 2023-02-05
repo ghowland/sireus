@@ -2,7 +2,12 @@ BINARY_NAME=sireus
 
 run:
 	@go build -o build/${BINARY_NAME} code/sireus.go || (echo "Build failed: $$?"; exit 1)
-	./build/${BINARY_NAME}
+	@./build/${BINARY_NAME}
+
+# Force everything to rebuild
+force-build:
+	@go build -a -o build/${BINARY_NAME} code/sireus.go || (echo "Build failed: $$?"; exit 1)
+
 
 test:
 	@go test ./code/...

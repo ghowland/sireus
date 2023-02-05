@@ -4,6 +4,7 @@ import (
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
+	"strings"
 )
 
 func RegisterHandlebarsHelpers() {
@@ -26,14 +27,28 @@ func RegisterHandlebarsHelpers_FormatData() {
 	})
 
 	// Variables
-	raymond.RegisterHelper("format_variable_type", func(item appdata.BotVariable) string {
-		return item.Type.String()
+	raymond.RegisterHelper("format_variable_type", func(item appdata.BotVariableType) string {
+		return item.String()
+	})
+
+	// []string
+	raymond.RegisterHelper("format_array_string_csv", func(item []string) string {
+		return strings.Join(item, ", ")
 	})
 }
 
 func RegisterHandlebarsHelpers_IfArrayLength() {
 	// NOTE(ghowland): I am choosing to do this on a per-data type basis instead of generalizing, as it will make
 	//				   targeted changes faster and easier in the future
+
+	// The data structure needs to be []interface{} to work, it wont auto-cast from Handlerbars to here, like []appdata.Bots -> []interface{}
+	raymond.RegisterHelper("if_array_length", func(items []interface{}, count int, options *raymond.Options) raymond.SafeString {
+		if len(items) >= count {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
+	})
 
 	// Testing Length of Arrays for the different structs
 	raymond.RegisterHelper("if_bot_group_length", func(items []appdata.BotGroup, count int, options *raymond.Options) raymond.SafeString {

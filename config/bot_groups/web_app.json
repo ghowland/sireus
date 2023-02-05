@@ -28,7 +28,7 @@
   "states": [
     {
       "name": "Operation",
-      "info": "Basic operational states to separate different actions from each other",
+      "info": "Basic operational states, to group Actions",
       "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
     }
   ],
@@ -52,6 +52,12 @@
       "info": "Try to fix this thing by doing something",
       "weight": 2.0,
       "weight_min": 0,
+      "required_states": [
+        "Operation.Normal"
+      ],
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
       "considerations": [
         {
           "name": "Consider A",
@@ -67,13 +73,27 @@
           "range_start": 0,
           "range_end": 1
         }
-      ]
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo This fixes everything",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "windows.laptop.ghowland"
+      }
     },
     {
       "name": "Action Z",
       "info": "Try to fix this thing by doing something",
       "weight": 2.0,
       "weight_min": 0,
+      "required_states": [
+        "Operation.Normal"
+      ],
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
       "considerations": [
         {
           "name": "Consider B",
@@ -89,7 +109,15 @@
           "range_start": 0,
           "range_end": 1
         }
-      ]
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo Hello, World",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "windows.laptop.ghowland"
+      }
     }
   ]
 }

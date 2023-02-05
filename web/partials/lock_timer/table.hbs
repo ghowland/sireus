@@ -1,0 +1,41 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Name">Name</abbr></th>
+            <th><abbr title="Type">Type</abbr></th>
+            <th><abbr title="Information">Info</abbr></th>
+            <th><abbr title="Is Active">Is Active</abbr></th>
+            <th><abbr title="Timeout">Timeout</abbr></th>
+        </tr>
+        </thead>
+        {{#if_lock_timer_length LockTimers 0}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Name">Name</abbr></th>
+                <th><abbr title="Type">Type</abbr></th>
+                <th><abbr title="Information">Info</abbr></th>
+                <th><abbr title="Is Active">Is Active</abbr></th>
+                <th><abbr title="Timeout">Timeout</abbr></th>
+            </tr>
+            </tfoot>
+        {{/if_lock_timer_length}}
+        <tbody>
+        </tbody>
+
+        {{#each botGroup.LockTimers as |lockTimer lockTimerIndex|}} <!-- Query:Start -->
+
+            <tr>
+                <th>{{lockTimer.Name}}</th>
+                <th>{{lockTimer.Type}}</th>
+                <th>{{lockTimer.Info}}</th>
+                <th>{{lockTimer.IsActive}}</th>
+                <th>{{lockTimer.Timeout}}</th>
+            </tr>
+
+
+        {{/each}} <!-- Query:End -->
+
+    </table>
+</div>
