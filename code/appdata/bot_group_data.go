@@ -132,11 +132,12 @@ func (bltt BotLockTimerType) String() string {
 }
 
 type BotLockTimer struct {
-	Type     BotLockTimerType `json:"type"`
-	Name     string           `json:"name"`
-	Info     string           `json:"info"`
-	IsActive bool
-	Timeout  time.Time
+	Type           BotLockTimerType `json:"type"`
+	Name           string           `json:"name"`
+	Info           string           `json:"info"`
+	IsActive       bool
+	Timeout        time.Time
+	ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Actions
 }
 
 type BotVariableType int64
