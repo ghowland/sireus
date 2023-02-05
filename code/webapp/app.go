@@ -21,7 +21,7 @@ func CreateHandlebarsEngine(appConfig appdata.AppConfig) *handlebars.Engine {
 	//// Layout defines the variable name that is used to yield templates within layouts
 	//engine.Layout("embed") // Optional. Default: "embed"
 
-	raymond.RegisterHelper("botinfo", func(bot appdata.Bot) string {
+	raymond.RegisterHelper("botinfo", func(bot appdata.BotGroup) string {
 		return fmt.Sprintf("%s  Actions: %d", bot.Name, len(bot.Actions))
 	})
 

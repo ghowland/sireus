@@ -1,0 +1,19 @@
+{
+  "name": "Sireus Prototype Site",
+  "info": "A demonstration of how to use, while in development.",
+  "bot_group_paths": [
+    "config/bot_groups/web_app.json"
+  ],
+  "query_servers": [
+    {
+      "type": 0,
+      "name": "prometheus_primary",
+      "info": "Primary Prometheus cluster",
+      "host": "localhost",
+      "port": 9090,
+      "auth_user": "",
+      "auth_secret": "",
+      "default_data_duration": 60
+    }
+  ]
+}

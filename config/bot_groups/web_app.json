@@ -1,0 +1,95 @@
+{
+  "name": "Web App",
+  "info": "Example Web Application",
+  "queries": [
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Window Services",
+      "info": "Using Windows Services to test things out",
+      "query": "windows_service_status"
+    }
+  ],
+  "bot_extractor": {
+    "query_name": "Window Services",
+    "key": "node"
+  },
+  "variables": [
+    {
+      "type": 0,
+      "name": "running",
+      "query_name": "Window Services",
+      "query_key": "running",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false
+    }
+  ],
+  "states": [
+    {
+      "name": "Operation",
+      "info": "Basic operational states to separate different actions from each other",
+      "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
+    }
+  ],
+  "lock_timers": [
+    {
+      "type": 1,
+      "name": "Single Bot Lock",
+      "info": "Per bot lock, so that each bot can operate independently.  Use for Node or Agent level control."
+    },
+    {
+      "type": 0,
+      "name": "Full Bot Group Lock",
+      "info": "Lock for controlling the entire Bot Group.  Use for Service or Platform level control."
+    }
+  ],
+  "bot_timeout_stale": 60,
+  "bot_timeout_remove": 120,
+  "actions": [
+    {
+      "name": "Action Y",
+      "info": "Try to fix this thing by doing something",
+      "weight": 2.0,
+      "weight_min": 0,
+      "considerations": [
+        {
+          "name": "Consider A",
+          "weight": 7.0,
+          "curve": "inc_sigmoid",
+          "range_start": 0,
+          "range_end": 100
+        },
+        {
+          "name": "Consider Boolean",
+          "weight": 2.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 1
+        }
+      ]
+    },
+    {
+      "name": "Action Z",
+      "info": "Try to fix this thing by doing something",
+      "weight": 2.0,
+      "weight_min": 0,
+      "considerations": [
+        {
+          "name": "Consider B",
+          "weight": 7.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 100
+        },
+        {
+          "name": "Consider Boolean",
+          "weight": 2.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 1
+        }
+      ]
+    }
+  ]
+}

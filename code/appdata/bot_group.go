@@ -1,6 +1,11 @@
 package appdata
 
-import "time"
+import (
+	"encoding/json"
+	"github.com/ghowland/sireus/code/util"
+	"os"
+	"time"
+)
 
 type ActionConsideration struct {
 	Name       string  `json:"name"`
@@ -72,27 +77,29 @@ type Bot struct {
 
 	VariableValues []BotVariableValue
 	CommandHistory []ActionCommandResult
+	LockTimers     []BotLockTimer
 }
 
 type BotQueryType int64
 
 const (
-	PrometheusQueryRange BotQueryType = iota
+	Range BotQueryType = iota
 )
 
 func (bqt BotQueryType) String() string {
 	switch bqt {
-	case PrometheusQueryRange:
-		return "PromQueryRange"
+	case Range:
+		return "Range"
 	}
 	return "Unknown"
 }
 
 type BotQuery struct {
-	QueryServer string `json:"query_server"`
-	Name        string `json:"name"`
-	Info        string `json:"info"`
-	Query       string `json:"query"`
+	QueryServer string       `json:"query_server"`
+	QueryType   BotQueryType `json:"query_type"`
+	Name        string       `json:"name"`
+	Info        string       `json:"info"`
+	Query       string       `json:"query"`
 }
 
 type BotForwardSequenceState struct {
@@ -103,11 +110,30 @@ type BotForwardSequenceState struct {
 
 type BotExtractorQueryKey struct {
 	QueryName string `json:"query_name"`
-	Keys      string `json:"key"`
+	Key       string `json:"key"`
+}
+
+type BotLockTimerType int64
+
+const (
+	LockBotGroup BotLockTimerType = iota
+	LockBot
+)
+
+func (bltt BotLockTimerType) String() string {
+	switch bltt {
+	case LockBotGroup:
+		return "Lock Bot Group"
+	case LockBot:
+		return "Lock Bot"
+	}
+	return "Unknown"
 }
 
 type BotLockTimer struct {
-	Name     string `json:"name"`
+	Type     BotLockTimerType `json:"type"`
+	Name     string           `json:"name"`
+	Info     string           `json:"info"`
 	IsActive bool
 	Timeout  time.Time
 }
@@ -143,13 +169,13 @@ type BotGroup struct {
 	Name             string                    `json:"name"`
 	Info             string                    `json:"info"`
 	Queries          []BotQuery                `json:"queries"`
+	Variables        []BotVariable             `json:"variables"`
 	BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
 	States           []BotForwardSequenceState `json:"states"`
-	Actions          []Action                  `json:"actions"`
-	Variables        []BotVariable             `json:"variables"`
 	LockTimers       []BotLockTimer            `json:"lock_timers"`
 	BotTimeoutStale  time.Duration             `json:"bot_timeout_stale"`
 	BotTimeoutRemove time.Duration             `json:"bot_timeout_remove"`
+	Actions          []Action                  `json:"actions"`
 	Bots             []Bot
 
 	// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
@@ -158,19 +184,63 @@ type BotGroup struct {
 	RemovedBots []string
 }
 
+type QueryServerType int64
+
+const (
+	Prometheus QueryServerType = iota
+)
+
+func (qst QueryServerType) String() string {
+	switch qst {
+	case Prometheus:
+		return "Prometheus"
+	}
+	return "Unknown"
+}
+
 type QueryServer struct {
-	Type         BotQueryType  `json:"type"`
-	Name         string        `json:"name"`
-	Info         string        `json:"info"`
-	Host         string        `json:"host"`
-	Port         int           `json:"port"`
-	Auth         string        `json:"auth"`
-	DataDuration time.Duration `json:"data_duration"`
+	Type                QueryServerType `json:"type"`
+	Name                string          `json:"name"`
+	Info                string          `json:"info"`
+	Host                string          `json:"host"`
+	Port                int             `json:"port"`
+	AuthUser            string          `json:"auth_user"`
+	AuthSecret          string          `json:"auth_secret"`
+	DefaultDataDuration time.Duration   `json:"default_data_duration"`
 }
 
 type Site struct {
-	Name         string        `json:"name"`
-	Paths        []string      `json:"paths"`
-	QueryServers []QueryServer `json:"query_servers"`
-	BotGroups    []BotGroup
+	Name          string        `json:"name"`
+	Info          string        `json:"info"`
+	BotGroupPaths []string      `json:"bot_group_paths"`
+	QueryServers  []QueryServer `json:"query_servers"`
+	BotGroups     []BotGroup
+}
+
+func LoadBotGroupConfig(path string) BotGroup {
+	botGroupData, err := os.ReadFile(path)
+	util.Check(err)
+
+	var botGroup BotGroup
+	err = json.Unmarshal(botGroupData, &botGroup)
+	util.Check(err)
+
+	return botGroup
+}
+
+func LoadSiteConfig(appConfig AppConfig) Site {
+	siteData, err := os.ReadFile(appConfig.SiteConfigPath)
+	util.Check(err)
+
+	var site Site
+	err = json.Unmarshal(siteData, &site)
+	util.Check(err)
+
+	// Load all our Bot Groups
+	for _, botGroupPath := range site.BotGroupPaths {
+		botGroup := LoadBotGroupConfig(botGroupPath)
+		site.BotGroups = append(site.BotGroups, botGroup)
+	}
+
+	return site
 }

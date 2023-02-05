@@ -8,7 +8,7 @@ import (
 
 type AppConfig struct {
 	WebPath         string `json:"web_path"`
-	ActionPath      string `json:"action_path"`
+	SiteConfigPath  string `json:"site_config_path"`
 	CurvePathFormat string `json:"curve_path_format"`
 }
 

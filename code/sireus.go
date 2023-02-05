@@ -1,15 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/extdata"
-	"github.com/ghowland/sireus/code/util"
 	"github.com/ghowland/sireus/code/webapp"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -24,22 +21,16 @@ func main() {
 
 	appConfig := appdata.LoadConfig(appConfigPath)
 
-	actionData, err := os.ReadFile(appConfig.ActionPath)
-	util.Check(err)
-
-	var bot appdata.Bot
-	err = json.Unmarshal(actionData, &bot)
-	util.Check(err)
+	site := appdata.LoadSiteConfig(appConfig)
 
 	engine := webapp.CreateHandlebarsEngine(appConfig)
 
 	app := webapp.CreateWebApp(engine)
 
 	pageDataMap := fiber.Map{
-		"bot":      bot,
+		"site":     site,
+		"botGroup": site.BotGroups[0],
 		"title":    "Sireus",
-		"test_one": true,
-		"test_two": false,
 	}
 
 	app.Post("/api/plot", func(c *fiber.Ctx) error {

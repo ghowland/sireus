@@ -1,5 +1,5 @@
 {
   "web_path": "./web",
-  "action_path": "config/action.json",
+  "site_config_path": "config/site.json",
   "curve_path_format": "config/curves/%s.json"
 }

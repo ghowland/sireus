@@ -1,10 +1,10 @@
 <section class="section">
 {{> 'partials/breadcrumbs_common' }}
     <h1 class="title is-1">
-        Bot: {{bot.Name}}
+        Bot: {{botGroup.Name}}
     </h1>
     <p class="subtitle">
-        {{bot.Info}}
+        {{botGroup.Info}}
     </p>
 
     <div class="block">
@@ -17,7 +17,7 @@
     </div>
 
     <div class="columns">
-        {{#each bot.Actions as |action actionIndex|}} <!-- Action:Start -->
+        {{#each botGroup.Actions as |action actionIndex|}} <!-- Action:Start -->
         <div class="column"> <!-- Column:Start -->
             {{> 'partials/action/card' }}
         </div> <!-- Column:End -->
