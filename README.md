@@ -10,6 +10,8 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 ### Sireus Goals
 
 - Bots execute commands or API calls, designed for SRE and DevOps environments
+- Fits into stack between monitoring and alerting.  Ex: Prometheus -> Sireus -> Alert Manager
+- Works with existing software stack, with minimal configuration.  Architecture agnostic.
 - Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus)
 - Bots have rulesets for prioritizing conditional commands to respond to detected issues
 - Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data
