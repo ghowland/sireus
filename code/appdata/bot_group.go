@@ -2,6 +2,8 @@ package appdata
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/ghowland/sireus/code/util"
 	"os"
 	"time"
@@ -206,7 +208,9 @@ type QueryServer struct {
 	Port                int             `json:"port"`
 	AuthUser            string          `json:"auth_user"`
 	AuthSecret          string          `json:"auth_secret"`
+	DefaultStep         string          `json:"default_step"`
 	DefaultDataDuration time.Duration   `json:"default_data_duration"`
+	WebUrlFormat        string          `json:"web_url_format"`
 }
 
 type Site struct {
@@ -243,4 +247,14 @@ func LoadSiteConfig(appConfig AppConfig) Site {
 	}
 
 	return site
+}
+
+func GetQueryServer(site Site, name string) (QueryServer, error) {
+	for _, queryServer := range site.QueryServers {
+		if queryServer.Name == name {
+			return queryServer, nil
+		}
+	}
+
+	return QueryServer{}, errors.New(fmt.Sprintf("Query Server missing: %s", name))
 }

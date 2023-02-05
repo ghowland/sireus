@@ -13,7 +13,9 @@
       "port": 9090,
       "auth_user": "",
       "auth_secret": "",
-      "default_data_duration": 60
+      "default_data_duration": 60,
+      "default_step": "15s",
+      "web_url_format": "http://localhost:9090/graph?g0.expr={{query}}"
     }
   ]
 }

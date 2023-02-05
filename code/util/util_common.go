@@ -1,6 +1,9 @@
 package util
 
-import "os"
+import (
+	"github.com/aymerick/raymond"
+	"os"
+)
 
 func Check(e error) {
 	if e != nil {
@@ -14,4 +17,11 @@ func FileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+func HandlebarFormatText(format string, mapData map[string]string) string {
+	result, err := raymond.Render(format, mapData)
+	Check(err)
+
+	return result
 }

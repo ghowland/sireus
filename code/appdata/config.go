@@ -7,9 +7,11 @@ import (
 )
 
 type AppConfig struct {
-	WebPath         string `json:"web_path"`
-	SiteConfigPath  string `json:"site_config_path"`
-	CurvePathFormat string `json:"curve_path_format"`
+	WebPath               string `json:"web_path"`
+	SiteConfigPath        string `json:"site_config_path"`
+	CurvePathFormat       string `json:"curve_path_format"`
+	ReloadTemplatesAlways bool   `json:"reload_templates_always"`
+	LogTemplateParsing    bool   `json:"log_template_parsing"`
 }
 
 func LoadConfig(path string) AppConfig {

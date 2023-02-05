@@ -1,0 +1,38 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Name">Name</abbr></th>
+            <th><abbr title="Query">Query</abbr></th>
+            <th><abbr title="Query Server">Server</abbr></th>
+            <th><abbr title="Information">Info</abbr></th>
+        </tr>
+        </thead>
+        {{#if_query_length Queries 10}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Name">Name</abbr></th>
+                <th><abbr title="Query">Query</abbr></th>
+                <th><abbr title="Query Server">Server</abbr></th>
+                <th><abbr title="Information">Info</abbr></th>
+            </tr>
+            </tfoot>
+        {{/if_query_length}}
+        <tbody>
+        </tbody>
+
+        {{#each botGroup.Queries as |query queryIndex|}} <!-- Query:Start -->
+
+            <tr>
+                <th>{{query.Name}}</th>
+                <td><a href="{{format_query_web site query}}">{{query.Query}}</a></td>
+                <td>{{query.QueryServer}}</td>
+                <td>{{query.Info}}</td>
+            </tr>
+
+
+        {{/each}} <!-- Query:End -->
+
+    </table>
+</div>

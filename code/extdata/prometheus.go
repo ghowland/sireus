@@ -66,3 +66,11 @@ func ExtractBotsFromPromData(data map[string]interface{}, botKey string) map[str
 
 	return bots
 }
+
+func GetPrometheusQueryType(queryType appdata.BotQueryType) string {
+	switch queryType {
+	case appdata.Range:
+		return "query_range"
+	}
+	return "invalid"
+}
