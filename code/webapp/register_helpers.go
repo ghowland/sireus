@@ -59,6 +59,14 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
+	raymond.RegisterHelper("if_bot_variable_value_length", func(items []appdata.BotVariableValue, count int, options *raymond.Options) raymond.SafeString {
+		if len(items) >= count {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
+	})
+
 	raymond.RegisterHelper("if_bot_length", func(items []appdata.Bot, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())

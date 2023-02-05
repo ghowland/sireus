@@ -6,19 +6,18 @@ import (
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
 	"io"
-	"log"
 	"net/http"
 	"time"
 )
 
 type PrometheusResponseDataResult struct {
 	Metric map[string]string `json:"metric"`
-	Values [][]string        `json:"values"`
+	Values [][]interface{}   `json:"values"`
 }
 
 type PrometheusResponseData struct {
-	ResultType string                       `json:"resultType"`
-	Result     PrometheusResponseDataResult `json:"result"`
+	ResultType string                         `json:"resultType"`
+	Result     []PrometheusResponseDataResult `json:"result"`
 }
 
 type PrometheusResponse struct {
@@ -26,7 +25,7 @@ type PrometheusResponse struct {
 	Data   PrometheusResponseData `json:"data"`
 }
 
-func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) map[string]interface{} {
+func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
 	start := timeStart.UTC().Format(time.RFC3339)
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
@@ -41,29 +40,20 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 	body, err := io.ReadAll(resp.Body)
 	util.Check(err)
 
-	log.Print("Prom Result: ", string(body))
+	//log.Print("Prom Result: ", string(body))
 
-	var jsonResultInt interface{}
-	err = json.Unmarshal(body, &jsonResultInt)
+	var jsonResponse PrometheusResponse
+	err = json.Unmarshal(body, &jsonResponse)
 	util.Check(err)
-	jsonResult := jsonResultInt.(map[string]interface{})
 
-	return jsonResult
+	return jsonResponse
 }
 
-func ExtractBotsFromPromData(data map[string]interface{}, botKey string) []appdata.Bot {
-	//log.Print("Extra From: ", data)
-
+func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.Bot {
 	bots := make(map[string]appdata.Bot)
 
-	resultItems := data["data"].(map[string]interface{})["result"].([]interface{})
-
-	for _, resultItem := range resultItems {
-		item := resultItem.(map[string]interface{})
-		metric := item["metric"].(map[string]interface{})
-		//log.Print("Item: ", metric)
-
-		name := metric[botKey].(string)
+	for _, resultItem := range data.Data.Result {
+		name := resultItem.Metric[botKey]
 
 		_, exists := bots[name]
 		if !exists {

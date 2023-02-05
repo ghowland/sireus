@@ -7,7 +7,7 @@
       "query_type": 0,
       "name": "Window Services",
       "info": "Using Windows Services to test things out",
-      "query": "windows_service_status"
+      "query": "windows_service_state"
     }
   ],
   "bot_extractor": {
@@ -20,7 +20,41 @@
       "name": "running",
       "bot_key": "name",
       "query_name": "Window Services",
-      "query_key": "running",
+      "query_key": "state",
+      "query_key_value": "running",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false
+    },
+    {
+      "type": 0,
+      "name": "stopped",
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "stopped",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false
+    },
+    {
+      "type": 0,
+      "name": "unknown",
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "unknown",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false
+    },
+    {
+      "type": 0,
+      "name": "paused",
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "paused",
       "bool_range_start": 1,
       "bool_range_end": 1,
       "bool_invert": false

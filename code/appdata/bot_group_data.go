@@ -163,7 +163,8 @@ type BotVariable struct {
 	Name           string          `json:"name"`
 	BotKey         string          `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
 	QueryName      string          `json:"query_name"`
-	QueryKey       string          `json:"query_key"` // Metric key to extract
+	QueryKey       string          `json:"query_key"`       // Metric key to extract
+	QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
 	BoolRangeStart float32         `json:"bool_range_start"`
 	BoolRangeEnd   float32         `json:"bool_range_end"`
 	BoolInvert     bool            `json:"bool_invert"`

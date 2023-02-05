@@ -1,0 +1,34 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><abbr title="Variable Name">Name</abbr></th>
+            <th><abbr title="Value">Value</abbr></th>
+            <th><abbr title="Time Updated">Time</abbr></th>
+        </tr>
+        </thead>
+        {{#if_bot_variable_value_length bot.VariableValues 10}}
+            <tfoot>
+            <tr>
+                <th><abbr title="Variable Name">Name</abbr></th>
+                <th><abbr title="Value">Value</abbr></th>
+                <th><abbr title="Time Updated">Time</abbr></th>
+            </tr>
+            </tfoot>
+        {{/if_bot_variable_value_length}}
+        <tbody>
+        </tbody>
+
+        {{#each bot.VariableValues as |value valueIndex|}} <!-- Action Consideration:Start -->
+
+            <tr>
+                <td>{{value.Name}}</td>
+                <td>{{value.Value}}</td>
+                <td>{{value.Time}}</td>
+            </tr>
+
+        {{/each}} <!-- Action Consideration:End -->
+
+    </table>
+</div>
