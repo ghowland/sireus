@@ -23,7 +23,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ## Links
 
-[Data Structure and Internal Function Documentation](docs/godoc.md)
+[Sireus Data Structure and Internal Function Documentation](docs/godoc.md)
 
 ### Sireus Bots and Bot Groups
 
