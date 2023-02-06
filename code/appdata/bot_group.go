@@ -72,3 +72,12 @@ func GetBot(site Site, botGroup BotGroup, botName string) (Bot, error) {
 	}
 	return Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
 }
+
+func GetActionConsideration(action Action, considerName string) (ActionConsideration, error) {
+	for _, consider := range action.Considerations {
+		if consider.Name == considerName {
+			return consider, nil
+		}
+	}
+	return ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
+}
