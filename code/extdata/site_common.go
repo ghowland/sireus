@@ -10,7 +10,7 @@ import (
 )
 
 func UpdateSiteBotGroups(site *appdata.Site) {
-	for index, _ := range site.BotGroups {
+	for index := range site.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(site, index)
 
@@ -39,7 +39,8 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
 			if _, ok := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
 				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = appdata.BotActionData{
-					ConsiderationScores: map[string]float64{},
+					ConsiderationFinalScores:     map[string]float64{},
+					ConsiderationEvaluatedScores: map[string]float64{},
 				}
 			}
 
@@ -55,7 +56,8 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 				if util.Check(err) {
 					// Invalidate this variable, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
-					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = math.SmallestNonzeroFloat64
+					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
@@ -64,14 +66,24 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 				considerationScore := result * consider.Weight
 
 				// Set the value.  Only valid values will exist.
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = considerationScore
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = result
 			}
+
+			// Get a Final Score for this Action
+			calculatedScore := appdata.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
+			finalScore := calculatedScore * action.Weight
+
+			// Copy out the ActionData struct, updated it, and assign it back into the map.
+			actionData := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
+			actionData.FinalScore = finalScore
+			site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}
 	}
 }
 
 func ClearAllBotVariables(site *appdata.Site, botGroupIndex int) {
-	for botIndex, _ := range site.BotGroups[botGroupIndex].Bots {
+	for botIndex := range site.BotGroups[botGroupIndex].Bots {
 		site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = map[string]float64{}
 	}
 }
@@ -82,7 +94,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 	// Clear all teh Bot VariableValues
 
 	// Create a list of names
-	queryVariableNames := []string{}
+	var queryVariableNames []string
 	for _, variable := range botGroup.Variables {
 		// Skip non-Synthetic variables
 		if len(variable.Evaluate) > 0 {
@@ -176,7 +188,7 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 		for _, promResult := range promData.Data.Result {
 			// Loop through all the Variables, for every Bot.  In a Bot Group, all Bots are expected to have the same vars
 			for _, variable := range botGroup.Variables {
-				// Skip variables that dont match this query, OR we have an Evaluate value, so this is an Synthetic Variable (not from Query)
+				// Skip variables that don't match this query, OR we have an Evaluate value, so this is a Synthetic Variable (not from Query)
 				if variable.QueryName != query.Name || len(variable.Evaluate) > 0 {
 					continue
 				}
@@ -206,7 +218,7 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 
 							nameFormatted := util.HandlebarFormatText(variable.Name, promResult.Metric)
 
-							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[nameFormatted] = float64(value)
+							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[nameFormatted] = value
 
 							// If we were matching on a BotKey (normal), stop looking.  If no BotKey, do them all.
 							if len(variable.BotKey) > 0 {

@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-content">
-        <h2 class="title is-primary">{{action.Name}}</h2>
+        <h2 class="title is-primary">{{action.Name}} Score: {{get_bot_action_data_final_score bot action}}</h2>
         <h3 class="subtitle">{{action.Info}}</h3>
         <p>Content here: {{action.Weight}}</p>
         {{> 'partials/consider/table' }}

@@ -47,11 +47,11 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
 
-	url := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
+	requestUrl := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
 
-	log.Print("Prom URL: ", url)
+	log.Print("Prom URL: ", requestUrl)
 
-	resp, err := http.Get(url)
+	resp, err := http.Get(requestUrl)
 	util.Check(err)
 
 	body, err := io.ReadAll(resp.Body)
@@ -87,7 +87,7 @@ func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.B
 	//log.Print("Bots: ", bots)
 
 	// Add all the bots to a final array.  The map allowed us to ensure no duplicate entries, as that is allowed.
-	botArray := []appdata.Bot{}
+	var botArray []appdata.Bot
 	for _, bot := range bots {
 		botArray = append(botArray, bot)
 	}

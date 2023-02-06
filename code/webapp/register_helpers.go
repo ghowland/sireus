@@ -20,8 +20,19 @@ func RegisterHandlebarsHelpers() {
 }
 
 func RegisterHandlebarsHelpers_GetAppData() {
-	raymond.RegisterHelper("get_bot_action_data_consideration_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationScores[consider.Name]))
+	// Consideration Scores: Final
+	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name]))
+	})
+
+	// Consideration Scores: Calculated (not Weighted)
+	raymond.RegisterHelper("get_bot_action_data_consideration_evaluated_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name]))
+	})
+
+	// ActionData Final Score
+	raymond.RegisterHelper("get_bot_action_data_final_score", func(bot appdata.Bot, action appdata.Action) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore))
 	})
 }
 

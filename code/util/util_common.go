@@ -74,3 +74,18 @@ func ConvertInterfaceToFloat(value interface{}) (float64, error) {
 		return math.NaN(), InvalidTypeFloat64
 	}
 }
+
+func Clamp(value float64, min float64, max float64) float64 {
+	return math.Max(min, math.Min(max, value))
+}
+
+// Returns clamped value between 0-1, where the value falls between the range
+func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
+	valueRange := rangeMax - rangeMin
+
+	rawRangeValue := value / valueRange
+
+	finalValue := Clamp(rawRangeValue, 0, 1)
+
+	return finalValue
+}
