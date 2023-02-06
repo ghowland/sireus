@@ -75,7 +75,7 @@ func GetCurveDataX(curveData CurveData) []float64
 func GetCurveValue(curveData CurveData, x float64) float64
 ```
 
-## type [Action](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L61-L73>)
+## type [Action](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L71-L83>)
 
 Action is what is considered for execution.  It will receive a Final Score from it's Weight and Consideration Final Scores
 
@@ -95,7 +95,9 @@ type Action struct {
 }
 ```
 
-## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L50-L57>)
+## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L59-L66>)
+
+When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request
 
 ```go
 type ActionCommand struct {
@@ -108,7 +110,9 @@ type ActionCommand struct {
 }
 ```
 
-## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L40-L48>)
+## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L46-L54>)
+
+When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result
 
 ```go
 type ActionCommandResult struct {
@@ -122,7 +126,7 @@ type ActionCommandResult struct {
 }
 ```
 
-## type [ActionCommandType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L17>)
+## type [ActionCommandType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L21>)
 
 ```go
 type ActionCommandType int64
@@ -137,13 +141,15 @@ const (
 )
 ```
 
-### func \(ActionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L26>)
+### func \(ActionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L30>)
 
 ```go
 func (act ActionCommandType) String() string
 ```
 
-## type [ActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L8-L15>)
+## type [ActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L11-L18>)
+
+Considerations are units for scoring an Action.  Each creates a Score, and they are combined to created the Consideration Final Score.
 
 ```go
 type ActionConsideration struct {
@@ -176,7 +182,13 @@ type AppConfig struct {
 func LoadConfig(path string) AppConfig
 ```
 
-## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L85-L92>)
+## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L109-L116>)
+
+Bots the core structure for this system.  They are ephemeral and build from the Bot Group data, and store minimal data.  Bots are expected to be added or removed at any time, and there is a Timeout for Stale, Invalid, and Removed bots.
+
+All Bots are expected to get all the data specified from the Bot Group in their Query to Variable mapping.
+
+If a Bot is missing any data for it's variables, it is considered Invalid, because we are not operating with a full set of data.
 
 ```go
 type Bot struct {
@@ -195,7 +207,9 @@ type Bot struct {
 func GetBot(site Site, botGroup BotGroup, botName string) (Bot, error)
 ```
 
-## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L76-L83>)
+## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L89-L96>)
+
+This stores the Final Scores and related data for all Actions, so they can be compared to determin if any Action should be executed
 
 ```go
 type BotActionData struct {
@@ -208,7 +222,9 @@ type BotActionData struct {
 }
 ```
 
-## type [BotExtractorQueryKey](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L123-L126>)
+## type [BotExtractorQueryKey](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L167-L170>)
+
+This is how Bots are created.  There is a BotQuery named QueryName that will use the Key to find the name of the Bots.  Using something like "instance", "node" or "service" is recommended, that will uniquely identify a Bot inside a BotGroup's configuration.
 
 ```go
 type BotExtractorQueryKey struct {
@@ -217,7 +233,15 @@ type BotExtractorQueryKey struct {
 }
 ```
 
-## type [BotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L117-L121>)
+## type [BotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L156-L160>)
+
+Forward Sequence State is the term I am using to describe a State Machine that only has a single forward sequence.  It can be Advanced and it can be Reset, but the state cannot go backwards.
+
+In this way you can create a State Machine for investigating problems, trying to solve them, checking for resolution, and finally escalating and waiting for someone else to fix it.
+
+If a resolution is detected by an Action, the action can Reset this state, starting the States process over again.
+
+States are used to exclude Actions from being tested, so that Actions can be targetted at a specific State of a Bot's operation.  This allows segmenting logic.  Actions use Action.RequiredStates to limit when they can execute.
 
 ```go
 type BotForwardSequenceState struct {
@@ -227,7 +251,9 @@ type BotForwardSequenceState struct {
 }
 ```
 
-## type [BotGroup](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L185-L203>)
+## type [BotGroup](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L260-L278>)
+
+BotGroup is used to create Bots.  Bots are the core of Sireus.  BotGroups define all the information used to populate the ephemeral Bot structure.
 
 ```go
 type BotGroup struct {
@@ -263,7 +289,11 @@ func GetBotGroup(site Site, botGroupName string) (BotGroup, error)
 func LoadBotGroupConfig(path string) BotGroup
 ```
 
-## type [BotLockTimer](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L145-L152>)
+## type [BotLockTimer](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L198-L205>)
+
+BotLockTimer is used to both block an Action from being executed, if the BotLockTimer.IsActive and has not reached the Timeout yet.  Actions can use multiple BotLockTimers which essentially act as execution "channels" where Actions execute 1 at a time.
+
+BotLockTimeType specifies the scope of the lock.  Is it locked at the Bot level or the BotGroup level? BotGroup level locks \(LockBotGroup\) are essentially global level locks, as BotGroups do not interact with each other, as they are data silos for decision\-making.
 
 ```go
 type BotLockTimer struct {
@@ -276,7 +306,7 @@ type BotLockTimer struct {
 }
 ```
 
-## type [BotLockTimerType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L128>)
+## type [BotLockTimerType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L173>)
 
 ```go
 type BotLockTimerType int64
@@ -289,13 +319,15 @@ const (
 )
 ```
 
-### func \(BotLockTimerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L135>)
+### func \(BotLockTimerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L180>)
 
 ```go
 func (bltt BotLockTimerType) String() string
 ```
 
-## type [BotQuery](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L108-L115>)
+## type [BotQuery](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L135-L142>)
+
+These queries are stored in BotGroup, but are used to populate the Bots with query Variables.
 
 ```go
 type BotQuery struct {
@@ -314,7 +346,7 @@ type BotQuery struct {
 func GetQuery(botGroup BotGroup, queryName string) (BotQuery, error)
 ```
 
-## type [BotQueryType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L94>)
+## type [BotQueryType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L119>)
 
 ```go
 type BotQueryType int64
@@ -326,13 +358,27 @@ const (
 )
 ```
 
-### func \(BotQueryType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L100>)
+### func \(BotQueryType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L125>)
 
 ```go
 func (bqt BotQueryType) String() string
 ```
 
-## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L171-L183>)
+## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L242-L254>)
+
+BotVariable is what is used for the ActionConsideration scoring process.
+
+BotVariable is assigned in the BotGroup, which is the definition of what will be queried or synthesized into each Bot.
+
+If Evaluate is not empty, then this will not run a Query, and instead will execute after all Query Variables are set, and will Evalutate using govaluate.Evaluate\(\) to set a new variable.
+
+Otherwise, a query is performed, and the variable is set from the query.
+
+Query Variables use any combination of BotKey, QueryKey and QueryKeyValue to set the variables.
+
+If BotKey is set, only query results that have a Metric Key named BotKey that matches Bot.Name will be accepted.
+
+If QueryKey is set, only query results that have a value with their Metric Name of QueryKey which matches QueryKeyValue will be set.
 
 ```go
 type BotVariable struct {
@@ -350,7 +396,7 @@ type BotVariable struct {
 }
 ```
 
-## type [BotVariableType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L154>)
+## type [BotVariableType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L208>)
 
 ```go
 type BotVariableType int64
@@ -363,7 +409,7 @@ const (
 )
 ```
 
-### func \(BotVariableType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L161>)
+### func \(BotVariableType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L215>)
 
 ```go
 func (bvt BotVariableType) String() string
@@ -384,7 +430,11 @@ type CurveData struct {
 func LoadCurveData(appConfig AppConfig, name string) CurveData
 ```
 
-## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L219-L230>)
+## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L301-L312>)
+
+QueryServer is where we connect to get data to populate our Bots.  example: Prometheus These are stored at a Site level, so that they can be shared by all BotGroups in a Site.
+
+Inside a QueryServer, all QueryNames must be unique for any BotGroup, so that they can potentially be shared to reduce QueryServer traffic.  Keep this in mind when creating BotGroup.Queries.
 
 ```go
 type QueryServer struct {
@@ -407,7 +457,7 @@ type QueryServer struct {
 func GetQueryServer(site Site, name string) (QueryServer, error)
 ```
 
-## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L205>)
+## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L281>)
 
 ```go
 type QueryServerType int64
@@ -419,13 +469,15 @@ const (
 )
 ```
 
-### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L211>)
+### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L287>)
 
 ```go
 func (qst QueryServerType) String() string
 ```
 
-## type [Site](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L232-L238>)
+## type [Site](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L318-L324>)
+
+Top Level of the data structure.  Site silos all BotGroups and QueryServers, so that we can have multiple Sites which are using different data sets, and should not share any data with each other.
 
 ```go
 type Site struct {

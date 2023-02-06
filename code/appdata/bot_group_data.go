@@ -5,14 +5,18 @@ import (
 	"time"
 )
 
-type ActionConsideration struct {
-	Name       string  `json:"name"`
-	Weight     float64 `json:"weight"`
-	CurveName  string  `json:"curve"`
-	RangeStart float64 `json:"range_start"`
-	RangeEnd   float64 `json:"range_end"`
-	Evaluate   string  `json:"evaluate"`
-}
+type (
+	// Considerations are units for scoring an Action.  Each creates a Score, and they are combined to created the
+	// Consideration Final Score.
+	ActionConsideration struct {
+		Name       string  `json:"name"`
+		Weight     float64 `json:"weight"`
+		CurveName  string  `json:"curve"`
+		RangeStart float64 `json:"range_start"`
+		RangeEnd   float64 `json:"range_end"`
+		Evaluate   string  `json:"evaluate"`
+	}
+)
 
 type ActionCommandType int64
 
@@ -37,24 +41,30 @@ func (act ActionCommandType) String() string {
 	return "Unknown"
 }
 
-type ActionCommandResult struct {
-	ActionName    string
-	ResultStatus  string
-	ResultContent string
-	HostExecOn    string
-	Started       time.Time
-	Finished      time.Time
-	Score         float64
-}
+type (
+	// When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result
+	ActionCommandResult struct {
+		ActionName    string
+		ResultStatus  string
+		ResultContent string
+		HostExecOn    string
+		Started       time.Time
+		Finished      time.Time
+		Score         float64
+	}
+)
 
-type ActionCommand struct {
-	Type              ActionCommandType `json:"type"`
-	Content           string            `json:"content"`
-	SuccessStatus     int               `json:"success_status"`
-	SuccessContent    string            `json:"success_content"`
-	LockTimerDuration util.Duration     `json:"lock_timer_duration"`
-	HostExecKey       string            `json:"host_exec_key"` // Sireus Client presents this key to get commands to run
-}
+type (
+	// When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request
+	ActionCommand struct {
+		Type              ActionCommandType `json:"type"`
+		Content           string            `json:"content"`
+		SuccessStatus     int               `json:"success_status"`
+		SuccessContent    string            `json:"success_content"`
+		LockTimerDuration util.Duration     `json:"lock_timer_duration"`
+		HostExecKey       string            `json:"host_exec_key"` // Sireus Client presents this key to get commands to run
+	}
+)
 
 type (
 	// Action is what is considered for execution.  It will receive a Final Score from it's Weight and Consideration Final Scores
@@ -73,23 +83,38 @@ type (
 	}
 )
 
-type BotActionData struct {
-	ActionName             string    // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
-	FinalScore             bool      // Final Score is the total result of calculations to Score this action for execution
-	IsActive               bool      // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
-	ActiveStartTime        time.Time // Time this Active started, so we can use it for an Evaluation variable
-	LastExecutedActionTime time.Time // Last time we executed this Action
-	Time                   time.Time // When this was updated
-}
+type (
+	// This stores the Final Scores and related data for all Actions, so they can be compared to determin if any
+	// Action should be executed
+	BotActionData struct {
+		ActionName             string    // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
+		FinalScore             bool      // Final Score is the total result of calculations to Score this action for execution
+		IsActive               bool      // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
+		ActiveStartTime        time.Time // Time this Active started, so we can use it for an Evaluation variable
+		LastExecutedActionTime time.Time // Last time we executed this Action
+		Time                   time.Time // When this was updated
+	}
+)
 
-type Bot struct {
-	Name           string
-	VariableValues map[string]float64
-	StateValues    []string
-	CommandHistory []ActionCommandResult
-	LockTimers     []BotLockTimer
-	ActionData     map[string]BotActionData // Key is Action.Name
-}
+type (
+	// Bots the core structure for this system.  They are ephemeral and build from the Bot Group data, and store
+	// minimal data.  Bots are expected to be added or removed at any time, and there is a Timeout for Stale, Invalid,
+	// and Removed bots.
+	//
+	// All Bots are expected to get all the data specified from the Bot Group in their Query to
+	// Variable mapping.
+	//
+	// If a Bot is missing any data for it's variables, it is considered Invalid, because we are not
+	// operating with a full set of data.
+	Bot struct {
+		Name           string
+		VariableValues map[string]float64
+		StateValues    []string
+		CommandHistory []ActionCommandResult
+		LockTimers     []BotLockTimer
+		ActionData     map[string]BotActionData // Key is Action.Name
+	}
+)
 
 type BotQueryType int64
 
@@ -105,25 +130,45 @@ func (bqt BotQueryType) String() string {
 	return "Unknown"
 }
 
-type BotQuery struct {
-	QueryServer string        `json:"query_server"`
-	QueryType   BotQueryType  `json:"query_type"`
-	Name        string        `json:"name"`
-	Info        string        `json:"info"`
-	Query       string        `json:"query"`
-	Interval    util.Duration `json:"interval"`
-}
+type (
+	// These queries are stored in BotGroup, but are used to populate the Bots with query Variables.
+	BotQuery struct {
+		QueryServer string        `json:"query_server"`
+		QueryType   BotQueryType  `json:"query_type"`
+		Name        string        `json:"name"`
+		Info        string        `json:"info"`
+		Query       string        `json:"query"`
+		Interval    util.Duration `json:"interval"`
+	}
+)
 
-type BotForwardSequenceState struct {
-	Name   string   `json:"name"`
-	Info   string   `json:"info"`
-	Labels []string `json:"labels"`
-}
+type (
+	// Forward Sequence State is the term I am using to describe a State Machine that only has a single forward
+	// sequence.  It can be Advanced and it can be Reset, but the state cannot go backwards.
+	//
+	// In this way you can create a State Machine for investigating problems, trying to solve them, checking for
+	// resolution, and finally escalating and waiting for someone else to fix it.
+	//
+	// If a resolution is detected by an Action, the action can Reset this state, starting the States process over again.
+	//
+	// States are used to exclude Actions from being tested, so that Actions can be targetted at a specific State of a
+	// Bot's operation.  This allows segmenting logic.  Actions use Action.RequiredStates to limit when they can execute.
+	BotForwardSequenceState struct {
+		Name   string   `json:"name"`
+		Info   string   `json:"info"`
+		Labels []string `json:"labels"`
+	}
+)
 
-type BotExtractorQueryKey struct {
-	QueryName string `json:"query_name"`
-	Key       string `json:"key"`
-}
+type (
+	// This is how Bots are created.  There is a BotQuery named QueryName that will use the Key to find the name of the
+	// Bots.  Using something like "instance", "node" or "service" is recommended, that will uniquely identify a Bot
+	// inside a BotGroup's configuration.
+	BotExtractorQueryKey struct {
+		QueryName string `json:"query_name"`
+		Key       string `json:"key"`
+	}
+)
 
 type BotLockTimerType int64
 
@@ -142,14 +187,23 @@ func (bltt BotLockTimerType) String() string {
 	return "Unknown"
 }
 
-type BotLockTimer struct {
-	Type           BotLockTimerType `json:"type"`
-	Name           string           `json:"name"`
-	Info           string           `json:"info"`
-	IsActive       bool
-	Timeout        time.Time
-	ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Actions
-}
+type (
+	// BotLockTimer is used to both block an Action from being executed, if the BotLockTimer.IsActive and has not
+	// reached the Timeout yet.  Actions can use multiple BotLockTimers which essentially act as execution "channels"
+	// where Actions execute 1 at a time.
+	//
+	// BotLockTimeType specifies the scope of the lock.  Is it locked at the Bot level or the BotGroup level?
+	// BotGroup level locks (LockBotGroup) are essentially global level locks, as BotGroups do not interact with each
+	// other, as they are data silos for decision-making.
+	BotLockTimer struct {
+		Type           BotLockTimerType `json:"type"`
+		Name           string           `json:"name"`
+		Info           string           `json:"info"`
+		IsActive       bool
+		Timeout        time.Time
+		ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Actions
+	}
+)
 
 type BotVariableType int64
 
@@ -168,39 +222,61 @@ func (bvt BotVariableType) String() string {
 	return "Unknown"
 }
 
-type BotVariable struct {
-	Type           BotVariableType `json:"type"`
-	Name           string          `json:"name"`
-	BotKey         string          `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
-	QueryName      string          `json:"query_name"`
-	QueryKey       string          `json:"query_key"`       // Metric key to extract
-	QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
-	Evaluate       string          `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
-	BoolRangeStart float64         `json:"bool_range_start"`
-	BoolRangeEnd   float64         `json:"bool_range_end"`
-	BoolInvert     bool            `json:"bool_invert"`
-	Export         bool            `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
-}
+type (
+	// BotVariable is what is used for the ActionConsideration scoring process.
+	//
+	// BotVariable is assigned in the BotGroup, which is the definition of what will be queried or synthesized into
+	// each Bot.
+	//
+	// If Evaluate is not empty, then this will not run a Query, and instead will execute after all Query Variables are
+	// set, and will Evalutate using govaluate.Evaluate() to set a new variable.
+	//
+	// Otherwise, a query is performed, and the variable is set from the query.
+	//
+	// Query Variables use any combination of BotKey, QueryKey and QueryKeyValue to set the variables.
+	//
+	// If BotKey is set, only query results that have a Metric Key named BotKey that matches Bot.Name will be accepted.
+	//
+	// If QueryKey is set, only query results that have a value with their Metric Name of QueryKey which matches
+	// QueryKeyValue will be set.
+	BotVariable struct {
+		Type           BotVariableType `json:"type"`
+		Name           string          `json:"name"`
+		BotKey         string          `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
+		QueryName      string          `json:"query_name"`
+		QueryKey       string          `json:"query_key"`       // Metric key to extract
+		QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
+		Evaluate       string          `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
+		BoolRangeStart float64         `json:"bool_range_start"`
+		BoolRangeEnd   float64         `json:"bool_range_end"`
+		BoolInvert     bool            `json:"bool_invert"`
+		Export         bool            `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
+	}
+)
 
-type BotGroup struct {
-	Name             string                    `json:"name"`
-	Info             string                    `json:"info"`
-	Queries          []BotQuery                `json:"queries"`
-	Variables        []BotVariable             `json:"variables"`
-	BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
-	States           []BotForwardSequenceState `json:"states"`
-	LockTimers       []BotLockTimer            `json:"lock_timers"`
-	BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
-	BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
-	ActionScoreMin   float64                   `json:"action_score_min"` // Minimum score to execute Action
-	Actions          []Action                  `json:"actions"`
-	Bots             []Bot
+type (
+	// BotGroup is used to create Bots.  Bots are the core of Sireus.  BotGroups define all the information used to
+	// populate the ephemeral Bot structure.
+	BotGroup struct {
+		Name             string                    `json:"name"`
+		Info             string                    `json:"info"`
+		Queries          []BotQuery                `json:"queries"`
+		Variables        []BotVariable             `json:"variables"`
+		BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
+		States           []BotForwardSequenceState `json:"states"`
+		LockTimers       []BotLockTimer            `json:"lock_timers"`
+		BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
+		BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
+		ActionScoreMin   float64                   `json:"action_score_min"` // Minimum score to execute Action
+		Actions          []Action                  `json:"actions"`
+		Bots             []Bot
 
-	// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
-	InvalidBots []string
-	StaleBots   []string
-	RemovedBots []string
-}
+		// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
+		InvalidBots []string
+		StaleBots   []string
+		RemovedBots []string
+	}
+)
 
 type QueryServerType int64
 
@@ -216,23 +292,34 @@ func (qst QueryServerType) String() string {
 	return "Unknown"
 }
 
-type QueryServer struct {
-	ServerType          QueryServerType `json:"server_type"`
-	Name                string          `json:"name"`
-	Info                string          `json:"info"`
-	Host                string          `json:"host"`
-	Port                int             `json:"port"`
-	AuthUser            string          `json:"auth_user"`
-	AuthSecret          string          `json:"auth_secret"`
-	DefaultStep         string          `json:"default_step"`
-	DefaultDataDuration util.Duration   `json:"default_data_duration"`
-	WebUrlFormat        string          `json:"web_url_format"`
-}
+type (
+	// QueryServer is where we connect to get data to populate our Bots.  example: Prometheus
+	// These are stored at a Site level, so that they can be shared by all BotGroups in a Site.
+	//
+	// Inside a QueryServer, all QueryNames must be unique for any BotGroup, so that they can potentially be shared
+	// to reduce QueryServer traffic.  Keep this in mind when creating BotGroup.Queries.
+	QueryServer struct {
+		ServerType          QueryServerType `json:"server_type"`
+		Name                string          `json:"name"`
+		Info                string          `json:"info"`
+		Host                string          `json:"host"`
+		Port                int             `json:"port"`
+		AuthUser            string          `json:"auth_user"`
+		AuthSecret          string          `json:"auth_secret"`
+		DefaultStep         string          `json:"default_step"`
+		DefaultDataDuration util.Duration   `json:"default_data_duration"`
+		WebUrlFormat        string          `json:"web_url_format"`
+	}
+)
 
-type Site struct {
-	Name          string        `json:"name"`
-	Info          string        `json:"info"`
-	BotGroupPaths []string      `json:"bot_group_paths"`
-	QueryServers  []QueryServer `json:"query_servers"`
-	BotGroups     []BotGroup
-}
+type (
+	// Top Level of the data structure.  Site silos all BotGroups and QueryServers, so that we can have multiple Sites
+	// which are using different data sets, and should not share any data with each other.
+	Site struct {
+		Name          string        `json:"name"`
+		Info          string        `json:"info"`
+		BotGroupPaths []string      `json:"bot_group_paths"`
+		QueryServers  []QueryServer `json:"query_servers"`
+		BotGroups     []BotGroup
+	}
+)
