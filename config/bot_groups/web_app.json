@@ -8,42 +8,47 @@
       "name": "Window Services",
       "info": "Using Windows Services to test things out",
       "query": "windows_service_state",
-      "interval": "5s"
+      "interval": "7s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
       "name": "Service Status",
       "info": "Getting information from a different query",
-      "query": "windows_service_status"
+      "query": "windows_service_status",
+      "interval": "7s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
       "name": "Disk Free Bytes",
       "info": "Getting free bytes on the disks",
-      "query": "windows_logical_disk_free_bytes"
+      "query": "windows_logical_disk_free_bytes",
+      "interval": "7s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
       "name": "Disk Total Bytes",
       "info": "Getting free bytes on the disks",
-      "query": "windows_logical_disk_size_bytes"
+      "query": "windows_logical_disk_size_bytes",
+      "interval": "7s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
       "name": "CPU Usage",
       "info": "Getting the CPU usage for the system",
-      "query": "100 - (avg by (instance) (irate(windows_cpu_time_total{mode=\"idle\"}[1m])) * 100)"
+      "query": "100 - (avg by (instance) (irate(windows_cpu_time_total{mode=\"idle\"}[1m])) * 100)",
+      "interval": "7s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
       "name": "Network Usage",
       "info": "Getting the Network usage for the system",
-      "query": "irate(windows_net_bytes_total[30s])"
+      "query": "irate(windows_net_bytes_total[30s])",
+      "interval": "7s"
     }
   ],
   "bot_extractor": {
@@ -237,6 +242,7 @@
       "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0,
+      "weight_threshold": 0.5,
       "required_lock_timers": [
         "Single Bot Lock"
       ],
@@ -276,7 +282,8 @@
       "info": "Try to fix this thing by doing something",
       "is_disabled": false,
       "weight": 2.0,
-      "weight_min": 0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.6,
       "required_lock_timers": [
         "Single Bot Lock"
       ],

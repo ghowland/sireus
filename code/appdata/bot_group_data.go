@@ -59,14 +59,25 @@ type ActionCommand struct {
 type Action struct {
 	Name               string                `json:"name"`
 	Info               string                `json:"info"`
-	IsDisabled         bool                  `json:"is_disabled"` // When testing changes, disable with modifying config
-	Weight             float32               `json:"weight"`
-	WeightMin          float32               `json:"weight_min"`
+	IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
+	Weight             float32               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
+	WeightMin          float32               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
+	WeightThreshold    float32               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
 	RequiredLockTimers []string              `json:"required_lock_timers"`
 	RequiredStates     []string              `json:"required_states"`
 	SetBotStates       []string              `json:"set_bot_states"`
 	Considerations     []ActionConsideration `json:"considerations"`
 	Command            ActionCommand         `json:"command"`
+}
+
+type BotActionData struct {
+	ActionName             string          // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
+	FinalScore             bool            // Final Score is the total result of calculations to Score this action for execution
+	IsActive               bool            // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
+	ActiveStartTime        time.Time       // Time this Active started, so we can use it for an Evaluation variable
+	LastExecutedActionTime time.Time       // Last time we executed this Action
+	Time                   time.Time       // When this was updated
+	History                []BotActionData // We keep N records history, but no recursive depth.  Top level keeps history, no history nodes keep history
 }
 
 type BotVariableValue struct {
@@ -81,6 +92,7 @@ type Bot struct {
 	StateValues    []string
 	CommandHistory []ActionCommandResult
 	LockTimers     []BotLockTimer
+	ActionData     map[string]BotActionData // Key is Action.Name
 }
 
 type BotQueryType int64

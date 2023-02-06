@@ -3,13 +3,16 @@
 
 ## Sireus - SRE Utility System - Dynamic Bot manager for executing SRE and DevOps commands conditionally
 
-Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.
+Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.  
+
+Sireus is a Decision System, made to collect information from Monitoring or other data sources, and make a decision on which action to execute, if any action should be executed.
 
 <img width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
 ### Sireus Goals
 
 - Bots execute commands or API calls, designed for SRE and DevOps environments.
+- Sireus is a Decision System.  It's purpose is to make a decision and execute a command or web call.
 - Fits into stack between monitoring and alerting.  ex: Prometheus -> Sireus -> Alert Manager.
 - Works with existing software stack, with minimal configuration.  Architecture agnostic.
 - Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus).
