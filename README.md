@@ -100,7 +100,7 @@ Having the ability to tune values at the top level Action, and for each Consider
 
 ## Links
 
-[Data Structure and Internal Function Documentation](../blob/docs/godoc.md)
+[Data Structure and Internal Function Documentation](docs/godoc.md)
 
 
 ## Portrait
