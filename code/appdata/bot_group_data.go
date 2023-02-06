@@ -21,22 +21,25 @@ type (
 type ActionCommandType int64
 
 const (
-	Bash ActionCommandType = iota
-	WebHttps
-	WebHttpInsecure
-	WebRPC
+	ShellCommand    ActionCommandType = iota // Shell Command
+	WebHttps                                 // HTTPS request
+	WebHttpInsecure                          // HTTP request
+	WebRPC                                   // RPC call
+	NoOperation                              // Do nothing
 )
 
 func (act ActionCommandType) String() string {
 	switch act {
-	case Bash:
-		return "Bash"
+	case ShellCommand:
+		return "ShellCommand"
 	case WebHttps:
 		return "WebHttps"
 	case WebHttpInsecure:
 		return "WebHttpInsecure"
 	case WebRPC:
 		return "WebRPC"
+	case NoOperation:
+		return "NoOperation"
 	}
 	return "Unknown"
 }
@@ -62,7 +65,9 @@ type (
 		SuccessStatus     int               `json:"success_status"`
 		SuccessContent    string            `json:"success_content"`
 		LockTimerDuration util.Duration     `json:"lock_timer_duration"`
-		HostExecKey       string            `json:"host_exec_key"` // Sireus Client presents this key to get commands to run
+		HostExecKey       string            `json:"host_exec_key"`    // Sireus Client presents this key to get commands to run
+		SetBotStates      []string          `json:"set_bot_states"`   // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.
+		JournalTemplate   string            `json:"journal_template"` // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
 	}
 )
 
@@ -77,7 +82,6 @@ type (
 		WeightThreshold    float64               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
 		RequiredLockTimers []string              `json:"required_lock_timers"`
 		RequiredStates     []string              `json:"required_states"`
-		SetBotStates       []string              `json:"set_bot_states"`
 		Considerations     []ActionConsideration `json:"considerations"`
 		Command            ActionCommand         `json:"command"`
 	}
@@ -259,14 +263,14 @@ type (
 	BotGroup struct {
 		Name             string                    `json:"name"`
 		Info             string                    `json:"info"`
-		Queries          []BotQuery                `json:"queries"`
-		Variables        []BotVariable             `json:"variables"`
 		BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
 		States           []BotForwardSequenceState `json:"states"`
 		LockTimers       []BotLockTimer            `json:"lock_timers"`
 		BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
 		BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
-		ActionScoreMin   float64                   `json:"action_score_min"` // Minimum score to execute Action
+		ActionThreshold  float64                   `json:"action_threshold"` // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
+		Queries          []BotQuery                `json:"queries"`
+		Variables        []BotVariable             `json:"variables"`
 		Actions          []Action                  `json:"actions"`
 		Bots             []Bot
 

@@ -1,6 +1,28 @@
 {
   "name": "Web App",
   "info": "Example Web Application",
+  "states": [
+    {
+      "name": "Operation",
+      "info": "Basic operational states, to group Actions",
+      "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
+    }
+  ],
+  "lock_timers": [
+    {
+      "type": 1,
+      "name": "Single Bot Lock",
+      "info": "Per bot lock, so that each bot can operate independently.  Use for Node or Agent level control."
+    },
+    {
+      "type": 0,
+      "name": "Full Bot Group Lock",
+      "info": "Lock for controlling the entire Bot Group.  Use for Service or Platform level control."
+    }
+  ],
+  "bot_timeout_stale": 60,
+  "bot_timeout_remove": 120,
+  "action_threshold": 0.6,
   "queries": [
     {
       "query_server": "prometheus_primary",
@@ -252,28 +274,6 @@
       "export": true
     }
   ],
-  "states": [
-    {
-      "name": "Operation",
-      "info": "Basic operational states, to group Actions",
-      "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
-    }
-  ],
-  "lock_timers": [
-    {
-      "type": 1,
-      "name": "Single Bot Lock",
-      "info": "Per bot lock, so that each bot can operate independently.  Use for Node or Agent level control."
-    },
-    {
-      "type": 0,
-      "name": "Full Bot Group Lock",
-      "info": "Lock for controlling the entire Bot Group.  Use for Service or Platform level control."
-    }
-  ],
-  "bot_timeout_stale": 60,
-  "bot_timeout_remove": 120,
-  "action_score_min": 0.6,
   "actions": [
     {
       "name": "Action Y",
@@ -287,9 +287,6 @@
       ],
       "required_states": [
         "Operation.Normal"
-      ],
-      "set_bot_states": [
-        "Operation.Problem"
       ],
       "considerations": [
         {
@@ -315,8 +312,12 @@
         "success_status": 0,
         "success_content": "",
         "lock_timer_duration": "30s",
-        "host_exec_key": "laptop.ghowland"
-      }
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ]
+      },
+      "journal_template": "The state for Action Y occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
     },
     {
       "name": "Action Z",
@@ -331,9 +332,6 @@
       "required_states": [
         "Operation.Normal"
       ],
-      "set_bot_states": [
-        "Operation.Problem"
-      ],
       "considerations": [
         {
           "name": "Stopped Properly",
@@ -344,12 +342,12 @@
           "evaluate": "service_stopped * status_ok"
         },
         {
-          "name": "Running Properly",
+          "name": "More than 10% Disk",
           "weight": 2.0,
           "curve": "inc_boolean",
           "range_start": 0,
           "range_end": 1,
-          "evaluate": "service_running * status_ok"
+          "evaluate": "disk_used_percent_D - 0.1"
         }
       ],
       "command": {
@@ -358,7 +356,11 @@
         "success_status": 0,
         "success_content": "",
         "lock_timer_duration": "30s",
-        "host_exec_key": "laptop.ghowland"
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ],
+        "journal_template": "The state for Action Z occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
       }
     }
   ]

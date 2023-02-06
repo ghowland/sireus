@@ -21,7 +21,7 @@ func RegisterHandlebarsHelpers() {
 
 func RegisterHandlebarsHelpers_GetAppData() {
 	raymond.RegisterHelper("get_bot_action_data_consideration_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%v", bot.ActionData[action.Name].ConsiderationScores[consider.Name]))
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationScores[consider.Name]))
 	})
 }
 
