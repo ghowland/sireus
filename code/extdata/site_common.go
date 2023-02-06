@@ -4,7 +4,6 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
-	"log"
 	"math"
 	"strconv"
 	"time"
@@ -39,7 +38,9 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 		for _, action := range botGroup.Actions {
 			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
 			if _, ok := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = appdata.BotActionData{}
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = appdata.BotActionData{
+					ConsiderationScores: map[string]float64{},
+				}
 			}
 
 			for _, consider := range action.Considerations {
@@ -53,12 +54,12 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 				result, err := util.ConvertInterfaceToFloat(resultInt)
 				if util.Check(err) {
 					// Invalidate this variable, result was invalid
-					log.Printf("Set Consideration Invalid: %s", consider.Name)
+					//log.Printf("Set Consideration Invalid: %s", consider.Name)
 					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
-				log.Printf("Set Consideration Result: %s = %v", consider.Name, result)
+				//log.Printf("Set Consideration Result: %s = %v", consider.Name, result)
 
 				// Set the value.  Only valid values will exist.
 				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = result

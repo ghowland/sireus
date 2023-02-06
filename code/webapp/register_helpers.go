@@ -1,6 +1,7 @@
 package webapp
 
 import (
+	"fmt"
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
@@ -13,6 +14,15 @@ func RegisterHandlebarsHelpers() {
 
 	// Format data
 	RegisterHandlebarsHelpers_FormatData()
+
+	// Get AppData values
+	RegisterHandlebarsHelpers_GetAppData()
+}
+
+func RegisterHandlebarsHelpers_GetAppData() {
+	raymond.RegisterHelper("get_bot_action_data_consideration_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%v", bot.ActionData[action.Name].ConsiderationScores[consider.Name]))
+	})
 }
 
 func RegisterHandlebarsHelpers_FormatData() {
@@ -38,9 +48,6 @@ func RegisterHandlebarsHelpers_FormatData() {
 }
 
 func RegisterHandlebarsHelpers_IfArrayLength() {
-	// NOTE(ghowland): I am choosing to do this on a per-data type basis instead of generalizing, as it will make
-	//				   targeted changes faster and easier in the future
-
 	// -- Go Data --
 
 	// The data structure needs to be []interface{} to work, it wont auto-cast from Handlerbars to here, like []appdata.Bots -> []interface{}

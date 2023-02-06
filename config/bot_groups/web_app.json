@@ -298,7 +298,7 @@
           "curve": "inc_sigmoid",
           "range_start": 0,
           "range_end": 100,
-          "evaluate": "service_running && status_ok"
+          "evaluate": "service_running * status_ok"
         },
         {
           "name": "Consider Boolean",
@@ -306,7 +306,7 @@
           "curve": "inc_boolean",
           "range_start": 0,
           "range_end": 1,
-          "evaluate": "service_running && status_ok"
+          "evaluate": "service_running * status_ok "
         }
       ],
       "command": {
@@ -336,20 +336,20 @@
       ],
       "considerations": [
         {
-          "name": "Consider B",
+          "name": "Stopped Properly",
           "weight": 7.0,
           "curve": "inc_smooth",
           "range_start": 0,
           "range_end": 100,
-          "evaluate": "service_running && status_ok"
+          "evaluate": "service_stopped * status_ok"
         },
         {
-          "name": "Consider Boolean",
+          "name": "Running Properly",
           "weight": 2.0,
           "curve": "inc_boolean",
           "range_start": 0,
           "range_end": 1,
-          "evaluate": "service_running && status_ok"
+          "evaluate": "service_running * status_ok"
         }
       ],
       "command": {

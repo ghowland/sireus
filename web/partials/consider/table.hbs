@@ -8,6 +8,7 @@
             <th><abbr title="Range End Start">Start</abbr></th>
             <th><abbr title="Range Value End">End</abbr></th>
             <th><abbr title="Curve">Curve</abbr></th>
+            <th><abbr title="Curve">Score</abbr></th>
         </tr>
         </thead>
         {{#if_consider_length Considerations 10}}
@@ -18,6 +19,7 @@
                 <th><abbr title="Range End Start">Start</abbr></th>
                 <th><abbr title="Range Value End">End</abbr></th>
                 <th><abbr title="Curve">Curve</abbr></th>
+                <th><abbr title="Curve">Score</abbr></th>
             </tr>
             </tfoot>
         {{/if_consider_length}}
@@ -25,13 +27,13 @@
         </tbody>
 
         {{#each action.Considerations as |consider considerIndex|}} <!-- Action Consideration:Start -->
-
             <tr>
                 <th>{{consider.Name}}</th>
                 <td>{{consider.Weight}}</td>
                 <td>{{consider.RangeStart}}</td>
                 <td>{{consider.RangeEnd}}</td>
                 <td><button class="button is-small" onclick="GetPlot('{{consider.CurveName}}')">{{consider.CurveName}}</button></td>
+                <td>{{get_bot_action_data_consideration_score bot action consider}}</td>
             </tr>
 
         {{/each}} <!-- Action Consideration:End -->
