@@ -25,6 +25,10 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 [Sireus Data Structure and Internal Function Documentation](docs/godoc.md)
 
+## Data Structure
+
+![Data Structure](/docs/images/data_structures.png)
+
 ### Sireus Bots and Bot Groups
 
 - A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or services (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
@@ -97,11 +101,6 @@ The reason to have all of these steps is to be able to control exactly how impor
 The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
 
 Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
-
-## Data Structure
-
-![Data Structure](/docs/images/data_structures.png)
-
 
 ## Sireus Portrait
 
