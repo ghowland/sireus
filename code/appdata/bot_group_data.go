@@ -11,6 +11,7 @@ type ActionConsideration struct {
 	CurveName  string  `json:"curve"`
 	RangeStart float32 `json:"range_start"`
 	RangeEnd   float32 `json:"range_end"`
+	Evaluate   string  `json:"evaluate"`
 }
 
 type ActionCommandType int64
@@ -97,11 +98,12 @@ func (bqt BotQueryType) String() string {
 }
 
 type BotQuery struct {
-	QueryServer string       `json:"query_server"`
-	QueryType   BotQueryType `json:"query_type"`
-	Name        string       `json:"name"`
-	Info        string       `json:"info"`
-	Query       string       `json:"query"`
+	QueryServer string        `json:"query_server"`
+	QueryType   BotQueryType  `json:"query_type"`
+	Name        string        `json:"name"`
+	Info        string        `json:"info"`
+	Query       string        `json:"query"`
+	Interval    util.Duration `json:"interval"`
 }
 
 type BotForwardSequenceState struct {

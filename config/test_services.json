@@ -1,0 +1,7 @@
+{
+	"app": true,
+	"webserver": true,
+	"database": true,
+	"firewall": true,
+	"router": true
+}

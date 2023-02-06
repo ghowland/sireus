@@ -1,5 +1,11 @@
 {
   "web_path": "./web",
   "site_config_path": "../../config/site.json",
-  "curve_path_format": "../../config/curves/%s.json"
+  "curve_path_format": "../../config/curves/%s.json",
+
+  "query_fast_interval": "2s",
+  "query_fast_duration": "30s",
+
+  "reload_templates_always": true,
+  "log_template_parsing": false
 }

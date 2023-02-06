@@ -7,7 +7,8 @@
       "query_type": 0,
       "name": "Window Services",
       "info": "Using Windows Services to test things out",
-      "query": "windows_service_state"
+      "query": "windows_service_state",
+      "interval": "5s"
     },
     {
       "query_server": "prometheus_primary",
@@ -19,9 +20,16 @@
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Disk Free Space",
+      "name": "Disk Free Bytes",
       "info": "Getting free bytes on the disks",
       "query": "windows_logical_disk_free_bytes"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Disk Total Bytes",
+      "info": "Getting free bytes on the disks",
+      "query": "windows_logical_disk_size_bytes"
     },
     {
       "query_server": "prometheus_primary",
@@ -131,7 +139,7 @@
       "type": 1,
       "name": "disk_free_space_C",
       "bot_key": "",
-      "query_name": "Disk Free Space",
+      "query_name": "Disk Free Bytes",
       "query_key": "volume",
       "query_key_value": "C:",
       "bool_range_start": 1,
@@ -143,7 +151,31 @@
       "type": 1,
       "name": "disk_free_space_D",
       "bot_key": "",
-      "query_name": "Disk Free Space",
+      "query_name": "Disk Free Bytes",
+      "query_key": "volume",
+      "query_key_value": "D:",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_total_space_C",
+      "bot_key": "",
+      "query_name": "Disk Total Bytes",
+      "query_key": "volume",
+      "query_key_value": "C:",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_total_space_D",
+      "bot_key": "",
+      "query_name": "Disk Total Bytes",
       "query_key": "volume",
       "query_key_value": "D:",
       "bool_range_start": 0,
@@ -236,7 +268,7 @@
         "success_status": 0,
         "success_content": "",
         "lock_timer_duration": "30s",
-        "host_exec_key": "windows.laptop.ghowland"
+        "host_exec_key": "laptop.ghowland"
       }
     },
     {
@@ -260,14 +292,16 @@
           "weight": 7.0,
           "curve": "inc_smooth",
           "range_start": 0,
-          "range_end": 100
+          "range_end": 100,
+          "evaluate": "service_running && status_ok"
         },
         {
           "name": "Consider Boolean",
           "weight": 2.0,
           "curve": "inc_boolean",
           "range_start": 0,
-          "range_end": 1
+          "range_end": 1,
+          "evaluate": "service_running && status_ok"
         }
       ],
       "command": {
@@ -276,7 +310,7 @@
         "success_status": 0,
         "success_content": "",
         "lock_timer_duration": "30s",
-        "host_exec_key": "windows.laptop.ghowland"
+        "host_exec_key": "laptop.ghowland"
       }
     }
   ]
