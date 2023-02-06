@@ -7,10 +7,10 @@ import (
 
 type ActionConsideration struct {
 	Name       string  `json:"name"`
-	Weight     float32 `json:"weight"`
+	Weight     float64 `json:"weight"`
 	CurveName  string  `json:"curve"`
-	RangeStart float32 `json:"range_start"`
-	RangeEnd   float32 `json:"range_end"`
+	RangeStart float64 `json:"range_start"`
+	RangeEnd   float64 `json:"range_end"`
 	Evaluate   string  `json:"evaluate"`
 }
 
@@ -44,7 +44,7 @@ type ActionCommandResult struct {
 	HostExecOn    string
 	Started       time.Time
 	Finished      time.Time
-	Score         float32
+	Score         float64
 }
 
 type ActionCommand struct {
@@ -56,39 +56,35 @@ type ActionCommand struct {
 	HostExecKey       string            `json:"host_exec_key"` // Sireus Client presents this key to get commands to run
 }
 
-type Action struct {
-	Name               string                `json:"name"`
-	Info               string                `json:"info"`
-	IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
-	Weight             float32               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
-	WeightMin          float32               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
-	WeightThreshold    float32               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
-	RequiredLockTimers []string              `json:"required_lock_timers"`
-	RequiredStates     []string              `json:"required_states"`
-	SetBotStates       []string              `json:"set_bot_states"`
-	Considerations     []ActionConsideration `json:"considerations"`
-	Command            ActionCommand         `json:"command"`
-}
+type (
+	// Action is what is considered for execution.  It will receive a Final Score from it's Weight and Consideration Final Scores
+	Action struct {
+		Name               string                `json:"name"`
+		Info               string                `json:"info"`
+		IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
+		Weight             float64               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
+		WeightMin          float64               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
+		WeightThreshold    float64               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
+		RequiredLockTimers []string              `json:"required_lock_timers"`
+		RequiredStates     []string              `json:"required_states"`
+		SetBotStates       []string              `json:"set_bot_states"`
+		Considerations     []ActionConsideration `json:"considerations"`
+		Command            ActionCommand         `json:"command"`
+	}
+)
 
 type BotActionData struct {
-	ActionName             string          // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
-	FinalScore             bool            // Final Score is the total result of calculations to Score this action for execution
-	IsActive               bool            // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
-	ActiveStartTime        time.Time       // Time this Active started, so we can use it for an Evaluation variable
-	LastExecutedActionTime time.Time       // Last time we executed this Action
-	Time                   time.Time       // When this was updated
-	History                []BotActionData // We keep N records history, but no recursive depth.  Top level keeps history, no history nodes keep history
-}
-
-type BotVariableValue struct {
-	Name  string
-	Value float32
-	Time  time.Time
+	ActionName             string    // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
+	FinalScore             bool      // Final Score is the total result of calculations to Score this action for execution
+	IsActive               bool      // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
+	ActiveStartTime        time.Time // Time this Active started, so we can use it for an Evaluation variable
+	LastExecutedActionTime time.Time // Last time we executed this Action
+	Time                   time.Time // When this was updated
 }
 
 type Bot struct {
 	Name           string
-	VariableValues []BotVariableValue
+	VariableValues map[string]float64
 	StateValues    []string
 	CommandHistory []ActionCommandResult
 	LockTimers     []BotLockTimer
@@ -180,8 +176,8 @@ type BotVariable struct {
 	QueryKey       string          `json:"query_key"`       // Metric key to extract
 	QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
 	Evaluate       string          `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
-	BoolRangeStart float32         `json:"bool_range_start"`
-	BoolRangeEnd   float32         `json:"bool_range_end"`
+	BoolRangeStart float64         `json:"bool_range_start"`
+	BoolRangeEnd   float64         `json:"bool_range_end"`
 	BoolInvert     bool            `json:"bool_invert"`
 	Export         bool            `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
 }
@@ -196,7 +192,7 @@ type BotGroup struct {
 	LockTimers       []BotLockTimer            `json:"lock_timers"`
 	BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
 	BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
-	ActionScoreMin   float32                   `json:"action_score_min"` // Minimum score to execute Action
+	ActionScoreMin   float64                   `json:"action_score_min"` // Minimum score to execute Action
 	Actions          []Action                  `json:"actions"`
 	Bots             []Bot
 

@@ -5,8 +5,8 @@
         {{#each bot.VariableValues as |value valueIndex|}} <!-- Action Consideration:Start -->
         <div class="control">
             <div class="tags has-addons">
-                <span class="tag is-warning">{{value.Name}}</span>
-                <span class="tag is-info">{{value.Value}}</span>
+                <span class="tag is-warning">{{valueIndex}}</span>
+                <span class="tag is-info">{{value}}</span>
             </div>
         </div>
         {{/each}} <!-- Action Consideration:End -->

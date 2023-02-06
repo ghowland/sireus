@@ -32,7 +32,7 @@ func GetAPIPlotData(appConfig AppConfig, c *fiber.Ctx) string {
 
 	if xPos >= 0 {
 		mapData["plot_selected_x"] = xPos
-		mapData["plot_selected_y"] = GetCurveValue(curveData, float32(xPos))
+		mapData["plot_selected_y"] = GetCurveValue(curveData, float64(xPos))
 	}
 
 	jsonOutput, _ := json.Marshal(mapData)

@@ -8,7 +8,7 @@
             <th><abbr title="Time Updated">Time</abbr></th>
         </tr>
         </thead>
-        {{#if_bot_variable_value_length bot.VariableValues 10}}
+        {{#if_map_string_float64_length bot.VariableValues 10}}
             <tfoot>
             <tr>
                 <th><abbr title="Variable Name">Name</abbr></th>
@@ -16,16 +16,15 @@
                 <th><abbr title="Time Updated">Time</abbr></th>
             </tr>
             </tfoot>
-        {{/if_bot_variable_value_length}}
+        {{/if_map_string_float64_length}}
         <tbody>
         </tbody>
 
         {{#each bot.VariableValues as |value valueIndex|}} <!-- Action Consideration:Start -->
 
             <tr>
-                <td>{{value.Name}}</td>
-                <td>{{value.Value}}</td>
-                <td>{{value.Time}}</td>
+                <td>{{valueIndex}}</td>
+                <td>{{value}}</td>
             </tr>
 
         {{/each}} <!-- Action Consideration:End -->

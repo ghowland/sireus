@@ -10,22 +10,22 @@ import (
 
 func LoadBotGroupConfig(path string) BotGroup {
 	botGroupData, err := os.ReadFile(path)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	var botGroup BotGroup
 	err = json.Unmarshal(botGroupData, &botGroup)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	return botGroup
 }
 
 func LoadSiteConfig(appConfig AppConfig) Site {
 	siteData, err := os.ReadFile(appConfig.SiteConfigPath)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	var site Site
 	err = json.Unmarshal(siteData, &site)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	// Load all our Bot Groups
 	for _, botGroupPath := range site.BotGroupPaths {

@@ -18,11 +18,11 @@ type AppConfig struct {
 
 func LoadConfig(path string) AppConfig {
 	appConfigData, err := os.ReadFile(path)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	var appConfig AppConfig
 	err = json.Unmarshal(appConfigData, &appConfig)
-	util.Check(err)
+	util.CheckPanic(err)
 
 	return appConfig
 }

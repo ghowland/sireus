@@ -1,8 +1,10 @@
 package extdata
 
 import (
+	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -13,6 +15,9 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(site, index)
 
+		// Clear all the bot variables, so our map starts fresh every time
+		ClearAllBotVariables(site, index)
+
 		// Update Bot Variables from our Queries
 		UpdateBotsFromQueries(site, index)
 
@@ -22,25 +27,70 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 	}
 }
 
+func ClearAllBotVariables(site *appdata.Site, botGroupIndex int) {
+	for botIndex, _ := range site.BotGroups[botGroupIndex].Bots {
+		site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = map[string]float64{}
+	}
+}
+
 func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
+	// Clear all teh Bot VariableValues
+
+	// Create a list of names
+	queryVariableNames := []string{}
 	for _, variable := range botGroup.Variables {
-		
+		// Skip non-Synthetic variables
+		if len(variable.Evaluate) == 0 {
+			continue
+		}
+
+		queryVariableNames = append(queryVariableNames, variable.Name)
+	}
+
+	for _, variable := range botGroup.Variables {
+		// Skip non-Synthetic variables
+		if len(variable.Evaluate) == 0 {
+			continue
+		}
+
+		// Compile Express to be used by every bot, with their own data
+		expression, err := govaluate.NewEvaluableExpression(variable.Evaluate)
+		util.Check(err)
+
 		for botIndex, bot := range botGroup.Bots {
-			// Skip non-Synthetic variables
-			if len(variable.Evaluate) == 0 {
-				continue
+			evalMap := GetBotEvalMap(bot, queryVariableNames)
+
+			log.Printf("Eval Map: %v", evalMap)
+
+			resultInt, err := expression.Evaluate(evalMap)
+			util.Check(err)
+
+			result, err := util.ConvertInterfaceToFloat(resultInt)
+			if util.Check(err) {
+				continue // Skip this variable, it was invalid
 			}
 
-			evalMap := map[string]float64{}
-
-			// Build a map from this bot's variables
-			for _, variableValue := range bot.VariableValues {
-
-			}
+			// Set the value.  Only valid values will exist.
+			//NOTE(ghowland): A separate test will occur to see if this bot is missing variables and cant be processed
+			site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[variable.Name] = result
 		}
 	}
+}
+
+func GetBotEvalMap(bot appdata.Bot, queryVariableNames []string) map[string]interface{} {
+	evalMap := make(map[string]interface{})
+
+	// Build a map from this bot's variables
+	for variableName, value := range bot.VariableValues {
+		// Only add variables that are Query Variables, because they are known before synethetic evaluation
+		if util.StringInSlice(variableName, queryVariableNames) {
+			evalMap[variableName] = value
+		}
+	}
+
+	return evalMap
 }
 
 func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
@@ -93,7 +143,7 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 							//	log.Printf("Bot Group: %s  Bot: %s   Var Bot Key: '%s'  Variable: %s  Key: %s == %v -> %v", botGroup.Name, bot.Name, variable.BotKey, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey], variable.QueryKeyValue == promResult.Metric[variable.QueryKey])
 							//}
 
-							value := math.SmallestNonzeroFloat32
+							value := math.SmallestNonzeroFloat64
 							if len(promResult.Values) > 0 && len(promResult.Values[0]) > 0 {
 								value, err = strconv.ParseFloat(promResult.Values[0][1].(string), 32)
 								util.Check(err)
@@ -101,13 +151,7 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 
 							nameFormatted := util.HandlebarFormatText(variable.Name, promResult.Metric)
 
-							newValue := appdata.BotVariableValue{
-								Name:  nameFormatted,
-								Value: float32(value),
-								Time:  time.Now(),
-							}
-
-							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = append(site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues, newValue)
+							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[nameFormatted] = float64(value)
 
 							// If we were matching on a BotKey (normal), stop looking.  If no BotKey, do them all.
 							if len(variable.BotKey) > 0 {

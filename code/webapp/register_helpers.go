@@ -41,6 +41,8 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 	// NOTE(ghowland): I am choosing to do this on a per-data type basis instead of generalizing, as it will make
 	//				   targeted changes faster and easier in the future
 
+	// -- Go Data --
+
 	// The data structure needs to be []interface{} to work, it wont auto-cast from Handlerbars to here, like []appdata.Bots -> []interface{}
 	raymond.RegisterHelper("if_array_length", func(items []interface{}, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
@@ -50,8 +52,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	// Testing Length of Arrays for the different structs
-	raymond.RegisterHelper("if_bot_group_length", func(items []appdata.BotGroup, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_map_string_float64_length", func(items map[string]float64, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -59,7 +60,10 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_bot_variable_value_length", func(items []appdata.BotVariableValue, count int, options *raymond.Options) raymond.SafeString {
+	// -- Sireus Structs --
+
+	// Testing Length of Arrays for the different structs
+	raymond.RegisterHelper("if_bot_group_length", func(items []appdata.BotGroup, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {

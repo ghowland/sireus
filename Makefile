@@ -15,6 +15,9 @@ force-build:
 test:
 	@go test ./code/...
 
+doc:
+	@cd code ; ~/go/bin/gomarkdoc ./... > ../docs/godoc.md
+
 cov:
 	@go test -coverprofile=coverage.txt -covermode=atomic ./code/...
 

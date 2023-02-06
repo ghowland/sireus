@@ -9,7 +9,7 @@ import (
 
 type CurveData struct {
 	Name   string    `json:"name"`
-	Values []float32 `json:"values"`
+	Values []float64 `json:"values"`
 }
 
 func LoadCurveData(appConfig AppConfig, name string) CurveData {
@@ -27,20 +27,20 @@ func LoadCurveData(appConfig AppConfig, name string) CurveData {
 	return curveData
 }
 
-func GetCurveDataX(curveData CurveData) []float32 {
-	var xArray []float32
+func GetCurveDataX(curveData CurveData) []float64 {
+	var xArray []float64
 
 	for i := 0; i < len(curveData.Values); i++ {
-		xArray = append(xArray, float32(i)*0.01)
+		xArray = append(xArray, float64(i)*0.01)
 	}
 
 	return xArray
 }
 
-func GetCurveValue(curveData CurveData, x float32) float32 {
+func GetCurveValue(curveData CurveData, x float64) float64 {
 
 	for i := 0; i < len(curveData.Values); i++ {
-		curPosX := float32(i) * 0.01
+		curPosX := float64(i) * 0.01
 		if x <= curPosX {
 			return curveData.Values[i]
 		}
