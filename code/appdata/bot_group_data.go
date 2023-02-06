@@ -269,7 +269,7 @@ type (
 		BotTimeoutStale       util.Duration             `json:"bot_timeout_stale"`
 		BotTimeoutRemove      util.Duration             `json:"bot_timeout_remove"`
 		ActionThreshold       float64                   `json:"action_threshold"`        // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-		JournalRollupStates   []BotForwardSequenceState `json:"journal_rollup_states"`   // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
+		JournalRollupStates   []string                  `json:"journal_rollup_states"`   // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
 		JournalRollupDuration util.Duration             `json:"journal_rollup_duration"` // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
 		Queries               []BotQuery                `json:"queries"`
 		Variables             []BotVariable             `json:"variables"`
