@@ -42,7 +42,7 @@ func (act ActionCommandType) String() string {
 }
 
 type (
-	// When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result
+	// When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result.
 	ActionCommandResult struct {
 		ActionName    string
 		ResultStatus  string
@@ -55,7 +55,7 @@ type (
 )
 
 type (
-	// When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request
+	// When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request.
 	ActionCommand struct {
 		Type              ActionCommandType `json:"type"`
 		Content           string            `json:"content"`
