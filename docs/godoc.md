@@ -97,7 +97,7 @@ type Action struct {
 
 ## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L59-L66>)
 
-When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request
+When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request.
 
 ```go
 type ActionCommand struct {
@@ -112,7 +112,7 @@ type ActionCommand struct {
 
 ## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/appdata/bot_group_data.go#L46-L54>)
 
-When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result
+When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result.
 
 ```go
 type ActionCommandResult struct {
