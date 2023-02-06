@@ -61,8 +61,10 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 
 				//log.Printf("Set Consideration Result: %s = %v", consider.Name, result)
 
+				considerationScore := result * consider.Weight
+
 				// Set the value.  Only valid values will exist.
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = result
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = considerationScore
 			}
 		}
 	}
