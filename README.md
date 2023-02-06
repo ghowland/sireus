@@ -21,6 +21,10 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Locking commands per Bot or Bot Group, to stop conflicting commands from running at once, or within a window to verify results of previous commands.
 - Uses the ["Utility AI" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.
 
+## Links
+
+[Data Structure and Internal Function Documentation](docs/godoc.md)
+
 ### Sireus Bots and Bot Groups
 
 - A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or services (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
@@ -97,10 +101,6 @@ Having the ability to tune values at the top level Action, and for each Consider
 ## Data Structure
 
 ![Data Structure](/docs/images/data_structures.png)
-
-## Links
-
-[Data Structure and Internal Function Documentation](docs/godoc.md)
 
 
 ## Portrait
