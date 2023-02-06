@@ -261,18 +261,20 @@ type (
 	// BotGroup is used to create Bots.  Bots are the core of Sireus.  BotGroups define all the information used to
 	// populate the ephemeral Bot structure.
 	BotGroup struct {
-		Name             string                    `json:"name"`
-		Info             string                    `json:"info"`
-		BotExtractor     BotExtractorQueryKey      `json:"bot_extractor"`
-		States           []BotForwardSequenceState `json:"states"`
-		LockTimers       []BotLockTimer            `json:"lock_timers"`
-		BotTimeoutStale  util.Duration             `json:"bot_timeout_stale"`
-		BotTimeoutRemove util.Duration             `json:"bot_timeout_remove"`
-		ActionThreshold  float64                   `json:"action_threshold"` // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-		Queries          []BotQuery                `json:"queries"`
-		Variables        []BotVariable             `json:"variables"`
-		Actions          []Action                  `json:"actions"`
-		Bots             []Bot
+		Name                  string                    `json:"name"`
+		Info                  string                    `json:"info"`
+		BotExtractor          BotExtractorQueryKey      `json:"bot_extractor"`
+		States                []BotForwardSequenceState `json:"states"`
+		LockTimers            []BotLockTimer            `json:"lock_timers"`
+		BotTimeoutStale       util.Duration             `json:"bot_timeout_stale"`
+		BotTimeoutRemove      util.Duration             `json:"bot_timeout_remove"`
+		ActionThreshold       float64                   `json:"action_threshold"`        // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
+		JournalRollupStates   []BotForwardSequenceState `json:"journal_rollup_states"`   // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
+		JournalRollupDuration util.Duration             `json:"journal_rollup_duration"` // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
+		Queries               []BotQuery                `json:"queries"`
+		Variables             []BotVariable             `json:"variables"`
+		Actions               []Action                  `json:"actions"`
+		Bots                  []Bot
 
 		// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
 		InvalidBots []string

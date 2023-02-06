@@ -23,6 +23,8 @@
   "bot_timeout_stale": 60,
   "bot_timeout_remove": 120,
   "action_threshold": 0.6,
+  "journal_rollup_states": ["Operation.Problem", "Operation.Resolved", "Operation.EscalatingWait"],
+  "journal_rollup_duration": "30m",
   "queries": [
     {
       "query_server": "prometheus_primary",
