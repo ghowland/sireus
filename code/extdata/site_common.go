@@ -44,27 +44,48 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 		for _, promResult := range promData.Data.Result {
 			// Loop through all the Variables, for every Bot.  In a Bot Group, all Bots are expected to have the same vars
 			for _, variable := range botGroup.Variables {
+				// Skip variables that dont match this query
+				if variable.QueryName != query.Name {
+					continue
+				}
+
 				//log.Printf("Bot Group: %s  Variable: %s  Key: %s == %v", botGroup.Name, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey])
 
-				// If we have a match for this variable, next look for what Bot it matches
-				if variable.QueryKeyValue == promResult.Metric[variable.QueryKey] {
-					//log.Printf("Match: Bot Group: %s  Variable: %s  Key: %s == %v", botGroup.Name, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey])
+				// If we have a match for this variable, next look for what Bot it matches, or it has no QueryKey we always accept it
+				if len(variable.QueryKey) == 0 || (len(variable.QueryKey) > 0 && variable.QueryKeyValue == promResult.Metric[variable.QueryKey]) {
+					//if variable.QueryKey == "volume" {
+					//	log.Printf("Bot Group: %s   Var Bot Key: '%s'  Variable: %s  Key: %s == %v -> %v", botGroup.Name, variable.BotKey, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey], variable.QueryKeyValue == promResult.Metric[variable.QueryKey])
+					//}
+
 					for botIndex, bot := range botGroup.Bots {
-						if promResult.Metric[variable.BotKey] == bot.Name {
+						// If this Metric BotKey matches the Bot name OR the BotKey is empty, it is always accepted
+						//NOTE(ghowland): Empty BotKey is used to pull data that is not specific to this Bot, but can be used as a general signal
+						if promResult.Metric[variable.BotKey] == bot.Name || len(variable.BotKey) == 0 {
+
+							//if variable.QueryName == "CPU Usage" {
+							//	log.Printf("Bot Group: %s  Bot: %s   Var Bot Key: '%s'  Variable: %s  Key: %s == %v -> %v", botGroup.Name, bot.Name, variable.BotKey, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey], variable.QueryKeyValue == promResult.Metric[variable.QueryKey])
+							//}
+
 							value := math.SmallestNonzeroFloat32
 							if len(promResult.Values) > 0 && len(promResult.Values[0]) > 0 {
 								value, err = strconv.ParseFloat(promResult.Values[0][1].(string), 32)
 								util.Check(err)
 							}
 
+							nameFormatted := util.HandlebarFormatText(variable.Name, promResult.Metric)
+
 							newValue := appdata.BotVariableValue{
-								Name:  variable.Name,
+								Name:  nameFormatted,
 								Value: float32(value),
 								Time:  time.Now(),
 							}
-							//log.Printf("Final: Bot Group: %s  Bot: %s  New Prom Value: %v", botGroup.Name, bot.Name, newValue)
+
 							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = append(site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues, newValue)
-							break
+
+							// If we were matching on a BotKey (normal), stop looking.  If no BotKey, do them all.
+							if len(variable.BotKey) > 0 {
+								break
+							}
 						}
 					}
 				}

@@ -8,6 +8,34 @@
       "name": "Window Services",
       "info": "Using Windows Services to test things out",
       "query": "windows_service_state"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Service Status",
+      "info": "Getting information from a different query",
+      "query": "windows_service_status"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Disk Free Space",
+      "info": "Getting free bytes on the disks",
+      "query": "windows_logical_disk_free_bytes"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "CPU Usage",
+      "info": "Getting the CPU usage for the system",
+      "query": "100 - (avg by (instance) (irate(windows_cpu_time_total{mode=\"idle\"}[1m])) * 100)"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Network Usage",
+      "info": "Getting the Network usage for the system",
+      "query": "irate(windows_net_bytes_total[30s])"
     }
   ],
   "bot_extractor": {
@@ -17,47 +45,135 @@
   "variables": [
     {
       "type": 0,
-      "name": "running",
+      "name": "service_running",
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
       "query_key_value": "running",
       "bool_range_start": 1,
       "bool_range_end": 1,
-      "bool_invert": false
+      "bool_invert": false,
+      "export": false
     },
     {
       "type": 0,
-      "name": "stopped",
+      "name": "service_stopped",
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
       "query_key_value": "stopped",
       "bool_range_start": 1,
       "bool_range_end": 1,
-      "bool_invert": false
+      "bool_invert": false,
+      "export": false
     },
     {
       "type": 0,
-      "name": "unknown",
+      "name": "service_unknown",
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
       "query_key_value": "unknown",
       "bool_range_start": 1,
       "bool_range_end": 1,
-      "bool_invert": false
+      "bool_invert": false,
+      "export": false
     },
     {
       "type": 0,
-      "name": "paused",
+      "name": "service_paused",
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
       "query_key_value": "paused",
       "bool_range_start": 1,
       "bool_range_end": 1,
-      "bool_invert": false
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_ok",
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "ok",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_service",
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "service",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_error",
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "error",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_free_space_C",
+      "bot_key": "",
+      "query_name": "Disk Free Space",
+      "query_key": "volume",
+      "query_key_value": "C:",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_free_space_D",
+      "bot_key": "",
+      "query_name": "Disk Free Space",
+      "query_key": "volume",
+      "query_key_value": "D:",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "cpu_usage",
+      "bot_key": "",
+      "query_name": "CPU Usage",
+      "query_key": "",
+      "query_key_value": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "network_usage_{{nic}}",
+      "bot_key": "",
+      "query_name": "Network Usage",
+      "query_key": "",
+      "query_key_value": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
     }
   ],
   "states": [

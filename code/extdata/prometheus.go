@@ -6,7 +6,9 @@ import (
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
 	"io"
+	"log"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -30,9 +32,9 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
 
-	url := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), query, start, end)
+	url := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
 
-	//log.Print("Prom URL: ", url)
+	log.Print("Prom URL: ", url)
 
 	resp, err := http.Get(url)
 	util.Check(err)

@@ -168,6 +168,7 @@ type BotVariable struct {
 	BoolRangeStart float32         `json:"bool_range_start"`
 	BoolRangeEnd   float32         `json:"bool_range_end"`
 	BoolInvert     bool            `json:"bool_invert"`
+	Export         bool            `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
 }
 
 type BotGroup struct {
