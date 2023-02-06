@@ -179,6 +179,7 @@ type BotVariable struct {
 	QueryName      string          `json:"query_name"`
 	QueryKey       string          `json:"query_key"`       // Metric key to extract
 	QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
+	Evaluate       string          `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
 	BoolRangeStart float32         `json:"bool_range_start"`
 	BoolRangeEnd   float32         `json:"bool_range_end"`
 	BoolInvert     bool            `json:"bool_invert"`

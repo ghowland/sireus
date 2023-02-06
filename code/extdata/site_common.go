@@ -10,10 +10,20 @@ import (
 
 func UpdateSiteBotGroups(site *appdata.Site) {
 	for index, _ := range site.BotGroups {
+		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(site, index)
 
+		// Update Bot Variables from our Queries
 		UpdateBotsFromQueries(site, index)
+
+		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
+		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
+		UpdateBotsWithSyntheticVariables(site, index)
 	}
+}
+
+func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
+
 }
 
 func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
@@ -44,8 +54,8 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 		for _, promResult := range promData.Data.Result {
 			// Loop through all the Variables, for every Bot.  In a Bot Group, all Bots are expected to have the same vars
 			for _, variable := range botGroup.Variables {
-				// Skip variables that dont match this query
-				if variable.QueryName != query.Name {
+				// Skip variables that dont match this query, OR we have an Evaluate value, so this is an Synthetic Variable (not from Query)
+				if variable.QueryName != query.Name || len(variable.Evaluate) > 0 {
 					continue
 				}
 
@@ -91,6 +101,5 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 				}
 			}
 		}
-
 	}
 }

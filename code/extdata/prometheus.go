@@ -23,11 +23,26 @@ type PrometheusResponseData struct {
 }
 
 type PrometheusResponse struct {
-	Status string                 `json:"status"`
-	Data   PrometheusResponseData `json:"data"`
+	Status       string                 `json:"status"`
+	Data         PrometheusResponseData `json:"data"`
+	RequestTime  time.Time              // When the Request was made
+	ResponseTime time.Time              // When the Response was received
+}
+
+type QueryResult struct {
+	QueryServer        string // Server this Query came from
+	QueryType          appdata.BotQueryType
+	QueryName          string             // The Query
+	PrometheusResponse PrometheusResponse // The Response
+}
+
+type QueryManager struct {
+	Results []QueryResult
 }
 
 func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
+	queryStartTime := time.Now()
+
 	start := timeStart.UTC().Format(time.RFC3339)
 
 	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
@@ -47,6 +62,10 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 	var jsonResponse PrometheusResponse
 	err = json.Unmarshal(body, &jsonResponse)
 	util.Check(err)
+
+	// Set the time, so we know when we got it
+	jsonResponse.RequestTime = queryStartTime
+	jsonResponse.ResponseTime = time.Now()
 
 	return jsonResponse
 }
