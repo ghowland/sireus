@@ -4,7 +4,6 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
-	"log"
 	"math"
 	"strconv"
 	"time"
@@ -42,7 +41,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 	queryVariableNames := []string{}
 	for _, variable := range botGroup.Variables {
 		// Skip non-Synthetic variables
-		if len(variable.Evaluate) == 0 {
+		if len(variable.Evaluate) > 0 {
 			continue
 		}
 
@@ -62,7 +61,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 		for botIndex, bot := range botGroup.Bots {
 			evalMap := GetBotEvalMap(bot, queryVariableNames)
 
-			log.Printf("Eval Map: %v", evalMap)
+			//log.Printf("Eval Map: %v", evalMap)
 
 			resultInt, err := expression.Evaluate(evalMap)
 			util.Check(err)
@@ -71,6 +70,8 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 			if util.Check(err) {
 				continue // Skip this variable, it was invalid
 			}
+
+			//log.Printf("Set Synethtic Variable: %s = %v", variable.Name, result)
 
 			// Set the value.  Only valid values will exist.
 			//NOTE(ghowland): A separate test will occur to see if this bot is missing variables and cant be processed

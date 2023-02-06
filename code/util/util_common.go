@@ -12,10 +12,10 @@ import (
 func Check(e error) bool {
 	if e != nil {
 		log.Printf("ERROR: %s", e.Error())
-		return false
+		return true
 	}
 
-	return true
+	return false
 }
 
 // Call CheckPanic for configuration errors that can't be solved.
