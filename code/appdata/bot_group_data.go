@@ -87,12 +87,11 @@ type (
 	// This stores the Final Scores and related data for all Actions, so they can be compared to determin if any
 	// Action should be executed
 	BotActionData struct {
-		ActionName             string    // Action.Name matches to store data about that action per Bot.  Can use a map[string]BotActionData
-		FinalScore             bool      // Final Score is the total result of calculations to Score this action for execution
-		IsActive               bool      // This Action is Active is the FinalScore is over the WeightThreshold, even if it is not executed
-		ActiveStartTime        time.Time // Time this Active started, so we can use it for an Evaluation variable
-		LastExecutedActionTime time.Time // Last time we executed this Action
-		Time                   time.Time // When this was updated
+		FinalScore             bool               // Final Score is the total result of calculations to Score this action for execution
+		ConsiderationScores    map[string]float64 // Considerations Results for this Bot
+		IsAvailable            bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
+		AvailableStartTime     time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
+		LastExecutedActionTime time.Time          // Last time we executed this Action.  Stateful.
 	}
 )
 

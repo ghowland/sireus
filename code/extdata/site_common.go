@@ -4,6 +4,7 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -23,6 +24,46 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
 		UpdateBotsWithSyntheticVariables(site, index)
+
+		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
+		UpdateBotActionConsiderations(site, index)
+	}
+}
+
+func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
+	botGroup := site.BotGroups[botGroupIndex]
+
+	for botIndex, bot := range botGroup.Bots {
+		evalMap := GetBotEvalMapAllVariables(bot)
+
+		for _, action := range botGroup.Actions {
+			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
+			if _, ok := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = appdata.BotActionData{}
+			}
+
+			for _, consider := range action.Considerations {
+				// Compile Express to be used by every bot, with their own data
+				expression, err := govaluate.NewEvaluableExpression(consider.Evaluate)
+				util.Check(err)
+
+				resultInt, err := expression.Evaluate(evalMap)
+				util.Check(err)
+
+				result, err := util.ConvertInterfaceToFloat(resultInt)
+				if util.Check(err) {
+					// Invalidate this variable, result was invalid
+					log.Printf("Set Consideration Invalid: %s", consider.Name)
+					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = math.SmallestNonzeroFloat64
+					continue
+				}
+
+				log.Printf("Set Consideration Result: %s = %v", consider.Name, result)
+
+				// Set the value.  Only valid values will exist.
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationScores[consider.Name] = result
+			}
+		}
 	}
 }
 
@@ -59,7 +100,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 		util.Check(err)
 
 		for botIndex, bot := range botGroup.Bots {
-			evalMap := GetBotEvalMap(bot, queryVariableNames)
+			evalMap := GetBotEvalMapOnlyQueries(bot, queryVariableNames)
 
 			//log.Printf("Eval Map: %v", evalMap)
 
@@ -80,7 +121,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func GetBotEvalMap(bot appdata.Bot, queryVariableNames []string) map[string]interface{} {
+func GetBotEvalMapOnlyQueries(bot appdata.Bot, queryVariableNames []string) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
 	// Build a map from this bot's variables
@@ -94,6 +135,16 @@ func GetBotEvalMap(bot appdata.Bot, queryVariableNames []string) map[string]inte
 	return evalMap
 }
 
+func GetBotEvalMapAllVariables(bot appdata.Bot) map[string]interface{} {
+	evalMap := make(map[string]interface{})
+
+	// Build a map from this bot's variables
+	for variableName, value := range bot.VariableValues {
+		evalMap[variableName] = value
+	}
+
+	return evalMap
+}
 func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
 	query, err := appdata.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
