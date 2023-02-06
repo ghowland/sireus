@@ -23,7 +23,24 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 }
 
 func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
+	botGroup := site.BotGroups[botGroupIndex]
 
+	for _, variable := range botGroup.Variables {
+		
+		for botIndex, bot := range botGroup.Bots {
+			// Skip non-Synthetic variables
+			if len(variable.Evaluate) == 0 {
+				continue
+			}
+
+			evalMap := map[string]float64{}
+
+			// Build a map from this bot's variables
+			for _, variableValue := range bot.VariableValues {
+
+			}
+		}
+	}
 }
 
 func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {

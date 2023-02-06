@@ -97,3 +97,7 @@ Having the ability to tune values at the top level Action, and for each Consider
 ## Data Structure
 
 ![Data Structure](/docs/images/data_structures.png)
+
+## Portrait
+
+![Sireus Portrait](/docs/images/sireus_dog_star.png)
