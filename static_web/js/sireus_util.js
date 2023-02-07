@@ -1,6 +1,8 @@
 function Toast(style, heading, text)
 {
-    if (style != "error" && style != "warning" && style != "info" && style != "success") style = "info";
+    if (style != "error" && style != "warning" && style != "info" && style != "success" && style != "danger" && style != "primary") {
+        style = "info";
+    }
 
     $.toast({
         text: text, // Text that is to be shown in the toast
