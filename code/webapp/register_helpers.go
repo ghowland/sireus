@@ -7,6 +7,7 @@ import (
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"strings"
+	"time"
 )
 
 func RegisterHandlebarsHelpers() {
@@ -45,6 +46,24 @@ func RegisterHandlebarsHelpers_IfTests() {
 			return raymond.SafeString("")
 		}
 	})
+
+	// Go time.Time == 0
+	raymond.RegisterHelper("if_time_never", func(t time.Time, options *raymond.Options) raymond.SafeString {
+		if t.IsZero() {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
+	})
+
+	// Go time.Time != 0
+	raymond.RegisterHelper("if_not_time_never", func(t time.Time, options *raymond.Options) raymond.SafeString {
+		if !t.IsZero() {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
+	})
 }
 
 func RegisterHandlebarsHelpers_GetAppData() {
@@ -80,6 +99,11 @@ func RegisterHandlebarsHelpers_FormatData() {
 		output := fmt.Sprintf(format, value)
 		//log.Printf("Format: %s  Val: %v  Output: %v", format, value, output)
 		return raymond.SafeString(output)
+	})
+
+	// Format Time
+	raymond.RegisterHelper("format_time_since", func(t time.Time) raymond.SafeString {
+		return raymond.SafeString(time.Since(t).String())
 	})
 
 	// Variables

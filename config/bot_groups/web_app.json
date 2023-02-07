@@ -280,51 +280,6 @@
   ],
   "actions": [
     {
-      "name": "Service Stopped, Out of Space",
-      "info": "Try to fix this thing by doing something",
-      "is_launched": true,
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0,
-      "weight_threshold": 0.5,
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Normal"
-      ],
-      "considerations": [
-        {
-          "name": "Stopped Properly",
-          "weight": 7.0,
-          "curve": "inc_smooth",
-          "range_start": 0,
-          "range_end": 100,
-          "evaluate": "service_stopped * status_ok"
-        },
-        {
-          "name": "Less than 10% Disk",
-          "weight": 2.0,
-          "curve": "inc_linear",
-          "range_start": 0.1,
-          "range_end": 1,
-          "evaluate": "disk_used_percent_D - 0.1"
-        }
-      ],
-      "command": {
-        "type": 0,
-        "content": "echo This fixes everything",
-        "success_status": 0,
-        "success_content": "",
-        "lock_timer_duration": "30s",
-        "host_exec_key": "laptop.ghowland",
-        "set_bot_states": [
-          "Operation.Problem"
-        ]
-      },
-      "journal_template": "The state for Action Y occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
-    },
-    {
       "is_launched": true,
       "name": "Service Stopped, Has Storage",
       "info": "Try to fix this thing by doing something",
@@ -368,6 +323,51 @@
         ],
         "journal_template": "The state for Action Z occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
       }
+    },
+    {
+      "name": "Service Stopped, Out of Space",
+      "info": "Try to fix this thing by doing something",
+      "is_launched": true,
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0,
+      "weight_threshold": 0.5,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Normal"
+      ],
+      "considerations": [
+        {
+          "name": "Stopped Properly",
+          "weight": 7.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 100,
+          "evaluate": "service_stopped * status_ok"
+        },
+        {
+          "name": "Less than 10% Disk",
+          "weight": 2.0,
+          "curve": "inc_linear",
+          "range_start": 0.1,
+          "range_end": 1,
+          "evaluate": "disk_used_percent_D - 0.1"
+        }
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo This fixes everything",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ]
+      },
+      "journal_template": "The state for Action Y occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
     }
   ]
 }

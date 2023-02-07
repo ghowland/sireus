@@ -93,12 +93,12 @@ type (
 	// Action should be executed
 	BotActionData struct {
 		FinalScore                   float64            // Final Score is the total result of calculations to Score this action for execution
-		ConsiderationFinalScores     map[string]float64 // Considerations Final Results for this Bot
-		ConsiderationEvaluatedScores map[string]float64 // Considerations Evaluated score, but not weighted results for this Bot
 		IsAvailable                  bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
 		AvailableStartTime           time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
 		LastExecutedActionTime       time.Time          // Last time we executed this Action.  Stateful.
 		Details                      []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
+		ConsiderationFinalScores     map[string]float64 // Considerations Final Results for this Bot
+		ConsiderationEvaluatedScores map[string]float64 // Considerations Evaluated score, but not weighted results for this Bot
 	}
 )
 
@@ -113,13 +113,14 @@ type (
 	// If a Bot is missing any data for it's variables, it is considered Invalid, because we are not
 	// operating with a full set of data.
 	Bot struct {
-		Name           string
-		VariableValues map[string]float64
-		StateValues    []string
-		CommandHistory []ActionCommandResult
-		LockTimers     []BotLockTimer
-		ActionData     map[string]BotActionData // Key is Action.Name
-		FreezeActions  bool                     // If true, no actions will be taken for this Bot.  Single agent control
+		Name                 string
+		VariableValues       map[string]float64
+		SortedVariableValues util.PairFloat64List // Sorted VariableValues, Handlebars doesn't make this easy
+		StateValues          []string
+		CommandHistory       []ActionCommandResult
+		LockTimers           []BotLockTimer
+		ActionData           map[string]BotActionData // Key is Action.Name
+		FreezeActions        bool                     // If true, no actions will be taken for this Bot.  Single agent control
 	}
 )
 

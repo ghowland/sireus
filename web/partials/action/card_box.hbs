@@ -12,18 +12,32 @@
             <span class="{{#with_bot_action bot action}}{{#if this.IsAvailable}}has-text-black{{else}}has-text-danger{{/if}}{{/with_bot_action}}">{{action.Name}}</span>
 
             <span style="padding-left: 1.5em">
-                <span class="icon has-text-info">
+                <span class="icon has-text-info has-tooltip-arrow" data-tooltip="Info" style="border-bottom: 0px solid !important;">
                   <i class="fas fa-info-circle"></i>
                 </span>
-                <span class="icon has-text-success">
+                <span class="icon has-text-success has-tooltip-arrow" data-tooltip="Action" style="border-bottom: 0px solid !important;">
                   <i class="fas fa-check-square"></i>
                 </span>
-                <span class="icon has-text-warning">
+                <span class="icon has-text-warning has-tooltip-arrow" data-tooltip="Force Execute" style="border-bottom: 0px solid !important;">
                   <i class="fas fa-exclamation-triangle"></i>
                 </span>
-                <span class="icon has-text-danger">
+                <span class="icon has-text-danger has-tooltip-arrow" data-tooltip="Edit" style="border-bottom: 0px solid !important;">
                   <i class="fas fa-ban"></i>
                 </span>
+            </span>
+            <span style="padding-left: 1.5em">
+                {{#with_bot_action bot action}}
+                    {{#if_not_time_never this.LastExecutedActionTime}}
+                        Last Executed: {{format_time_since this.LastExecutedActionTime}}
+                    {{/if_not_time_never}}
+                {{/with_bot_action}}
+            </span>
+            <span style="padding-left: 1.5em">
+                {{#with_bot_action bot action}}
+                    {{#if this.IsAvailable}}
+                       Available Since: {{format_time_since this.AvailableStartTime}}
+                    {{/if}}
+                {{/with_bot_action}}
             </span>
         </p>
         <button class="card-header-icon" aria-label="more options">

@@ -26,6 +26,18 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
 		UpdateBotActionConsiderations(site, index)
+
+		// Sort alpha, so they print consistently
+		SortAllVariables(site, index)
+	}
+}
+
+func SortAllVariables(site *appdata.Site, botGroupIndex int) {
+	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
+		values := util.SortMapStringFloat64ByKey(bot.VariableValues)
+
+		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = values
+		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues)
 	}
 }
 
@@ -81,9 +93,13 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 			actionData.Details = details
 			// Action.WeightThreshold determines if an Action is available for possible execution
 			if finalScore > action.WeightThreshold {
-				actionData.IsAvailable = true
+				if !actionData.IsAvailable {
+					actionData.IsAvailable = true
+					actionData.AvailableStartTime = time.Now()
+				}
 			} else {
 				actionData.IsAvailable = false
+				actionData.AvailableStartTime = time.UnixMilli(0)
 			}
 			site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}

@@ -30,7 +30,7 @@
 
         {{#each action.Considerations as |consider considerIndex|}} <!-- Action Consideration:Start -->
             <tr>
-                <th>{{consider.Name}}</th>
+                <th><span class="has-tooltip-arrow" data-tooltip="{{consider.Evaluate}}">{{consider.Name}}</span></th>
                 <td>{{consider.Weight}}</td>
                 <td>{{consider.RangeStart}}</td>
                 <td>{{consider.RangeEnd}}</td>
