@@ -4,6 +4,7 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -28,16 +29,25 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 		UpdateBotActionConsiderations(site, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariables(site, index)
+		SortAllVariablesAndActions(site, index)
 	}
 }
 
-func SortAllVariables(site *appdata.Site, botGroupIndex int) {
+func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int) {
 	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
-		values := util.SortMapStringFloat64ByKey(bot.VariableValues)
+		// Sort VariableValues
+		sortedVars := util.SortMapStringFloat64ByKey(bot.VariableValues)
+		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
-		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = values
-		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues)
+		// Sort ActionData
+		sortedActions := appdata.SortMapStringActionDataByFinalScore(bot.ActionData, false)
+		site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
+
+		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
+
+		if bot.Name == "sensordataservice" {
+			log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
+		}
 	}
 }
 
@@ -254,4 +264,6 @@ func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
 			}
 		}
 	}
+
+	log.Printf("Done with initial Bot queries...")
 }

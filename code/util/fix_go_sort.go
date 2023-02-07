@@ -1,7 +1,6 @@
 package util
 
 import (
-	"log"
 	"sort"
 )
 
@@ -38,7 +37,7 @@ func SortMapStringFloat64ByKey(input map[string]float64) PairFloat64List {
 }
 
 // TODO(ghowland):PERF: Inefficient, but I am working quickly.  Make it better later.
-func SortMapStringFloat64ByValue(input map[string]float64) PairFloat64List {
+func SortMapStringFloat64ByValue(input map[string]float64, sortForward bool) PairFloat64List {
 	pairList := PairFloat64List{}
 
 	// Create the PairList
@@ -50,9 +49,13 @@ func SortMapStringFloat64ByValue(input map[string]float64) PairFloat64List {
 		pairList = append(pairList, newPair)
 	}
 
-	sort.Sort(pairList)
+	if sortForward {
+		sort.Sort(pairList)
+	} else {
+		sort.Reverse(pairList)
+	}
 
-	log.Printf("Sorted: %v", pairList)
+	//log.Printf("Sorted: %v", pairList)
 
 	return pairList
 }

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/aymerick/raymond"
 	"log"
@@ -97,4 +98,11 @@ func BoolToFloatString(value bool) string {
 	} else {
 		return "0"
 	}
+}
+
+func PrintJson(value interface{}) string {
+	output, err := json.MarshalIndent(value, "", "  ")
+	Check(err)
+
+	return string(output)
 }

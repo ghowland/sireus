@@ -15,8 +15,10 @@
         </div>
     </div>
 
-    {{#each botGroup.Actions as |action actionIndex|}} <!-- Action:Start -->
-        {{> 'partials/action/card_box' }}
+    {{#each bot.SortedActionData as |actionData actionDataIndex|}} <!-- Action:Start -->
+        {{#with_action_from_bot botGroup bot actionDataIndex as |action|}}
+            {{> 'partials/action/card_box' }}
+        {{/with_action_from_bot}}
     {{/each}} <!-- Action:End -->
 
 </section>

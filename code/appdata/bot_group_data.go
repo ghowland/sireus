@@ -115,11 +115,12 @@ type (
 	Bot struct {
 		Name                 string
 		VariableValues       map[string]float64
-		SortedVariableValues util.PairFloat64List // Sorted VariableValues, Handlebars doesn't make this easy
+		SortedVariableValues util.PairFloat64List // Sorted VariableValues, Handlebars helper
 		StateValues          []string
 		CommandHistory       []ActionCommandResult
 		LockTimers           []BotLockTimer
 		ActionData           map[string]BotActionData // Key is Action.Name
+		SortedActionData     PairBotActionDataList    // Scored ActionData, Handlebars helper
 		FreezeActions        bool                     // If true, no actions will be taken for this Bot.  Single agent control
 	}
 )

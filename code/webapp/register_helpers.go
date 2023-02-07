@@ -34,6 +34,16 @@ func RegisterHandlebarsHelpers_WithData() {
 		botActionData := bot.ActionData[action.Name]
 		return raymond.SafeString(options.FnWith(botActionData))
 	})
+
+	// With Action from Bot
+	raymond.RegisterHelper("with_action_from_bot", func(botGroup appdata.BotGroup, bot appdata.Bot, actionDataIndex int, options *raymond.Options) raymond.SafeString {
+
+		botActionData := bot.SortedActionData[actionDataIndex]
+
+		botAction, err := appdata.GetAction(botGroup, botActionData.Key)
+		util.Check(err)
+		return raymond.SafeString(options.FnWith(botAction))
+	})
 }
 
 func RegisterHandlebarsHelpers_IfTests() {
