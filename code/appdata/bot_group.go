@@ -99,3 +99,13 @@ func GetActionConsideration(action Action, considerName string) (ActionConsidera
 	}
 	return ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
 }
+
+func AreAllActionStatesActive(action Action, bot Bot) bool {
+	for _, state := range action.RequiredStates {
+		if !util.StringInSlice(state, bot.StateValues) {
+			return false
+		}
+	}
+
+	return true
+}

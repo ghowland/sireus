@@ -67,6 +67,17 @@ func RegisterHandlebarsHelpers_IfTests() {
 		}
 	})
 
+	// If []string has concatenation of strings in it
+	raymond.RegisterHelper("if_slice_has_dot_strings_2", func(a []string, b1 string, b2 string, options *raymond.Options) interface{} {
+		testString := fmt.Sprintf("%s.%s", b1, b2)
+
+		if util.StringInSlice(testString, a) {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return options.Inverse()
+		}
+	})
+
 	// If Go time.Time == 0
 	raymond.RegisterHelper("if_time_never", func(t time.Time, options *raymond.Options) raymond.SafeString {
 		if t.IsZero() {

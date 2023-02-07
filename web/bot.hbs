@@ -9,6 +9,16 @@
 
     <div class="block">
         <div class="box">
+            <h1 class="title is-big">States</h1>
+            <div class="content">
+            {{#each botGroup.States as |state stateIndex|}} <!-- Action:Start -->
+                <strong>{{state.Name}}</strong>:
+                {{#each state.Labels as |label labelIndex|}} <!-- Action:Start -->
+                    <span class="tag {{#if_slice_has_dot_strings_2 bot.StateValues state.Name label }}is-success{{else}}is-info-light{{/if_slice_has_dot_strings_2}} has-tooltip-arrow" data-tooltip="{{#if_slice_has_dot_strings_2 bot.StateValues state.Name label }}This is the Active State: {{state.Name}}.{{label}}{{else}}This state is not active.{{/if_slice_has_dot_strings_2}}" style="border-bottom: 0px solid !important;">{{label}}</span>
+                {{/each}}
+            {{/each}} <!-- Action:End -->
+            </div>
+
             <h1 class="title is-big">Variables</h1>
             {{> 'partials/bot/taglist_variable_value' }}
 

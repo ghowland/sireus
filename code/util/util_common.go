@@ -7,6 +7,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"strings"
 )
 
 // Call Check when we only want to log the error and wrap error testing, but it does not require an exceptional response
@@ -103,6 +104,12 @@ func BoolToFloatString(value bool) string {
 func PrintJson(value interface{}) string {
 	output, err := json.MarshalIndent(value, "", "  ")
 	Check(err)
+
+	return string(output)
+}
+
+func PrintStringArrayCSV(slice []string) string {
+	output := strings.Join(slice, ", ")
 
 	return string(output)
 }

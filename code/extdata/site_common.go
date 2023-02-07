@@ -1,6 +1,7 @@
 package extdata
 
 import (
+	"fmt"
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
@@ -117,18 +118,30 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
 			actionData.FinalScore = finalScore
-			// Details explain what happen in text, so users can better understand their results
-			actionData.Details = details
+
+			allActionStatesAreActive := appdata.AreAllActionStatesActive(action, bot)
+
 			// Action.WeightThreshold determines if an Action is available for possible execution
-			if finalScore > action.WeightThreshold {
+			if finalScore >= action.WeightThreshold && allActionStatesAreActive {
 				if !actionData.IsAvailable {
 					actionData.IsAvailable = true
 					actionData.AvailableStartTime = time.Now()
 				}
 			} else {
+				if !allActionStatesAreActive {
+					details = append(details, fmt.Sprintf("Not all states required are active, required: %s", util.PrintStringArrayCSV(action.RequiredStates)))
+				}
+
+				if finalScore < action.WeightThreshold {
+					details = append(details, fmt.Sprintf("Final Score (%.2f) did not meet Action Weight Threshold (%.2f)", finalScore, action.WeightThreshold))
+				}
+
 				actionData.IsAvailable = false
 				actionData.AvailableStartTime = time.UnixMilli(0)
 			}
+
+			// Details explain what happen in text, so users can better understand their results
+			actionData.Details = details
 			site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}
 	}
@@ -223,6 +236,20 @@ func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
 	promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
 
 	site.BotGroups[botGroupIndex].Bots = ExtractBotsFromPromData(promData, "name")
+
+	// Initialize all the Bot Group states in Bot
+	InitializeStates(site, botGroupIndex)
+}
+
+func InitializeStates(site *appdata.Site, botGroupIndex int) {
+	botGroup := site.BotGroups[botGroupIndex]
+
+	for botIndex, _ := range botGroup.Bots {
+		for _, state := range botGroup.States {
+			key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
+			site.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(site.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
+		}
+	}
 }
 
 func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
