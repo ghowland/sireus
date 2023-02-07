@@ -129,7 +129,7 @@ I would recommend naming your actions to describe the state they represent.  Thi
  - Service Stopped, Out of Space
  - Service Stopped, Has Storage
 
-These names answer the question "Why perform this action?".  
+These names answer the question "**Why perform this action?**".  
 
 With "Service Stopped, Out of Space", it is likely being out of storage is what caused the service to stop, so an action will be triggered to try to deal with that.
 
