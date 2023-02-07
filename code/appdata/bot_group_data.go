@@ -113,15 +113,16 @@ type (
 	// If a Bot is missing any data for it's variables, it is considered Invalid, because we are not
 	// operating with a full set of data.
 	Bot struct {
-		Name                 string
-		VariableValues       map[string]float64
-		SortedVariableValues util.PairFloat64List // Sorted VariableValues, Handlebars helper
-		StateValues          []string
-		CommandHistory       []ActionCommandResult
-		LockTimers           []BotLockTimer
-		ActionData           map[string]BotActionData // Key is Action.Name
-		SortedActionData     PairBotActionDataList    // Scored ActionData, Handlebars helper
-		FreezeActions        bool                     // If true, no actions will be taken for this Bot.  Single agent control
+		Name                    string
+		VariableValues          map[string]float64
+		FormattedVariableValues map[string]string    // VariableValues formatted as specified by BotVariableFormat
+		SortedVariableValues    util.PairFloat64List // Sorted VariableValues, Handlebars helper
+		StateValues             []string
+		CommandHistory          []ActionCommandResult
+		LockTimers              []BotLockTimer
+		ActionData              map[string]BotActionData // Key is Action.Name
+		SortedActionData        PairBotActionDataList    // Scored ActionData, Handlebars helper
+		FreezeActions           bool                     // If true, no actions will be taken for this Bot.  Single agent control
 	}
 )
 
@@ -221,6 +222,21 @@ const (
 	Float
 )
 
+type BotVariableFormat int64
+
+const (
+	FormatFloat BotVariableFormat = iota
+	FormatBool
+	FormatBytes
+	FormatBandwidth
+	FormatTime
+	FormatDuration
+	FormatPercent
+	FormatOrdinal
+	FormatComma
+	FormatMetricPrefix
+)
+
 func (bvt BotVariableType) String() string {
 	switch bvt {
 	case Boolean:
@@ -249,17 +265,18 @@ type (
 	// If QueryKey is set, only query results that have a value with their Metric Name of QueryKey which matches
 	// QueryKeyValue will be set.
 	BotVariable struct {
-		Type           BotVariableType `json:"type"`
-		Name           string          `json:"name"`
-		BotKey         string          `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
-		QueryName      string          `json:"query_name"`
-		QueryKey       string          `json:"query_key"`       // Metric key to extract
-		QueryKeyValue  string          `json:"query_key_value"` // Metric key value to match against the QueryKey
-		Evaluate       string          `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
-		BoolRangeStart float64         `json:"bool_range_start"`
-		BoolRangeEnd   float64         `json:"bool_range_end"`
-		BoolInvert     bool            `json:"bool_invert"`
-		Export         bool            `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
+		Type           BotVariableType   `json:"type"`
+		Name           string            `json:"name"`
+		Format         BotVariableFormat `json:"format"`
+		BotKey         string            `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
+		QueryName      string            `json:"query_name"`
+		QueryKey       string            `json:"query_key"`       // Metric key to extract
+		QueryKeyValue  string            `json:"query_key_value"` // Metric key value to match against the QueryKey
+		Evaluate       string            `json:"evaluate"`        // If this is non-empty, query will not be performed.  After query testing for other variables, this will have a final phase of processing, and will take all the query-made variables and perform govaluation.Evaluate() with this evaluate string, to set this variable.  Evaluate variables cannot use each other, only Query variables.
+		BoolRangeStart float64           `json:"bool_range_start"`
+		BoolRangeEnd   float64           `json:"bool_range_end"`
+		BoolInvert     bool              `json:"bool_invert"`
+		Export         bool              `json:"export"` // If true, this variable will be exported for Metric collection.  Normally not useful, because we just got it from the Metric system.
 	}
 )
 
@@ -269,9 +286,9 @@ type (
 	BotGroup struct {
 		Name                   string                    `json:"name"`
 		Info                   string                    `json:"info"`
-		BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`
-		States                 []BotForwardSequenceState `json:"states"`
-		LockTimers             []BotLockTimer            `json:"lock_timers"`
+		BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`             // This is the information we use to create the ephemeral Bots, but taking their names from this query's metric key
+		States                 []BotForwardSequenceState `json:"states"`                    // States can only advance from the start to the end, they can never go backwards.  It's a sequence, but you can skip steps forward.  Using several of these, many situations can be modelled.
+		LockTimers             []BotLockTimer            `json:"lock_timers"`               // Lock timers work at BotGroup or Bot level, and block any execution for a period of time, so the previous action's results can be evaluated
 		BotTimeoutStale        util.Duration             `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
 		BotTimeoutRemove       util.Duration             `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
 		BotRemoveStoreDuration util.Duration             `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
@@ -280,10 +297,10 @@ type (
 		CommandHistoryDuration util.Duration             `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
 		JournalRollupStates    []string                  `json:"journal_rollup_states"`     // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
 		JournalRollupDuration  util.Duration             `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
-		Queries                []BotQuery                `json:"queries"`
-		Variables              []BotVariable             `json:"variables"`
-		Actions                []Action                  `json:"actions"`
-		Bots                   []Bot
+		Queries                []BotQuery                `json:"queries"`                   // Queries used to populate the Variables
+		Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ActionConsideration evaluations to score the Action
+		Actions                []Action                  `json:"actions"`                   // Actions get scored using ActionConsideration and the highest scored Action that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Actions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Actions based on the BotState.
+		Bots                   []Bot                     // These are the ephemeral workers of Sireus.  In an Action, the Queries populate VariableValues and then the ActionConsiderations are scored to determine if an action IsAvailable.
 
 		// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
 		InvalidBots   []string

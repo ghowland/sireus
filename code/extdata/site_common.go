@@ -44,10 +44,7 @@ func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int) {
 		site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
 
 		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
-
-		if bot.Name == "sensordataservice" {
-			log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
-		}
+		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
 	}
 }
 
