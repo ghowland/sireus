@@ -23,6 +23,8 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
     + [Action Final Scores from Multiple Considerations](#action-final-scores-from-multiple-considerations)
     + [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score-)
 - [Best Practices](#best-practices)
+  * [Naming your Actions](#naming-your-actions)
+  * [Setting the Action Consideration Weights](#setting-the-action-consideration-weights)
 - [Sireus Portrait](#sireus-portrait)
 
 ### Sireus Goals
@@ -149,6 +151,16 @@ This is a simple 2 set problem, but let's expand the list to see why this is a s
 At this point if we were naming things differently, it would become hard to add more actions and understand what the differences of them are.  This in some way just turns the evaluations into text, but it should also simplify those evaluations into big picture concepts so that new users can get a grasp on things easier, and experienced used can quickly differentiate.
 
 This still has issues in that you can have more than 2 conditions.  For this, consider using Synthethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synthethic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
+
+### Setting the Action Consideration Weights
+
+Consideration weights should try to stay in the low numbers, the best weight being 1.0.  Anything under 10 would be good for a particular strong weight to offset the more normal 1.0 weights, as a lower importance weight could be give 0.5 or 0.2 as it's Consideration Weight.
+
+The reason for this is that in the calculations, there is a running score that multiplys all the scores together.  If a lot of \~1.0 values are multiplying each other, then the final result will be in the \~1.0 range.  If there are many different values such as "500, 10, -30, 1.0, 2000", these numbers are so different your Consideration Final Score will be very difficult to understand or control.
+
+Using numbers such as "1.0, 1.3, 0.7, 1.0, 2.5" allows a set of Considerations that have relative importance to each other without swingingly wildly out of control if a one or more value has is at an extreme.
+
+The Action Weight is where you differentiate Actions from each other by their weighted Action Final Score, which is the multiplier of the result of the Consideration Final Score.  This allows you to increase an Action by 500x, 2000x, etc.  If you want to put Actions into different categories of priority this way, do it with Action Weight, and leave the Consideration Weight to be near 1.0.
 
 ## Sireus Portrait
 
