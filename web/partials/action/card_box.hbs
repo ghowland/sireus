@@ -1,5 +1,5 @@
 <div class="card">
-    <header class="card-header">
+    <header class="card-header {{#with_bot_action bot action}}{{#if this.IsAvailable}}has-background-primary-light{{else}}has-background-info-light{{/if}}{{/with_bot_action}}">
         <p class="card-header-title">
             <span style="padding-right: 0.75em;">
             {{#with_bot_action bot action}}
@@ -9,7 +9,7 @@
             {{/with_bot_action}}
             </span>
 
-            {{action.Name}}
+            <span class="{{#with_bot_action bot action}}{{#if this.IsAvailable}}has-text-black{{else}}has-text-danger{{/if}}{{/with_bot_action}}">{{action.Name}}</span>
 
             <span style="padding-left: 1.5em">
                 <span class="icon has-text-info">
@@ -28,13 +28,25 @@
         </p>
         <button class="card-header-icon" aria-label="more options">
       <span class="icon">
-        <i class="fas fa-angle-down" aria-hidden="true"></i>
+        <i class="fas fa-angle-down" aria-hidden="true" onclick="$('#action_content_{{actionIndex}}').toggleClass('is-hidden')"></i>
       </span>
         </button>
     </header>
 
-    <div class="card-content">
-
+    <!--<div class="card-content is-hidden" id="action_content_{{actionIndex}}">-->
+    <div class="card-content" id="action_content_{{actionIndex}}">
         {{> 'partials/consider/table' }}
+
+        <div class="content">
+            <h3 class="is-medium">Details</h3>
+            {{#with_bot_action bot action}}
+                <ul>
+                {{#each this.Details}}
+                    <li>{{this}}</li>
+                {{/each}}
+                </ul>
+            {{/with_bot_action}}
+        </div>
+
     </div>
 </div>
