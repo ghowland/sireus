@@ -17,6 +17,18 @@ func RegisterHandlebarsHelpers() {
 
 	// Get AppData values
 	RegisterHandlebarsHelpers_GetAppData()
+
+	// Get values from structs.  Only needed for when data isn't available as a child.
+	RegisterHandlebarsHelpers_GetValuesFromStructs()
+}
+
+func RegisterHandlebarsHelpers_GetValuesFromStructs() {
+	// BotActionData
+	raymond.RegisterHelper("struct_bot_action_data", func(bot appdata.Bot, action appdata.Action) appdata.BotActionData {
+		botActionData := bot.ActionData[action.Name]
+		return botActionData
+	})
+
 }
 
 func RegisterHandlebarsHelpers_GetAppData() {

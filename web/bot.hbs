@@ -15,12 +15,8 @@
         </div>
     </div>
 
-    <div class="columns">
-        {{#each botGroup.Actions as |action actionIndex|}} <!-- Action:Start -->
-        <div class="column"> <!-- Column:Start -->
-            {{> 'partials/action/card' }}
-        </div> <!-- Column:End -->
-        {{/each}} <!-- Action:End -->
-    </div>
+    {{#each botGroup.Actions as |action actionIndex|}} <!-- Action:Start -->
+        {{> 'partials/action/card_box' }}
+    {{/each}} <!-- Action:End -->
 
 </section>

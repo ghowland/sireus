@@ -76,6 +76,7 @@ type (
 	Action struct {
 		Name               string                `json:"name"`
 		Info               string                `json:"info"`
+		IsLaunched         bool                  `json:"is_launched"`      // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
 		IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
 		Weight             float64               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
 		WeightMin          float64               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
@@ -117,6 +118,7 @@ type (
 		CommandHistory []ActionCommandResult
 		LockTimers     []BotLockTimer
 		ActionData     map[string]BotActionData // Key is Action.Name
+		FreezeActions  bool                     // If true, no actions will be taken for this Bot.  Single agent control
 	}
 )
 
@@ -262,25 +264,29 @@ type (
 	// BotGroup is used to create Bots.  Bots are the core of Sireus.  BotGroups define all the information used to
 	// populate the ephemeral Bot structure.
 	BotGroup struct {
-		Name                  string                    `json:"name"`
-		Info                  string                    `json:"info"`
-		BotExtractor          BotExtractorQueryKey      `json:"bot_extractor"`
-		States                []BotForwardSequenceState `json:"states"`
-		LockTimers            []BotLockTimer            `json:"lock_timers"`
-		BotTimeoutStale       util.Duration             `json:"bot_timeout_stale"`
-		BotTimeoutRemove      util.Duration             `json:"bot_timeout_remove"`
-		ActionThreshold       float64                   `json:"action_threshold"`        // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-		JournalRollupStates   []string                  `json:"journal_rollup_states"`   // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
-		JournalRollupDuration util.Duration             `json:"journal_rollup_duration"` // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
-		Queries               []BotQuery                `json:"queries"`
-		Variables             []BotVariable             `json:"variables"`
-		Actions               []Action                  `json:"actions"`
-		Bots                  []Bot
+		Name                   string                    `json:"name"`
+		Info                   string                    `json:"info"`
+		BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`
+		States                 []BotForwardSequenceState `json:"states"`
+		LockTimers             []BotLockTimer            `json:"lock_timers"`
+		BotTimeoutStale        util.Duration             `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
+		BotTimeoutRemove       util.Duration             `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
+		BotRemoveStoreDuration util.Duration             `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
+		RefuseBotResumption    bool                      `json:"refuse_bot_resumption"`     // If true, once a bot is removed, while it is being stored for inspect, if it returns it will not be resumed.  Instead a new bot will be created to disconnect their history, even though they share the same BotKey
+		ActionThreshold        float64                   `json:"action_threshold"`          // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
+		CommandHistoryDuration util.Duration             `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
+		JournalRollupStates    []string                  `json:"journal_rollup_states"`     // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
+		JournalRollupDuration  util.Duration             `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
+		Queries                []BotQuery                `json:"queries"`
+		Variables              []BotVariable             `json:"variables"`
+		Actions                []Action                  `json:"actions"`
+		Bots                   []Bot
 
 		// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
-		InvalidBots []string
-		StaleBots   []string
-		RemovedBots []string
+		InvalidBots   []string
+		StaleBots     []string
+		RemovedBots   []string
+		FreezeActions bool // If true, no actions will be taken for this BotGroup.  Allows group level control.
 	}
 )
 
@@ -327,5 +333,6 @@ type (
 		BotGroupPaths []string      `json:"bot_group_paths"`
 		QueryServers  []QueryServer `json:"query_servers"`
 		BotGroups     []BotGroup
+		FreezeActions bool // If true, no actions will be taken for this Site.  Allows control of all BotGroups.
 	}
 )

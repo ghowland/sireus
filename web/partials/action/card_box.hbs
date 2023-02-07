@@ -1,0 +1,36 @@
+<div class="card">
+    <header class="card-header">
+        <p class="card-header-title">
+            {{action.Name}}
+
+            {{#with struct_bot_action_data bot action}}
+            <span class="tag {{#if IsAvailable}}is-primary{{else}}is-danger{{/if}}">
+                Score: {{FinalScore}}
+            </span>
+            {{/with}}
+        </p>
+        <button class="card-header-icon" aria-label="more options">
+      <span class="icon">
+        <i class="fas fa-angle-down" aria-hidden="true"></i>
+      </span>
+        </button>
+    </header>
+    <div class="card-content">
+        <div class="columns">
+            <div class="column">
+                <h2 class="title is-primary">{{action.Name}}</h2>
+            </div>
+            <div class="column">
+                <span class="tag is-primary">Score: {{get_bot_action_data_final_score bot action}}</span>
+            </div>
+            <div class="column">
+                <i class="fa fa-thumbs-up"></i>
+                <i class="fa fa-thumbs-down"></i>
+                <i class="fa fa-cloud"></i>
+            </div>
+        </div>
+
+
+        {{> 'partials/consider/table' }}
+    </div>
+</div>

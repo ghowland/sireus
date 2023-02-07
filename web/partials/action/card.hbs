@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-content">
-        <h2 class="title is-primary">{{action.Name}} Score: {{get_bot_action_data_final_score bot action}}</h2>
+        <h2 class="title is-primary">{{action.Name}}  <span class="tag is-primary">Score: {{get_bot_action_data_final_score bot action}}</span></h2>
         <h3 class="subtitle">{{action.Info}}</h3>
         <p>Content here: {{action.Weight}}</p>
         {{> 'partials/consider/table' }}
@@ -9,16 +9,17 @@
         <div class="card-footer-item">
             <a href="#" class="button is-success is-outlined">
                 <i class="fa fa-thumbs-up"></i>
+                <i class="fa fa-thumbs-down"></i>
+                <i class="fa fa-cloud"></i>
             </a>
         </div>
         <div class="card-footer-item">
             <a href="#" class="button is-danger is-outlined">
-                <i class="fa fa-thumbs-down"></i>
             </a>
         </div>
         <div class="card-footer-item">
             <a href="#" class="button is-info is-outlined">
-                <i class="fa fa-cloud"></i>
+                <button>Force Execution</button>
             </a>
         </div>
     </footer>

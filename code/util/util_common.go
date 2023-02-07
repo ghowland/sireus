@@ -89,3 +89,12 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
 
 	return finalValue
 }
+
+// Converts a boolean to a string of "0" or "1"
+func BoolToFloatString(value bool) string {
+	if value {
+		return "1"
+	} else {
+		return "0"
+	}
+}

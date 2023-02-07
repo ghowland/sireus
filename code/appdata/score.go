@@ -2,7 +2,6 @@ package appdata
 
 import (
 	"github.com/ghowland/sireus/code/util"
-	"log"
 )
 
 func CalculateScore(action Action, actionData BotActionData) float64 {
@@ -33,13 +32,13 @@ func CalculateScore(action Action, actionData BotActionData) float64 {
 		// Move a constantly Running Score
 		runningScore *= weightedScore
 
-		log.Printf("Consider: %s  Score: %.2f  Ranged Score: %.2f  Weighted: %.2f  Running: %.2f", consider.Name, considerScore, rangedScore, weightedScore, runningScore)
+		//log.Printf("Consider: %s  Score: %.2f  Ranged Score: %.2f  Weighted: %.2f  Running: %.2f", consider.Name, considerScore, rangedScore, weightedScore, runningScore)
 	}
 
 	// Mix the numbers together in a "modified average" which yields a good result, especially for low or 0-1 numbers
 	calculatedScore := AverageAndFixup(runningScore, considerCount)
 
-	log.Printf("Calculate: %s  Consider Count: %d  Calc Score: %.2f", action.Name, considerCount, calculatedScore)
+	//log.Printf("Calculate: %s  Consider Count: %d  Calc Score: %.2f", action.Name, considerCount, calculatedScore)
 
 	return calculatedScore
 }
@@ -63,7 +62,7 @@ func AverageAndFixup(runningScore float64, considerCount int) float64 {
 	// Apply the average and fixup to the running score
 	var finalScore float64 = runningScore + (makeUpValue * runningScore)
 
-	log.Printf("AvgFixup: Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
+	//log.Printf("AvgFixup: Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
 
 	return finalScore
 }

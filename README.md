@@ -11,6 +11,22 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 <img width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
+- [sireus](#sireus)
+  * [Sireus - SRE Utility System - Dynamic Bot manager for executing SRE and DevOps commands conditionally](#sireus---sre-utility-system---dynamic-bot-manager-for-executing-sre-and-devops-commands-conditionally)
+    + [Sireus Goals](#sireus-goals)
+  * [Links](#links)
+  * [Data Structure](#data-structure)
+    + [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
+    + [Terminology](#terminology)
+    + [How a Utility System or "Utility AI" works](#how-a-utility-system-or--utility-ai--works)
+      - [Action Consideration Data](#action-consideration-data)
+      - [Action Final Scores from Multiple Considerations](#action-final-scores-from-multiple-considerations)
+      - [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score-)
+  * [Sireus Portrait](#sireus-portrait)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ### Sireus Goals
 
 - Bots execute commands or API calls, designed for SRE and DevOps environments.
