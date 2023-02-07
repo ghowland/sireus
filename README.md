@@ -26,8 +26,8 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ### Sireus Goals
 
-- Bots execute a single command or API call, designed for SRE and DevOps environments.
-- Sireus is a Decision System.  It's purpose is to make a decision and execute a single command or web call.
+- Bots execute a *single* command or API call, designed for SRE and DevOps environments.
+- Sireus is a Decision System.  It's purpose is to make a decision and execute a *single* command or web call.
 - Fits into the stack between monitoring and alerting.  ex: Prometheus -> Sireus -> Alert Manager.
 - Works with existing software stack, with minimal configuration.  Architecture agnostic.
 - Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus).
