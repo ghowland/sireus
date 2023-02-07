@@ -82,6 +82,15 @@ func GetAction(botGroup BotGroup, actionName string) (Action, error) {
 	return Action{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Action: %s", botGroup.Name, actionName))
 }
 
+func GetVariable(botGroup BotGroup, varName string) (BotVariable, error) {
+	for _, variable := range botGroup.Variables {
+		if variable.Name == varName {
+			return variable, nil
+		}
+	}
+	return BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing variable: %s", botGroup.Name, varName))
+}
+
 func GetActionConsideration(action Action, considerName string) (ActionConsideration, error) {
 	for _, consider := range action.Considerations {
 		if consider.Name == considerName {

@@ -4,9 +4,9 @@
 
         {{#each bot.SortedVariableValues as |value valueIndex|}} <!-- Action Consideration:Start -->
         <div class="control">
-            <div class="tags has-addons">
+            <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{value.Value}}" style="border-bottom: 0px solid !important;">
                 <span class="tag is-warning">{{value.Key}}</span>
-                <span class="tag is-info">{{value.Value}}</span>
+                <span class="tag is-info">{{value.Formatted}}</span>
             </div>
         </div>
         {{/each}} <!-- Action Consideration:End -->

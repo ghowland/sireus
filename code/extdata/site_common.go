@@ -30,6 +30,27 @@ func UpdateSiteBotGroups(site *appdata.Site) {
 
 		// Sort alpha, so they print consistently
 		SortAllVariablesAndActions(site, index)
+
+		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
+		CreateFormattedVariables(site, index)
+	}
+}
+
+func CreateFormattedVariables(site *appdata.Site, botGroupIndex int) {
+	botGroup := site.BotGroups[botGroupIndex]
+
+	for botIndex, bot := range botGroup.Bots {
+		for varIndex, value := range bot.SortedVariableValues {
+			variable, err := appdata.GetVariable(botGroup, value.Key)
+			util.Check(err)
+
+			result := appdata.FormatBotVariable(variable.Format, value.Value)
+
+			newPair := site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex]
+			newPair.Formatted = result
+
+			site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex] = newPair
+		}
 	}
 }
 

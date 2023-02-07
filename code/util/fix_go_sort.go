@@ -5,8 +5,9 @@ import (
 )
 
 type PairFloat64 struct {
-	Key   string
-	Value float64
+	Key       string
+	Value     float64
+	Formatted string
 }
 
 type PairFloat64List []PairFloat64
