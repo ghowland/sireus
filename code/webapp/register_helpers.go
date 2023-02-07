@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"fmt"
+	"github.com/BenJetson/humantime"
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
@@ -36,7 +37,7 @@ func RegisterHandlebarsHelpers_WithData() {
 }
 
 func RegisterHandlebarsHelpers_IfTests() {
-	// BotActionData
+	// If string == string
 	raymond.RegisterHelper("if_equal_string", func(a string, b string, options *raymond.Options) raymond.SafeString {
 		if a == b {
 			log.Printf("Equal String: True: %s == %s -> %v", a, b, a == b)
@@ -47,7 +48,16 @@ func RegisterHandlebarsHelpers_IfTests() {
 		}
 	})
 
-	// Go time.Time == 0
+	// If string in []string
+	raymond.RegisterHelper("if_string_in_slice", func(a string, b []string, options *raymond.Options) interface{} {
+		if util.StringInSlice(a, b) {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return options.Inverse()
+		}
+	})
+
+	// If Go time.Time == 0
 	raymond.RegisterHelper("if_time_never", func(t time.Time, options *raymond.Options) raymond.SafeString {
 		if t.IsZero() {
 			return raymond.SafeString(options.Fn())
@@ -56,7 +66,7 @@ func RegisterHandlebarsHelpers_IfTests() {
 		}
 	})
 
-	// Go time.Time != 0
+	// If Go time.Time != 0
 	raymond.RegisterHelper("if_not_time_never", func(t time.Time, options *raymond.Options) raymond.SafeString {
 		if !t.IsZero() {
 			return raymond.SafeString(options.Fn())
@@ -103,7 +113,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 
 	// Format Time
 	raymond.RegisterHelper("format_time_since", func(t time.Time) raymond.SafeString {
-		return raymond.SafeString(time.Since(t).String())
+		return raymond.SafeString(humantime.Since(t))
 	})
 
 	// Variables

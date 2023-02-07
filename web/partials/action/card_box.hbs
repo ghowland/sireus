@@ -1,6 +1,7 @@
 <div class="card">
     <header class="card-header {{#with_bot_action bot action}}{{#if this.IsAvailable}}has-background-primary-light{{else}}has-background-info-light{{/if}}{{/with_bot_action}}">
         <p class="card-header-title">
+            <!-- Action Final Score -->
             <span style="padding-right: 0.75em;">
             {{#with_bot_action bot action}}
                 <span class="tag {{#if this.IsAvailable}}is-primary{{else}}is-danger{{/if}}">
@@ -9,8 +10,10 @@
             {{/with_bot_action}}
             </span>
 
+            <!-- Name -->
             <span class="{{#with_bot_action bot action}}{{#if this.IsAvailable}}has-text-black{{else}}has-text-danger{{/if}}{{/with_bot_action}}">{{action.Name}}</span>
 
+            <!-- Icon Controls -->
             <span style="padding-left: 1.5em">
                 <span class="icon has-text-info has-tooltip-arrow" data-tooltip="Info" style="border-bottom: 0px solid !important;">
                   <i class="fas fa-info-circle"></i>
@@ -25,20 +28,38 @@
                   <i class="fas fa-ban"></i>
                 </span>
             </span>
+
+            <!-- States -->
+            <span style="padding-left: 1.5em">
+                {{#each action.RequiredStates as |state stateIndex|}}
+                    <span class="tag {{#if_string_in_slice state bot.StateValues}}is-primary{{else}}is-danger{{/if_string_in_slice}} has-tooltip-arrow"
+                          data-tooltip="{{#if_string_in_slice state bot.StateValues}}State is Active{{else}}State is not Active, so this Action is not available.{{/if_string_in_slice}}"
+                          style="border-bottom: 0px solid !important;">
+
+                        {{state}}
+
+                    </span>
+                {{/each}}
+            </span>
+
+            <!-- Last Executed Time -->
             <span style="padding-left: 1.5em">
                 {{#with_bot_action bot action}}
                     {{#if_not_time_never this.LastExecutedActionTime}}
-                        Last Executed: {{format_time_since this.LastExecutedActionTime}}
+                        Executed: {{format_time_since this.LastExecutedActionTime}}
                     {{/if_not_time_never}}
                 {{/with_bot_action}}
             </span>
+
+            <!-- Available Since -->
             <span style="padding-left: 1.5em">
                 {{#with_bot_action bot action}}
                     {{#if this.IsAvailable}}
-                       Available Since: {{format_time_since this.AvailableStartTime}}
+                        Available: {{format_time_since this.AvailableStartTime}}
                     {{/if}}
                 {{/with_bot_action}}
             </span>
+
         </p>
         <button class="card-header-icon" aria-label="more options">
       <span class="icon">

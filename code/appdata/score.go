@@ -79,7 +79,7 @@ func AverageAndFixup(runningScore float64, considerCount int) (float64, []string
 	var finalScore float64 = runningScore + (makeUpValue * runningScore)
 
 	// They can always look at the math to try to understand better
-	resultDetail := fmt.Sprintf("Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
+	resultDetail := fmt.Sprintf("Unweighted Final Score:  Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
 	details = append(details, resultDetail)
 	//log.Print(resultDetail)
 
