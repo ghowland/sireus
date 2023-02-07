@@ -13,8 +13,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ### Table of Contents
 
-- [Sireus - SRE Utility System - Dynamic Bot manager for executing SRE and DevOps commands conditionally](#sireus---sre-utility-system---dynamic-bot-manager-for-executing-sre-and-devops-commands-conditionally)
-  * [Sireus Goals](#sireus-goals)
+- [Sireus Goals](#sireus-goals)
 - [Links](#links)
 - [Data Structure](#data-structure)
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
