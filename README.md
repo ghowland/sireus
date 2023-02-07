@@ -160,7 +160,7 @@ The reason for this is that in the calculations, there is a running score that m
 
 Using numbers such as "1.0, 1.3, 0.7, 1.0, 2.5" allows a set of Considerations that have relative importance to each other without swingingly wildly out of control if a one or more value is at an extreme.
 
-The Action Weight is where you differentiate Actions from each other by their weighted Action Final Score, which is the multiplier of the result of the Consideration Final Score.  This allows you to increase an Action by 500x, 2000x, etc.  If you want to put Actions into different categories of priority this way, do it with Action Weight, and leave the Consideration Weight to be near 1.0.
+The Action Weight is where you differentiate Actions from each other by their weighted Action Final Score, which is the multiplier of the result of the Consideration Final Score by the Action Weight.  This allows you to increase an Action by 500x, 2000x, etc.  If you want to put Actions into different categories of priority this way, do it with Action Weight, and leave the Consideration Weight near 1.0.
 
 ## Sireus Portrait
 
