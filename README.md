@@ -135,7 +135,7 @@ With "*Service Stopped, Out of Space*", it is likely being out of storage is wha
 
 With "*Service Stopped, Has Storage*", we know the service is stopped, but it still has storage, so we want to run a different command that deals with problems unrelated to running out of storage.
 
-This is a simple 2 set problem, but let's expand into more to see why this is a scalable naming pattern:
+This is a simple 2 set problem, but let's expand the list to see why this is a scalable naming pattern:
 
  - Service Stopped, Out of Space
  - Service Stopped, Has Storage
