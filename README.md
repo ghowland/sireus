@@ -154,7 +154,7 @@ This still has issues in that you can have more than 2 conditions.  For this, co
 
 ### Setting the Action Consideration Weights
 
-Consideration weights should try to stay in the low numbers, the best weight being 1.0.  Anything under 10 would be good for a particular strong weight to offset the more normal 1.0 weights, as a lower importance weight could be give 0.5 or 0.2 as it's Consideration Weight.
+Consideration weights should try to stay in the low numbers, the best weight being \~1.0.  Anything under 10 would be good for a particular strong weight to offset the more normal 1.0 weights, as a lower importance weight could be give 0.5 or 0.2 as it's Consideration Weight.
 
 The reason for this is that in the calculations, there is a running score that multiplys all the scores together.  If a lot of \~1.0 values are multiplying each other, then the final result will be in the \~1.0 range.  If there are many different values such as "500, 10, -30, 1.0, 2000", these numbers are so different your Consideration Final Score will be very difficult to understand or control.
 
