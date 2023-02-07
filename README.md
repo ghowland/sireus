@@ -146,7 +146,7 @@ This is a simple 2 set problem, but let's expand the list to see why this is a s
  - Service Running, Too Busy
  - Service Running, Maybe Under Attack
 
-At this point if we were naming things differently, it would become hard to scale what all the different conditions are.  
+At this point if we were naming things differently, it would become hard to add more actions and understand what the differences of them are.  This in some way just turns the evaluations into text, but it should also simplify those evaluations into big picture concepts so that new users can get a grasp on things easier, and experienced used can quickly differentiate.
 
 This still has issues in that you can have more than 2 conditions.  For this, consider using Synthethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synthethic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
 
