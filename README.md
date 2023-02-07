@@ -131,9 +131,9 @@ I would recommend naming your actions to describe the state they represent.  Thi
 
 These names answer the question: **Why perform this action?**
 
-With "Service Stopped, Out of Space", it is likely being out of storage is what caused the service to stop, so an action will be triggered to try to deal with that.
+With "*Service Stopped, Out of Space*", it is likely being out of storage is what caused the service to stop, so an action will be triggered to try to deal with that.
 
-With "Service Stopped, Has Storage", we know the service is stopped, but it still has storage, so we want to run a different command that deals with problems unrelated to running out of storage.
+With "*Service Stopped, Has Storage*", we know the service is stopped, but it still has storage, so we want to run a different command that deals with problems unrelated to running out of storage.
 
 This is a simple 2 set problem, but let's expand into more to see why this is a scalable naming pattern:
 
@@ -148,7 +148,7 @@ This is a simple 2 set problem, but let's expand into more to see why this is a 
 
 At this point if we were naming things differently, it would become hard to scale what all the different conditions are.  
 
-This still has issues in that you can have more than 2 conditions.  For this, consider using Synethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synethetic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
+This still has issues in that you can have more than 2 conditions.  For this, consider using Synthethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synthethic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
 
 ## Sireus Portrait
 
