@@ -118,9 +118,9 @@ The benefit of this is that even with hundreds or thousands of Actions, they can
 
 Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
 
-### Best Practices
+## Best Practices
 
-#### Naming your Actions
+### Naming your Actions
 
 I would recommend naming your actions to describe the state they represent.  This name would answer the question, "Why perform this action?"
 
