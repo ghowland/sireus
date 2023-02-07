@@ -85,7 +85,7 @@
     {
       "type": 0,
       "name": "service_running",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
@@ -99,7 +99,7 @@
     {
       "type": 0,
       "name": "service_stopped",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
@@ -113,7 +113,7 @@
     {
       "type": 0,
       "name": "service_unknown",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
@@ -127,7 +127,7 @@
     {
       "type": 0,
       "name": "service_paused",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Window Services",
       "query_key": "state",
@@ -141,7 +141,7 @@
     {
       "type": 0,
       "name": "status_ok",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Service Status",
       "query_key": "status",
@@ -155,7 +155,7 @@
     {
       "type": 0,
       "name": "status_service",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Service Status",
       "query_key": "status",
@@ -169,7 +169,7 @@
     {
       "type": 0,
       "name": "status_error",
-      "format": 0,
+      "format": 1,
       "bot_key": "name",
       "query_name": "Service Status",
       "query_key": "status",
@@ -181,7 +181,7 @@
       "export": false
     },
     {
-      "type": 1,
+        "type": 1,
       "name": "disk_free_space_C",
       "format": 2,
       "bot_key": "",

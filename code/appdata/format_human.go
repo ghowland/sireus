@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BenJetson/humantime"
 	"time"
+	"github.com/dustin/go-humanize"
 )
 
 func FormatBotVariable(format BotVariableFormat, value float64) string {
@@ -19,9 +20,13 @@ func FormatBotVariable(format BotVariableFormat, value float64) string {
 	case FormatTime:
 		return humanize.Time(time.Unix(int64(value), 0))
 	case FormatOrdinal:
-		return humanize.Ordinal(int64(value))
+		return humanize.Ordinal(int(value))
 	case FormatComma:
 		return humanize.Comma(int64(value))
+	case FormatMetricPrefix:
+		return humanize.SI(value, "")
+	case FormatPercent:
+		return fmt.Sprintf("%.1f%%", value*100)
 	case FormatBool:
 		if value == 0 {
 			return "False"
