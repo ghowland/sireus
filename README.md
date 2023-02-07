@@ -131,7 +131,7 @@ I would recommend naming your actions to describe the state they represent.  Thi
 
 These names answer the question: **Why perform this action?**
 
-With "*Service Stopped, Out of Space*", it is likely being out of storage is what caused the service to stop, so an action will be triggered to try to deal with that.
+With "*Service Stopped, Out of Space*", it is likely being out of storage is what caused the service to stop, so an action will be executed to try to deal with that.
 
 With "*Service Stopped, Has Storage*", we know the service is stopped, but it still has storage, so we want to run a different command that deals with problems unrelated to running out of storage.
 
