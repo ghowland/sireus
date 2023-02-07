@@ -30,9 +30,9 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Sireus is a Decision System.  It's purpose is to make a decision and execute a *single* command or web call.
 - Fits into the stack between monitoring and alerting.  ex: Prometheus -> Sireus -> Alert Manager.
 - Works with existing software stack, with minimal configuration.  Architecture agnostic.
-- Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus).
-- Bots have rulesets for prioritizing conditional commands to respond to detected issues.
-- Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data.
+- Dynamically create Bots for any Platform, Service, Process, Host, etc from monitoring software (ex: Prometheus).  Bots are ephemeral.
+- Bots have something like rulesets for prioritizing conditional commands to respond to detected issues.
+- Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data to aid in configuration and adjusting values to better respond to future events.
 - Locking commands per Bot or Bot Group, to stop conflicting commands from running at once, or within a window to verify results of previous commands.
 - Uses the ["Utility AI" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.
 
