@@ -22,6 +22,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
     + [Action Consideration Data](#action-consideration-data)
     + [Action Final Scores from Multiple Considerations](#action-final-scores-from-multiple-considerations)
     + [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score-)
+- [Best Practices](#best-practices)
 - [Sireus Portrait](#sireus-portrait)
 
 ### Sireus Goals
@@ -116,6 +117,38 @@ The reason to have all of these steps is to be able to control exactly how impor
 The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
 
 Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
+
+### Best Practices
+
+#### Naming your Actions
+
+I would recommend naming your actions to describe the state they represent.  This name would answer the question, "Why perform this action?"
+
+**Example names:**
+
+ - Service Stopped, Out of Space
+ - Service Stopped, Has Storage
+
+These names answer the question "Why perform this action?".  
+
+With "Service Stopped, Out of Space", it is likely being out of storage is what caused the service to stop, so an action will be triggered to try to deal with that.
+
+With "Service Stopped, Has Storage", we know the service is stopped, but it still has storage, so we want to run a different command that deals with problems unrelated to running out of storage.
+
+This is a simple 2 set problem, but let's expand into more to see why this is a scalable naming pattern:
+
+ - Service Stopped, Out of Space
+ - Service Stopped, Has Storage
+ - Service Stopped, Won't Restart
+ - Service Running, Many Errors
+ - Service Running, Many Timeouts
+ - Service Running, Database Connection Errors
+ - Service Running, Too Busy
+ - Service Running, Maybe Under Attack
+
+At this point if we were naming things differently, it would become hard to scale what all the different conditions are.  
+
+This still has issues in that you can have more than 2 conditions.  For this, consider using Synethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synethetic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
 
 ## Sireus Portrait
 
