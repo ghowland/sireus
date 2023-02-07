@@ -71,12 +71,20 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 			}
 
 			// Get a Final Score for this Action
-			calculatedScore := appdata.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
+			calculatedScore, details := appdata.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
 			actionData.FinalScore = finalScore
+			// Details explain what happen in text, so users can better understand their results
+			actionData.Details = details
+			// Action.WeightThreshold determines if an Action is available for possible execution
+			if finalScore > action.WeightThreshold {
+				actionData.IsAvailable = true
+			} else {
+				actionData.IsAvailable = false
+			}
 			site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}
 	}

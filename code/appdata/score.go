@@ -1,12 +1,15 @@
 package appdata
 
 import (
+	"fmt"
 	"github.com/ghowland/sireus/code/util"
 )
 
-func CalculateScore(action Action, actionData BotActionData) float64 {
+func CalculateScore(action Action, actionData BotActionData) (float64, []string) {
 	var runningScore float64 = 1
 	var considerCount int = 0
+
+	var details []string
 
 	for considerName, considerScore := range actionData.ConsiderationFinalScores {
 		// We will use a "modified average" to create a calculated score for all the considerations, so need a count
@@ -16,12 +19,14 @@ func CalculateScore(action Action, actionData BotActionData) float64 {
 
 		// Any Consideration that is 0, means the entire Score is 0, and will never be executed.  It is not Invalid
 		if considerScore == 0 {
-			return 0
+			details = append(details, fmt.Sprintf("Consideration is 0, aborting: %s", considerName))
+			return 0, details
 		}
 
 		consider, err := GetActionConsideration(action, considerName)
 		if util.Check(err) {
-			return 0
+			details = append(details, fmt.Sprintf("Missing Consideration, aborting: %s", considerName))
+			return 0, details
 		}
 
 		// Multiply the raw Score by the Weight
@@ -36,17 +41,28 @@ func CalculateScore(action Action, actionData BotActionData) float64 {
 	}
 
 	// Mix the numbers together in a "modified average" which yields a good result, especially for low or 0-1 numbers
-	calculatedScore := AverageAndFixup(runningScore, considerCount)
+	calculatedScore, detailsFromFixup := AverageAndFixup(runningScore, considerCount)
+
+	// Add any details we got from Fixup
+	for _, detail := range detailsFromFixup {
+		details = append(details, detail)
+	}
 
 	//log.Printf("Calculate: %s  Consider Count: %d  Calc Score: %.2f", action.Name, considerCount, calculatedScore)
 
-	return calculatedScore
+	return calculatedScore, details
 }
 
-func AverageAndFixup(runningScore float64, considerCount int) float64 {
+// This is the heuristic we use to get a good "modified average" of the Considerations to a Consideration Final Score
+// This works well when all the ActionConsideration.Weight values are ~1.0, so that they have relative importance
+// to each other.  Try to keep ActionConsideration.Weight values between 0.1 and 10.0 for a good result.
+func AverageAndFixup(runningScore float64, considerCount int) (float64, []string) {
+	var details []string
+
 	// No considerations is always 0.  We will be dividing by considerCount later...
 	if considerCount == 0 {
-		return 0
+		details = append(details, "There are 0 consideration final scores.  Nothing to Calculate: 0")
+		return 0, details
 	}
 
 	// Create the modification factor for our averaging function
@@ -62,7 +78,10 @@ func AverageAndFixup(runningScore float64, considerCount int) float64 {
 	// Apply the average and fixup to the running score
 	var finalScore float64 = runningScore + (makeUpValue * runningScore)
 
-	//log.Printf("AvgFixup: Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
+	// They can always look at the math to try to understand better
+	resultDetail := fmt.Sprintf("Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
+	details = append(details, resultDetail)
+	//log.Print(resultDetail)
 
-	return finalScore
+	return finalScore, details
 }

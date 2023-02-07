@@ -124,6 +124,8 @@ Having the ability to tune values at the top level Action, and for each Consider
 
 ### Naming your Actions
 
+TL;DR - Name your actions to answer "Why perform this action?" using CSV of descriptions of the evaluation elements.
+
 I would recommend naming your actions to describe the state they represent.  This name would answer the question, "Why perform this action?"
 
 **Example names:**
@@ -153,6 +155,8 @@ At this point if we were naming things differently, it would become hard to add 
 This still has issues in that you can have more than 2 conditions.  For this, consider using Synthethic Variables to create a combination of values so that you can test them as a boolean.  In this way as you grow in variables, you can reduce them into Synthethic Variables to keep the Action evaluation logic simpler, and the names easier to read and understand, even as the number of actions continues to increase.
 
 ### Setting the Action Consideration Weights
+
+TL;DR - Keep Action Consideration weights between 0.1 and 10.0, with most being closer to 1.0.
 
 Consideration weights should try to stay in the low numbers, the best weight being \~1.0.  Anything under 10 would be good for a particular strong weight to offset the more normal 1.0 weights, as a lower importance weight could be given 0.5 or 0.2 as it's Consideration Weight.
 

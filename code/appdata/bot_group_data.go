@@ -98,6 +98,7 @@ type (
 		IsAvailable                  bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
 		AvailableStartTime           time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
 		LastExecutedActionTime       time.Time          // Last time we executed this Action.  Stateful.
+		Details                      []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
 	}
 )
 

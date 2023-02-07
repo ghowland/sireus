@@ -5,6 +5,7 @@ import (
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"strings"
 )
 
@@ -18,17 +19,32 @@ func RegisterHandlebarsHelpers() {
 	// Get AppData values
 	RegisterHandlebarsHelpers_GetAppData()
 
-	// Get values from structs.  Only needed for when data isn't available as a child.
-	RegisterHandlebarsHelpers_GetValuesFromStructs()
+	// Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
+	RegisterHandlebarsHelpers_WithData()
+
+	// Expanded test logic
+	RegisterHandlebarsHelpers_IfTests()
 }
 
-func RegisterHandlebarsHelpers_GetValuesFromStructs() {
-	// BotActionData
-	raymond.RegisterHelper("struct_bot_action_data", func(bot appdata.Bot, action appdata.Action) appdata.BotActionData {
+func RegisterHandlebarsHelpers_WithData() {
+	// With BotActionData
+	raymond.RegisterHelper("with_bot_action", func(bot appdata.Bot, action appdata.Action, options *raymond.Options) raymond.SafeString {
 		botActionData := bot.ActionData[action.Name]
-		return botActionData
+		return raymond.SafeString(options.FnWith(botActionData))
 	})
+}
 
+func RegisterHandlebarsHelpers_IfTests() {
+	// BotActionData
+	raymond.RegisterHelper("if_equal_string", func(a string, b string, options *raymond.Options) raymond.SafeString {
+		if a == b {
+			log.Printf("Equal String: True: %s == %s -> %v", a, b, a == b)
+			return raymond.SafeString(options.Fn())
+		} else {
+			log.Printf("Equal String: False: %s == %s -> %v", a, b, a == b)
+			return raymond.SafeString("")
+		}
+	})
 }
 
 func RegisterHandlebarsHelpers_GetAppData() {
@@ -57,6 +73,13 @@ func RegisterHandlebarsHelpers_FormatData() {
 			"query": item.Query,
 		}
 		return util.HandlebarFormatText(queryServer.WebUrlFormat, mapData)
+	})
+
+	// Format Go Values
+	raymond.RegisterHelper("format_float64", func(format string, value float64) raymond.SafeString {
+		output := fmt.Sprintf(format, value)
+		//log.Printf("Format: %s  Val: %v  Output: %v", format, value, output)
+		return raymond.SafeString(output)
 	})
 
 	// Variables

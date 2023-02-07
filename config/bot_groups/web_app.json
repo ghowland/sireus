@@ -24,7 +24,7 @@
   "bot_timeout_remove": 120,
   "bot_remove_store_duration": "24h",
   "refuse_bot_resumption": false,
-  "action_threshold": 0.6,
+  "action_threshold": 0.5,
   "journal_rollup_states": ["Operation.Problem", "Operation.Resolved", "Operation.EscalatingWait"],
   "journal_rollup_duration": "30m",
   "queries": [
@@ -331,7 +331,7 @@
       "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0.5,
-      "weight_threshold": 0.6,
+      "weight_threshold": 0.5,
       "required_lock_timers": [
         "Single Bot Lock"
       ],
