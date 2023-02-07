@@ -26,9 +26,6 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
       - [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score-)
   * [Sireus Portrait](#sireus-portrait)
 
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
-
 ### Sireus Goals
 
 - Bots execute commands or API calls, designed for SRE and DevOps environments.
