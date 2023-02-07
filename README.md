@@ -44,6 +44,8 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
  - [Sireus Data Structure and Internal Function Documentation](docs/godoc.md)
 
+![Web App Example Page](/docs/images/webapp_example.png)
+
 ## Data Structure
 
 ![Data Structure](/docs/images/data_structures.png)
