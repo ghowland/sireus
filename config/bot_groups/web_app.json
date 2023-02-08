@@ -6,6 +6,16 @@
       "name": "Operation",
       "info": "Basic operational states, to group Actions",
       "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
+    },
+    {
+      "name": "Traffic",
+      "info": "What does our traffic situation look like?",
+      "labels": ["Normal", "None", "Low", "High"]
+    },
+    {
+      "name": "Attack Risk",
+      "info": "What is the likelihood we are under attack now?",
+      "labels": ["None", "Low", "High", "Critical"]
     }
   ],
   "lock_timers": [
