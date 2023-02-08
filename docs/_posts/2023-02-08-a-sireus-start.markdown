@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Starting Sireus"
+title:  "A Sireus Start"
 date:   2023-02-08 19:27:19 +0700
 categories: sireus news
 ---
