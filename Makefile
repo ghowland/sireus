@@ -16,7 +16,7 @@ test:
 	@go test ./code/...
 
 doc:
-	@cd code ; ~/go/bin/gomarkdoc ./... > ../docs/godoc.md
+	@cd code ; ~/go/bin/gomarkdoc ./... > ../documentation/godoc.md
 
 cov:
 	@go test -coverprofile=coverage.txt -covermode=atomic ./code/...
