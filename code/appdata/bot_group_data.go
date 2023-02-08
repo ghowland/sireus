@@ -18,7 +18,10 @@ type (
 	}
 )
 
-type ActionCommandType int64
+type (
+	// What will we do with this ActionCommand?  We will only ever do 1 thing per Action, as this is a Decision System
+	ActionCommandType int64
+)
 
 const (
 	ShellCommand    ActionCommandType = iota // Shell Command
@@ -113,24 +116,31 @@ type (
 	// If a Bot is missing any data for it's variables, it is considered Invalid, because we are not
 	// operating with a full set of data.
 	Bot struct {
-		Name                 string
-		VariableValues       map[string]float64
-		SortedVariableValues util.PairFloat64List // Sorted VariableValues, Handlebars helper
-		StateValues          []string
-		CommandHistory       []ActionCommandResult
-		LockTimers           []BotLockTimer
+		Name                 string                   // Unique identifier pulled from the BotGroup.BotExtractor
+		VariableValues       map[string]float64       // These are the unique values for this Bot, and will be used for all ActionConsideration scoring
+		SortedVariableValues util.PairFloat64List     // Sorted VariableValues, Handlebars helper
+		StateValues          []string                 // These are the current States for this Bot.  Actions can only be available for execution, if all their Action.RequiredStates are active in the Bot
+		CommandHistory       []ActionCommandResult    // Storage of previous ActionCommand data run, so we can see insight into the history
+		LockTimers           []BotLockTimer           // LockTimers allow control over Actions that require them, so they cant be available until they can get all their LockTimers
 		ActionData           map[string]BotActionData // Key is Action.Name
 		SortedActionData     PairBotActionDataList    // Scored ActionData, Handlebars helper
 		FreezeActions        bool                     // If true, no actions will be taken for this Bot.  Single agent control
+		IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
+		InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
+		IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
 	}
 )
 
-type BotQueryType int64
+type (
+	// Differentiate Query Types, so we can format our requests and parse the data properly
+	BotQueryType int64
+)
 
 const (
 	Range BotQueryType = iota
 )
 
+// Format the BotQueryType to a string usable for building the request
 func (bqt BotQueryType) String() string {
 	switch bqt {
 	case Range:
@@ -179,13 +189,17 @@ type (
 	}
 )
 
-type BotLockTimerType int64
+type (
+	// Scope for locking Actions
+	BotLockTimerType int64
+)
 
 const (
 	LockBotGroup BotLockTimerType = iota
 	LockBot
 )
 
+// Format the BotLockTimerType for human readability
 func (bltt BotLockTimerType) String() string {
 	switch bltt {
 	case LockBotGroup:
@@ -214,14 +228,20 @@ type (
 	}
 )
 
-type BotVariableType int64
+type (
+	// This is the raw input data type.  It will still be turned into a float64, but it is best to know the origin type
+	BotVariableType int64
+)
 
 const (
 	Boolean BotVariableType = iota
 	Float
 )
 
-type BotVariableFormat int64
+type (
+	// This is for formatting the data we got raw from BotVariableType.  This uses Humanize and other readability funcs
+	BotVariableFormat int64
+)
 
 const (
 	FormatFloat BotVariableFormat = iota
@@ -236,6 +256,7 @@ const (
 	FormatMetricPrefix
 )
 
+// Format the BotVariableType for human readability
 func (bvt BotVariableType) String() string {
 	switch bvt {
 	case Boolean:
@@ -309,12 +330,16 @@ type (
 	}
 )
 
-type QueryServerType int64
+type (
+	// QueryServerType specifies QueryServer software, defining how we make and parse Query requests
+	QueryServerType int64
+)
 
 const (
 	Prometheus QueryServerType = iota
 )
 
+// Format the QueryServerType for human readability
 func (qst QueryServerType) String() string {
 	switch qst {
 	case Prometheus:

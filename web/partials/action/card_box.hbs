@@ -15,13 +15,13 @@
 
             <!-- Icon Controls -->
             <span style="padding-left: 1.5em">
-                <span class="icon has-text-info has-tooltip-arrow" data-tooltip="Info" style="border-bottom: 0px solid !important;">
+                <span class="icon has-text-info has-tooltip-arrow" data-tooltip="Info" style="border-bottom: 0 solid !important;">
                   <i class="fas fa-info-circle" onclick="Toast('info', 'Not Implemented', 'Would you like to know more?')"></i>
                 </span>
-                <span class="icon has-text-success has-tooltip-arrow" data-tooltip="Edit" style="border-bottom: 0px solid !important;">
+                <span class="icon has-text-success has-tooltip-arrow" data-tooltip="Edit" style="border-bottom: 0 solid !important;">
                   <i class="fa-solid fa-pen" onclick="Toast('success', 'Not Implemented', 'There is a time for changes.')"></i>
                 </span>
-                <span class="icon has-text-danger has-tooltip-arrow" data-tooltip="Force Execute" style="border-bottom: 0px solid !important;">
+                <span class="icon has-text-danger has-tooltip-arrow" data-tooltip="Force Execute" style="border-bottom: 0 solid !important;">
                   <i class="fas fa-ban" onclick="Toast('danger', 'Not Implemented', 'I am the law.')"></i>
                 </span>
             </span>
@@ -31,7 +31,7 @@
                 {{#each action.RequiredStates as |state stateIndex|}}
                     <span class="tag {{#if_string_in_slice state bot.StateValues}}is-primary{{else}}is-danger{{/if_string_in_slice}} has-tooltip-arrow"
                           data-tooltip="{{#if_string_in_slice state bot.StateValues}}State is Active{{else}}State is not Active, so this Action is not available.{{/if_string_in_slice}}"
-                          style="border-bottom: 0px solid !important;">
+                          style="border-bottom: 0 solid !important;">
 
                         {{state}}
 
@@ -60,13 +60,13 @@
         </p>
         <button class="card-header-icon" aria-label="more options">
       <span class="icon">
-        <i class="fas fa-angle-down" aria-hidden="true" onclick="$('#action_content_{{actionIndex}}').toggleClass('is-hidden')"></i>
+        <i class="fas fa-angle-down" aria-hidden="true" onclick="$('#action_content_{{actionDataIndex}}').toggleClass('is-hidden')"></i>
       </span>
         </button>
     </header>
 
-    <!--<div class="card-content is-hidden" id="action_content_{{actionIndex}}">-->
-    <div class="card-content" id="action_content_{{actionIndex}}">
+    <!--<div class="card-content is-hidden" id="action_content_{{actionDataIndex}}">-->
+    <div class="card-content" id="action_content_{{actionDataIndex}}">
         {{> 'partials/consider/table' }}
 
         <div class="content">

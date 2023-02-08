@@ -64,7 +64,7 @@ func GetBotGroup(site Site, botGroupName string) (BotGroup, error) {
 	return BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
 }
 
-func GetBot(site Site, botGroup BotGroup, botName string) (Bot, error) {
+func GetBot(botGroup BotGroup, botName string) (Bot, error) {
 	for _, bot := range botGroup.Bots {
 		if bot.Name == botName {
 			return bot, nil
@@ -88,7 +88,7 @@ func GetVariable(botGroup BotGroup, varName string) (BotVariable, error) {
 			return variable, nil
 		}
 	}
-	return BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing variable: %s", botGroup.Name, varName))
+	return BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Variable: %s", botGroup.Name, varName))
 }
 
 func GetActionConsideration(action Action, considerName string) (ActionConsideration, error) {

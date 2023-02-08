@@ -20,6 +20,16 @@ func Check(e error) bool {
 	return false
 }
 
+// Call CheckNoLog when we want to get a boolean on the error, but dont want to log because we handle the response and
+// it's too noisy or not useful. 
+func CheckNoLog(e error) bool {
+	if e != nil {
+		return true
+	}
+
+	return false
+}
+
 // Call CheckPanic for configuration errors that can't be solved.
 func CheckPanic(e error) {
 	if e != nil {

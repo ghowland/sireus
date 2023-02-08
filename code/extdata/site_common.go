@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"math"
@@ -11,30 +12,35 @@ import (
 	"time"
 )
 
-func UpdateSiteBotGroups(site *appdata.Site) {
+func UpdateSiteBotGroups() {
+	site := data.SireusData.Site
+
 	for index := range site.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
-		UpdateBotGroupFromPrometheus(site, index)
+		UpdateBotGroupFromPrometheus(&site, index)
 
 		// Clear all the bot variables, so our map starts fresh every time
-		ClearAllBotVariables(site, index)
+		ClearAllBotVariables(&site, index)
 
 		// Update Bot Variables from our Queries
-		UpdateBotsFromQueries(site, index)
+		UpdateBotsFromQueries(&site, index)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
-		UpdateBotsWithSyntheticVariables(site, index)
+		UpdateBotsWithSyntheticVariables(&site, index)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(site, index)
+		UpdateBotActionConsiderations(&site, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(site, index)
+		SortAllVariablesAndActions(&site, index)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
-		CreateFormattedVariables(site, index)
+		CreateFormattedVariables(&site, index)
 	}
+
+	// Assign the site back into the server data.  This allows atomic updates
+	data.SireusData.Site = site
 }
 
 func CreateFormattedVariables(site *appdata.Site, botGroupIndex int) {
@@ -43,7 +49,11 @@ func CreateFormattedVariables(site *appdata.Site, botGroupIndex int) {
 	for botIndex, bot := range botGroup.Bots {
 		for varIndex, value := range bot.SortedVariableValues {
 			variable, err := appdata.GetVariable(botGroup, value.Key)
-			util.Check(err)
+			if util.CheckNoLog(err) {
+				// Mark this bot as Invalid, because it is missing information
+				site.BotGroups[botGroupIndex].Bots[botIndex].IsInvalid = true
+				site.BotGroups[botGroupIndex].Bots[botIndex].InfoInvalid += fmt.Sprintf("Missing Variable: %s.  ", value.Key)
+			}
 
 			result := appdata.FormatBotVariable(variable.Format, value.Value)
 

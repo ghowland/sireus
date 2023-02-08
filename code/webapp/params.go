@@ -20,7 +20,7 @@ func GetPageMapData(c *fiber.Ctx, site appdata.Site) fiber.Map {
 
 	bot := appdata.Bot{}
 	if botId != "" && botGroup.Name != "" {
-		bot, err = appdata.GetBot(site, botGroup, botId)
+		bot, err = appdata.GetBot(botGroup, botId)
 		util.Check(err)
 	}
 
