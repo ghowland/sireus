@@ -1,5 +1,5 @@
 # sireus
-<img align="right" width="30%" src="docs/images/sireus_logo.png">
+<img align="right" width="30%" src="documenation/images/sireus_logo.png">
 
 ## Sireus - SRE Utility System
 ### Dynamic Bot manager for executing SRE and DevOps commands conditionally
@@ -10,7 +10,7 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 
 Sireus is a Decision System, made to collect information from Monitoring or other data sources, and make a decision on which action to execute, if any action should be executed.
 
-<img width="70%" src="docs/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
+<img width="70%" src="documenation/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
 ### Table of Contents
 
@@ -42,14 +42,14 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ## Links
 
- - [Sireus Data Structure and Internal Function Documentation](docs/godoc.md)
+ - [Sireus Data Structure and Internal Function Documentation](documenation/godoc.md)
  - Web App Example Page:
 
-![Web App Example Page](/docs/images/webapp_example.png)
+![Web App Example Page](/documenation/images/webapp_example.png)
 
 ## Data Structure
 
-![Data Structure](/docs/images/data_structures.png)
+![Data Structure](/documenation/images/data_structures.png)
 
 ### Sireus Bots and Bot Groups
 
@@ -75,7 +75,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Each Action has a set of Considerations (Conditions that are not just boolean) which create a Score.
 - The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Action will be executed.
 
-<img width="70%" src="docs/images/bot_action_execution.png" alt="Bot Action Execution">
+<img width="70%" src="documenation/images/bot_action_execution.png" alt="Bot Action Execution">
 
 #### Action Consideration Data
 
@@ -93,7 +93,7 @@ An Action has N Considerations, made from the following data:
 - Value Range: 0 to 100
 - Curve:
 
-![Curve Example](/docs/images/curve_example.PNG)
+![Curve Example](/documenation/images/curve_example.PNG)
 
 Given a Value Function Result (60) in the Value Range (0 to 100) = 0.6
 
@@ -172,4 +172,4 @@ The Action Weight is where you differentiate Actions from each other by their we
 
 ## Sireus Portrait
 
-![Sireus Portrait](/docs/images/sireus_dog_star.png)
+![Sireus Portrait](/documenation/images/sireus_dog_star.png)
