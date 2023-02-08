@@ -12,34 +12,50 @@ import (
 	"time"
 )
 
-type PrometheusResponseDataResult struct {
-	Metric map[string]string `json:"metric"`
-	Values [][]interface{}   `json:"values"`
-}
+type (
+	// Data inside the payload of the PrometheusResponseData
+	PrometheusResponseDataResult struct {
+		Metric map[string]string `json:"metric"`
+		Values [][]interface{}   `json:"values"`
+	}
+)
 
-type PrometheusResponseData struct {
-	ResultType string                         `json:"resultType"`
-	Result     []PrometheusResponseDataResult `json:"result"`
-}
+type (
+	// Payload for PrometheusResponse
+	PrometheusResponseData struct {
+		ResultType string                         `json:"resultType"`
+		Result     []PrometheusResponseDataResult `json:"result"`
+	}
+)
 
-type PrometheusResponse struct {
-	Status       string                 `json:"status"`
-	Data         PrometheusResponseData `json:"data"`
-	RequestTime  time.Time              // When the Request was made
-	ResponseTime time.Time              // When the Response was received
-}
+type (
+	// Response from Prometheus.  I made a short-hand version of this instead of using the one from Prometheus for convenience.
+	PrometheusResponse struct {
+		Status       string                 `json:"status"`
+		Data         PrometheusResponseData `json:"data"`
+		RequestTime  time.Time              // When the Request was made
+		ResponseTime time.Time              // When the Response was received
+	}
+)
 
-type QueryResult struct {
-	QueryServer        string // Server this Query came from
-	QueryType          data.BotQueryType
-	QueryName          string             // The Query
-	PrometheusResponse PrometheusResponse // The Response
-}
+type (
+	// A single Query result
+	QueryResult struct {
+		QueryServer        string // Server this Query came from
+		QueryType          data.BotQueryType
+		QueryName          string             // The Query
+		PrometheusResponse PrometheusResponse // The Response
+	}
+)
 
-type QueryManager struct {
-	Results []QueryResult
-}
+type (
+	// Stores all our QueryResults
+	QueryManager struct {
+		Results []QueryResult
+	}
+)
 
+// Query the Prometheus metric server
 func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
 	queryStartTime := time.Now()
 
@@ -70,6 +86,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 	return jsonResponse
 }
 
+// Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot {
 	bots := make(map[string]data.Bot)
 

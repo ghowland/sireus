@@ -5,6 +5,7 @@ import (
 	"sort"
 )
 
+// Sort a map[string]float64 by their key.  Returns a custom pair list
 func SortMapStringFloat64ByKey(input map[string]float64) data.PairFloat64List {
 	var keys []string
 
@@ -26,6 +27,7 @@ func SortMapStringFloat64ByKey(input map[string]float64) data.PairFloat64List {
 	return output
 }
 
+// Sort a map[string]float64 by their value.  Returns a custom pair list
 // TODO(ghowland):PERF: Inefficient, but I am working quickly.  Make it better later.
 func SortMapStringFloat64ByValue(input map[string]float64, sortForward bool) data.PairFloat64List {
 	pairList := data.PairFloat64List{}

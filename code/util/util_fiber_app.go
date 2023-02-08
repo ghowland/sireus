@@ -5,6 +5,7 @@ import (
 	"net/url"
 )
 
+// Parse the HTTP request body.  Needed for API requests
 func ParseContextBody(c *fiber.Ctx) map[string]string {
 	values, err := url.ParseQuery(string(c.Body()))
 	Check(err)

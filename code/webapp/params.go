@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// This is the function that passes in all the data for a given Handlebars page render, using Fiber
 func GetPageMapData(c *fiber.Ctx, site data.Site) fiber.Map {
 	siteId := site.Name
 	botGroupId := c.Query("bot_group_id")

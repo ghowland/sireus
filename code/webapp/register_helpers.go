@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// Main function to register all the different Handlebars helper functions, for text processing
 func RegisterHandlebarsHelpers() {
 	// Testing Length of Arrays for the different structs
 	RegisterHandlebarsHelpers_IfArrayLength()
@@ -29,6 +30,7 @@ func RegisterHandlebarsHelpers() {
 	RegisterHandlebarsHelpers_IfTests()
 }
 
+// Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
 func RegisterHandlebarsHelpers_WithData() {
 	// With BotActionData
 	raymond.RegisterHelper("with_bot_action", func(bot data.Bot, action data.Action, options *raymond.Options) raymond.SafeString {
@@ -47,6 +49,7 @@ func RegisterHandlebarsHelpers_WithData() {
 	})
 }
 
+// Expanded test logic
 func RegisterHandlebarsHelpers_IfTests() {
 	// If string == string
 	raymond.RegisterHelper("if_equal_string", func(a string, b string, options *raymond.Options) raymond.SafeString {
@@ -98,6 +101,7 @@ func RegisterHandlebarsHelpers_IfTests() {
 	})
 }
 
+// Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
 func RegisterHandlebarsHelpers_GetAppData() {
 	// Consideration Scores: Final
 	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
@@ -115,6 +119,7 @@ func RegisterHandlebarsHelpers_GetAppData() {
 	})
 }
 
+// Format data, for Go and our internal data types
 func RegisterHandlebarsHelpers_FormatData() {
 	// Queries
 	raymond.RegisterHelper("format_query_web", func(site data.Site, item data.BotQuery) string {
@@ -149,6 +154,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 	})
 }
 
+// Testing Length of Arrays for the different structs
 func RegisterHandlebarsHelpers_IfArrayLength() {
 	// -- Go Data --
 

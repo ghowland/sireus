@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/template/handlebars"
 )
 
+// Initial creation of the Handlebars engine, which is passed into Fiber
 func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine {
 	// Handlebars Engine for Fiber
 	engine := handlebars.New(appConfig.WebPath, ".hbs")
@@ -26,6 +27,7 @@ func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine {
 	return engine
 }
 
+// Create the Fiber web app, from the Handlebars engine
 func CreateWebApp(engine *handlebars.Engine) *fiber.App {
 	app := fiber.New(fiber.Config{
 		Views: engine,

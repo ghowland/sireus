@@ -815,79 +815,105 @@ import "github.com/ghowland/sireus/code/extdata"
 - [type QueryResult](<#type-queryresult>)
 
 
-## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L161>)
+## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L166>)
 
 ```go
 func ClearAllBotVariables(site *data.Site, botGroupIndex int)
 ```
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L47>)
+Clear all the Bot.VariableValues, so we can start fresh.  If we are missing any values, that Bot IsInvalid
+
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L49>)
 
 ```go
 func CreateFormattedVariables(site *data.Site, botGroupIndex int)
 ```
 
-## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L73>)
+Create formatted variables for all our Bots.  This adds human readable strings to all the sorted Pair Lists
+
+## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L90>)
 
 ```go
 func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot
 ```
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L229>)
+Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
+
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L237>)
 
 ```go
 func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}
 ```
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L215>)
+Returns the map for doing the Evaluate with a Bot's VariableValues.  Uses Govaluate.Evaluate\(\)
+
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L222>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
 ```
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L255>)
+Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate\(\)
+
+## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L266>)
 
 ```go
 func InitializeStates(site *data.Site, botGroupIndex int)
 ```
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L69>)
+Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
+
+## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L72>)
 
 ```go
 func SortAllVariablesAndActions(site *data.Site, botGroupIndex int)
 ```
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L84>)
+Sort all the Variables by name and Actions by Final Score
+
+## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L88>)
 
 ```go
 func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int)
 ```
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L239>)
+For this BotGroup, update all the BotActionData with new ActionConsideration scores
+
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L249>)
 
 ```go
 func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int)
 ```
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L266>)
+Runs Queries against Prometheus for a BotGroup
+
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L278>)
 
 ```go
 func UpdateBotsFromQueries(site *data.Site, botGroupIndex int)
 ```
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L167>)
+Update all the Bot VariableValues from our Queries
+
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L173>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int)
 ```
 
-## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L16>)
+Update bot with Synethic Variables.  Happens after all the Query Variables are set.  Sythnetics cant work on each other
+
+## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L17>)
 
 ```go
 func UpdateSiteBotGroups()
 ```
 
-## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L25-L30>)
+Update all the BotGroups in this Site
+
+## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L33-L38>)
+
+Response from Prometheus.  I made a short\-hand version of this instead of using the one from Prometheus for convenience.
 
 ```go
 type PrometheusResponse struct {
@@ -898,13 +924,17 @@ type PrometheusResponse struct {
 }
 ```
 
-### func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L43>)
+### func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L59>)
 
 ```go
 func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse
 ```
 
-## type [PrometheusResponseData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L20-L23>)
+Query the Prometheus metric server
+
+## type [PrometheusResponseData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L25-L28>)
+
+Payload for PrometheusResponse
 
 ```go
 type PrometheusResponseData struct {
@@ -913,7 +943,9 @@ type PrometheusResponseData struct {
 }
 ```
 
-## type [PrometheusResponseDataResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L15-L18>)
+## type [PrometheusResponseDataResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L17-L20>)
+
+Data inside the payload of the PrometheusResponseData
 
 ```go
 type PrometheusResponseDataResult struct {
@@ -922,7 +954,9 @@ type PrometheusResponseDataResult struct {
 }
 ```
 
-## type [QueryManager](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L39-L41>)
+## type [QueryManager](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L53-L55>)
+
+Stores all our QueryResults
 
 ```go
 type QueryManager struct {
@@ -930,7 +964,9 @@ type QueryManager struct {
 }
 ```
 
-## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L32-L37>)
+## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L43-L48>)
+
+A single Query result
 
 ```go
 type QueryResult struct {
@@ -953,19 +989,21 @@ import "github.com/ghowland/sireus/code/fixgo"
 - [func SortMapStringFloat64ByValue(input map[string]float64, sortForward bool) data.PairFloat64List](<#func-sortmapstringfloat64byvalue>)
 
 
-## func [SortMapStringFloat64ByKey](<https://github.com/ghowland/sireus/blob/main/code/fixgo/fix_go_sort.go#L8>)
+## func [SortMapStringFloat64ByKey](<https://github.com/ghowland/sireus/blob/main/code/fixgo/fix_go_sort.go#L9>)
 
 ```go
 func SortMapStringFloat64ByKey(input map[string]float64) data.PairFloat64List
 ```
 
-## func [SortMapStringFloat64ByValue](<https://github.com/ghowland/sireus/blob/main/code/fixgo/fix_go_sort.go#L30>)
+Sort a map\[string\]float64 by their key.  Returns a custom pair list
+
+## func [SortMapStringFloat64ByValue](<https://github.com/ghowland/sireus/blob/main/code/fixgo/fix_go_sort.go#L32>)
 
 ```go
 func SortMapStringFloat64ByValue(input map[string]float64, sortForward bool) data.PairFloat64List
 ```
 
-TODO\(ghowland\):PERF: Inefficient, but I am working quickly.  Make it better later.
+Sort a map\[string\]float64 by their value.  Returns a custom pair list TODO\(ghowland\):PERF: Inefficient, but I am working quickly.  Make it better later.
 
 # server
 
@@ -1029,10 +1067,13 @@ import "github.com/ghowland/sireus/code/util"
 ## Variables
 
 ```go
-var InvalidTypeFloat64 = errors.New("Value could not be converted to Float64")
+var (
+    // Float64 is our primary data type, custom error for tracking problems
+    InvalidTypeFloat64 = errors.New("Value could not be converted to Float64")
+)
 ```
 
-## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L106>)
+## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L114>)
 
 ```go
 func BoolToFloatString(value bool) string
@@ -1064,49 +1105,63 @@ func CheckPanic(e error)
 
 Call CheckPanic for configuration errors that can't be solved.
 
-## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L90>)
+## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L98>)
 
 ```go
 func Clamp(value float64, min float64, max float64) float64
 ```
 
-## func [ConvertInterfaceToFloat](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L67>)
+Clamp a value between a min and a max
+
+## func [ConvertInterfaceToFloat](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L74>)
 
 ```go
 func ConvertInterfaceToFloat(value interface{}) (float64, error)
 ```
 
-## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L41>)
+Convert any value we can into a float64 in a predictable manner
+
+## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L42>)
 
 ```go
 func FileExists(filename string) bool
 ```
 
-## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L49>)
+Does this file exist?  Wrap to make code shorter in situ
+
+## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L51>)
 
 ```go
 func HandlebarFormatText(format string, mapData map[string]string) string
 ```
 
-## func [ParseContextBody](<https://github.com/ghowland/sireus/blob/main/code/util/util_fiber_app.go#L8>)
+Format Handlebars string, so I don't have to remember any arguments
+
+## func [ParseContextBody](<https://github.com/ghowland/sireus/blob/main/code/util/util_fiber_app.go#L9>)
 
 ```go
 func ParseContextBody(c *fiber.Ctx) map[string]string
 ```
 
-## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L114>)
+Parse the HTTP request body.  Needed for API requests
+
+## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L123>)
 
 ```go
 func PrintJson(value interface{}) string
 ```
 
-## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L121>)
+Print JSON, for debugging
+
+## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L131>)
 
 ```go
 func PrintStringArrayCSV(slice []string) string
 ```
 
-## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L95>)
+Print a string array.  For human readability or debugging
+
+## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L103>)
 
 ```go
 func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
@@ -1114,11 +1169,13 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
 
 Returns clamped value between 0\-1, where the value falls between the range
 
-## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L56>)
+## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L59>)
 
 ```go
 func StringInSlice(a string, list []string) bool
 ```
+
+Test if a string is in a slice
 
 # webapp
 
@@ -1139,59 +1196,77 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
 
 
-## func [CreateHandlebarsEngine](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L9>)
+## func [CreateHandlebarsEngine](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L10>)
 
 ```go
 func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine
 ```
 
-## func [CreateWebApp](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L29>)
+Initial creation of the Handlebars engine, which is passed into Fiber
+
+## func [CreateWebApp](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L31>)
 
 ```go
 func CreateWebApp(engine *handlebars.Engine) *fiber.App
 ```
 
-## func [GetPageMapData](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L10>)
+Create the Fiber web app, from the Handlebars engine
+
+## func [GetPageMapData](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L11>)
 
 ```go
 func GetPageMapData(c *fiber.Ctx, site data.Site) fiber.Map
 ```
 
-## func [RegisterHandlebarsHelpers](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L15>)
+This is the function that passes in all the data for a given Handlebars page render, using Fiber
+
+## func [RegisterHandlebarsHelpers](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L16>)
 
 ```go
 func RegisterHandlebarsHelpers()
 ```
 
-## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L118>)
+Main function to register all the different Handlebars helper functions, for text processing
+
+## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L123>)
 
 ```go
 func RegisterHandlebarsHelpers_FormatData()
 ```
 
-## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L101>)
+Format data, for Go and our internal data types
+
+## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L105>)
 
 ```go
 func RegisterHandlebarsHelpers_GetAppData()
 ```
 
-## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L152>)
+Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
+
+## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L158>)
 
 ```go
 func RegisterHandlebarsHelpers_IfArrayLength()
 ```
 
-## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L50>)
+Testing Length of Arrays for the different structs
+
+## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L53>)
 
 ```go
 func RegisterHandlebarsHelpers_IfTests()
 ```
 
-## func [RegisterHandlebarsHelpers\_WithData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L32>)
+Expanded test logic
+
+## func [RegisterHandlebarsHelpers\_WithData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L34>)
 
 ```go
 func RegisterHandlebarsHelpers_WithData()
 ```
+
+Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
 
 
 

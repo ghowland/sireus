@@ -21,7 +21,7 @@ func Check(e error) bool {
 }
 
 // Call CheckNoLog when we want to get a boolean on the error, but dont want to log because we handle the response and
-// it's too noisy or not useful. 
+// it's too noisy or not useful.
 func CheckNoLog(e error) bool {
 	if e != nil {
 		return true
@@ -38,6 +38,7 @@ func CheckPanic(e error) {
 	}
 }
 
+// Does this file exist?  Wrap to make code shorter in situ
 func FileExists(filename string) bool {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -46,6 +47,7 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+// Format Handlebars string, so I don't have to remember any arguments
 func HandlebarFormatText(format string, mapData map[string]string) string {
 	result, err := raymond.Render(format, mapData)
 	Check(err)
@@ -53,6 +55,7 @@ func HandlebarFormatText(format string, mapData map[string]string) string {
 	return result
 }
 
+// Test if a string is in a slice
 func StringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
@@ -62,8 +65,12 @@ func StringInSlice(a string, list []string) bool {
 	return false
 }
 
-var InvalidTypeFloat64 = errors.New("Value could not be converted to Float64")
+var (
+	// Float64 is our primary data type, custom error for tracking problems
+	InvalidTypeFloat64 = errors.New("Value could not be converted to Float64")
+)
 
+// Convert any value we can into a float64 in a predictable manner
 func ConvertInterfaceToFloat(value interface{}) (float64, error) {
 	switch value := value.(type) {
 	case float64:
@@ -87,6 +94,7 @@ func ConvertInterfaceToFloat(value interface{}) (float64, error) {
 	}
 }
 
+// Clamp a value between a min and a max
 func Clamp(value float64, min float64, max float64) float64 {
 	return math.Max(min, math.Min(max, value))
 }
@@ -111,6 +119,7 @@ func BoolToFloatString(value bool) string {
 	}
 }
 
+// Print JSON, for debugging
 func PrintJson(value interface{}) string {
 	output, err := json.MarshalIndent(value, "", "  ")
 	Check(err)
@@ -118,6 +127,7 @@ func PrintJson(value interface{}) string {
 	return string(output)
 }
 
+// Print a string array.  For human readability or debugging
 func PrintStringArrayCSV(slice []string) string {
 	output := strings.Join(slice, ", ")
 
