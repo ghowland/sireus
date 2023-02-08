@@ -10,7 +10,7 @@ Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution metho
 
 Sireus is a Decision System, made to collect information from Monitoring or other data sources, and make a decision on which action to execute, if any action should be executed.
 
-<img width="70%" src="documenation/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
+<img width="70%" src="https://github.com/ghowland/sireus/blob/main/documenation/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
 ### Table of Contents
 
@@ -42,14 +42,14 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ## Links
 
- - [Sireus Data Structure and Internal Function Documentation](documenation/godoc.md)
+ - [Sireus Data Structure and Internal Function Documentation](https://github.com/ghowland/sireus/blob/main/documenation/godoc.md)
  - Web App Example Page:
 
-![Web App Example Page](/documenation/images/webapp_example.png)
+![Web App Example Page](https://github.com/ghowland/sireus/blob/main/documenation/images/webapp_example.png)
 
 ## Data Structure
 
-![Data Structure](/documenation/images/data_structures.png)
+![Data Structure](https://github.com/ghowland/sireus/blob/main/documenation/images/data_structures.png)
 
 ### Sireus Bots and Bot Groups
 
@@ -93,7 +93,7 @@ An Action has N Considerations, made from the following data:
 - Value Range: 0 to 100
 - Curve:
 
-![Curve Example](/documenation/images/curve_example.PNG)
+![Curve Example](https://github.com/ghowland/sireus/blob/main/documenation/images/curve_example.PNG)
 
 Given a Value Function Result (60) in the Value Range (0 to 100) = 0.6
 
