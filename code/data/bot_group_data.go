@@ -1,7 +1,6 @@
-package appdata
+package data
 
 import (
-	"github.com/ghowland/sireus/code/util"
 	"time"
 )
 
@@ -67,7 +66,7 @@ type (
 		Content           string            `json:"content"`
 		SuccessStatus     int               `json:"success_status"`
 		SuccessContent    string            `json:"success_content"`
-		LockTimerDuration util.Duration     `json:"lock_timer_duration"`
+		LockTimerDuration Duration          `json:"lock_timer_duration"`
 		HostExecKey       string            `json:"host_exec_key"`    // Sireus Client presents this key to get commands to run
 		SetBotStates      []string          `json:"set_bot_states"`   // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.
 		JournalTemplate   string            `json:"journal_template"` // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
@@ -118,7 +117,7 @@ type (
 	Bot struct {
 		Name                 string                   // Unique identifier pulled from the BotGroup.BotExtractor
 		VariableValues       map[string]float64       // These are the unique values for this Bot, and will be used for all ActionConsideration scoring
-		SortedVariableValues util.PairFloat64List     // Sorted VariableValues, Handlebars helper
+		SortedVariableValues PairFloat64List          // Sorted VariableValues, Handlebars helper
 		StateValues          []string                 // These are the current States for this Bot.  Actions can only be available for execution, if all their Action.RequiredStates are active in the Bot
 		CommandHistory       []ActionCommandResult    // Storage of previous ActionCommand data run, so we can see insight into the history
 		LockTimers           []BotLockTimer           // LockTimers allow control over Actions that require them, so they cant be available until they can get all their LockTimers
@@ -152,12 +151,12 @@ func (bqt BotQueryType) String() string {
 type (
 	// These queries are stored in BotGroup, but are used to populate the Bots with query Variables.
 	BotQuery struct {
-		QueryServer string        `json:"query_server"`
-		QueryType   BotQueryType  `json:"query_type"`
-		Name        string        `json:"name"`
-		Info        string        `json:"info"`
-		Query       string        `json:"query"`
-		Interval    util.Duration `json:"interval"`
+		QueryServer string       `json:"query_server"`
+		QueryType   BotQueryType `json:"query_type"`
+		Name        string       `json:"name"`
+		Info        string       `json:"info"`
+		Query       string       `json:"query"`
+		Interval    Duration     `json:"interval"`
 	}
 )
 
@@ -309,14 +308,14 @@ type (
 		BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`             // This is the information we use to create the ephemeral Bots, but taking their names from this query's metric key
 		States                 []BotForwardSequenceState `json:"states"`                    // States can only advance from the start to the end, they can never go backwards.  It's a sequence, but you can skip steps forward.  Using several of these, many situations can be modelled.
 		LockTimers             []BotLockTimer            `json:"lock_timers"`               // Lock timers work at BotGroup or Bot level, and block any execution for a period of time, so the previous action's results can be evaluated
-		BotTimeoutStale        util.Duration             `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
-		BotTimeoutRemove       util.Duration             `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
-		BotRemoveStoreDuration util.Duration             `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
+		BotTimeoutStale        Duration                  `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
+		BotTimeoutRemove       Duration                  `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
+		BotRemoveStoreDuration Duration                  `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
 		RefuseBotResumption    bool                      `json:"refuse_bot_resumption"`     // If true, once a bot is removed, while it is being stored for inspect, if it returns it will not be resumed.  Instead a new bot will be created to disconnect their history, even though they share the same BotKey
 		ActionThreshold        float64                   `json:"action_threshold"`          // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-		CommandHistoryDuration util.Duration             `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
+		CommandHistoryDuration Duration                  `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
 		JournalRollupStates    []string                  `json:"journal_rollup_states"`     // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
-		JournalRollupDuration  util.Duration             `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
+		JournalRollupDuration  Duration                  `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
 		Queries                []BotQuery                `json:"queries"`                   // Queries used to populate the Variables
 		Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ActionConsideration evaluations to score the Action
 		Actions                []Action                  `json:"actions"`                   // Actions get scored using ActionConsideration and the highest scored Action that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Actions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Actions based on the BotState.
@@ -363,7 +362,7 @@ type (
 		AuthUser            string          `json:"auth_user"`
 		AuthSecret          string          `json:"auth_secret"`
 		DefaultStep         string          `json:"default_step"`
-		DefaultDataDuration util.Duration   `json:"default_data_duration"`
+		DefaultDataDuration Duration        `json:"default_data_duration"`
 		WebUrlFormat        string          `json:"web_url_format"`
 	}
 )

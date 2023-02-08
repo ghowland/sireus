@@ -3,6 +3,7 @@ package appdata
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"os"
 )
@@ -12,7 +13,7 @@ type CurveData struct {
 	Values []float64 `json:"values"`
 }
 
-func LoadCurveData(appConfig AppConfig, name string) CurveData {
+func LoadCurveData(appConfig data.AppConfig, name string) CurveData {
 	path := fmt.Sprintf(appConfig.CurvePathFormat, name)
 
 	curveDataInput, err := os.ReadFile(path)

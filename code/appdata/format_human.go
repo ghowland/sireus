@@ -3,31 +3,32 @@ package appdata
 import (
 	"fmt"
 	"github.com/BenJetson/humantime"
-	"time"
 	"github.com/dustin/go-humanize"
+	"github.com/ghowland/sireus/code/data"
+	"time"
 )
 
-func FormatBotVariable(format BotVariableFormat, value float64) string {
+func FormatBotVariable(format data.BotVariableFormat, value float64) string {
 	switch format {
-	case FormatFloat:
+	case data.FormatFloat:
 		return fmt.Sprintf("%.2f", value)
-	case FormatBytes:
+	case data.FormatBytes:
 		return humanize.Bytes(uint64(value))
-	case FormatBandwidth:
+	case data.FormatBandwidth:
 		return humanize.Bytes(uint64(value))
-	case FormatDuration:
+	case data.FormatDuration:
 		return humantime.Duration(time.Duration(value))
-	case FormatTime:
+	case data.FormatTime:
 		return humanize.Time(time.Unix(int64(value), 0))
-	case FormatOrdinal:
+	case data.FormatOrdinal:
 		return humanize.Ordinal(int(value))
-	case FormatComma:
+	case data.FormatComma:
 		return humanize.Comma(int64(value))
-	case FormatMetricPrefix:
+	case data.FormatMetricPrefix:
 		return humanize.SI(value, "")
-	case FormatPercent:
+	case data.FormatPercent:
 		return fmt.Sprintf("%.1f%%", value*100)
-	case FormatBool:
+	case data.FormatBool:
 		if value == 0 {
 			return "False"
 		} else {

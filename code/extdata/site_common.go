@@ -5,6 +5,7 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/appdata"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/fix_go"
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"math"
@@ -43,7 +44,7 @@ func UpdateSiteBotGroups() {
 	data.SireusData.Site = site
 }
 
-func CreateFormattedVariables(site *appdata.Site, botGroupIndex int) {
+func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -65,10 +66,10 @@ func CreateFormattedVariables(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int) {
+func SortAllVariablesAndActions(site *data.Site, botGroupIndex int) {
 	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
 		// Sort VariableValues
-		sortedVars := util.SortMapStringFloat64ByKey(bot.VariableValues)
+		sortedVars := fix_go.SortMapStringFloat64ByKey(bot.VariableValues)
 		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
 		// Sort ActionData
@@ -80,7 +81,7 @@ func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
+func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -89,7 +90,7 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 		for _, action := range botGroup.Actions {
 			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
 			if _, ok := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = appdata.BotActionData{
+				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = data.BotActionData{
 					ConsiderationFinalScores:     map[string]float64{},
 					ConsiderationEvaluatedScores: map[string]float64{},
 				}
@@ -157,13 +158,13 @@ func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func ClearAllBotVariables(site *appdata.Site, botGroupIndex int) {
+func ClearAllBotVariables(site *data.Site, botGroupIndex int) {
 	for botIndex := range site.BotGroups[botGroupIndex].Bots {
 		site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = map[string]float64{}
 	}
 }
 
-func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
+func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Clear all teh Bot VariableValues
@@ -211,7 +212,7 @@ func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func GetBotEvalMapOnlyQueries(bot appdata.Bot, queryVariableNames []string) map[string]interface{} {
+func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
 	// Build a map from this bot's variables
@@ -225,7 +226,7 @@ func GetBotEvalMapOnlyQueries(bot appdata.Bot, queryVariableNames []string) map[
 	return evalMap
 }
 
-func GetBotEvalMapAllVariables(bot appdata.Bot) map[string]interface{} {
+func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
 	// Build a map from this bot's variables
@@ -235,7 +236,7 @@ func GetBotEvalMapAllVariables(bot appdata.Bot) map[string]interface{} {
 
 	return evalMap
 }
-func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
+func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
 	query, err := appdata.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
@@ -251,7 +252,7 @@ func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int) {
 	InitializeStates(site, botGroupIndex)
 }
 
-func InitializeStates(site *appdata.Site, botGroupIndex int) {
+func InitializeStates(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, _ := range botGroup.Bots {
@@ -262,7 +263,7 @@ func InitializeStates(site *appdata.Site, botGroupIndex int) {
 	}
 }
 
-func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int) {
+func UpdateBotsFromQueries(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Loop over all Bot Group Queries

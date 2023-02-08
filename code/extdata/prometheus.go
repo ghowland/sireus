@@ -3,7 +3,7 @@ package extdata
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"io"
 	"log"
@@ -31,7 +31,7 @@ type PrometheusResponse struct {
 
 type QueryResult struct {
 	QueryServer        string // Server this Query came from
-	QueryType          appdata.BotQueryType
+	QueryType          data.BotQueryType
 	QueryName          string             // The Query
 	PrometheusResponse PrometheusResponse // The Response
 }
@@ -40,7 +40,7 @@ type QueryManager struct {
 	Results []QueryResult
 }
 
-func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
+func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
 	queryStartTime := time.Now()
 
 	start := timeStart.UTC().Format(time.RFC3339)
@@ -70,17 +70,17 @@ func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, quer
 	return jsonResponse
 }
 
-func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.Bot {
-	bots := make(map[string]appdata.Bot)
+func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot {
+	bots := make(map[string]data.Bot)
 
-	for _, resultItem := range data.Data.Result {
+	for _, resultItem := range response.Data.Result {
 		name := resultItem.Metric[botKey]
 
 		_, exists := bots[name]
 		if !exists {
-			bots[name] = appdata.Bot{
+			bots[name] = data.Bot{
 				Name:        name,
-				ActionData:  map[string]appdata.BotActionData{},
+				ActionData:  map[string]data.BotActionData{},
 				StateValues: []string{},
 			}
 		}
@@ -88,7 +88,7 @@ func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.B
 	//log.Print("Bots: ", bots)
 
 	// Add all the bots to a final array.  The map allowed us to ensure no duplicate entries, as that is allowed.
-	var botArray []appdata.Bot
+	var botArray []data.Bot
 	for _, bot := range bots {
 		botArray = append(botArray, bot)
 	}

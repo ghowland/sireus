@@ -5,6 +5,7 @@ import (
 	"github.com/BenJetson/humantime"
 	"github.com/aymerick/raymond"
 	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"strings"
@@ -30,13 +31,13 @@ func RegisterHandlebarsHelpers() {
 
 func RegisterHandlebarsHelpers_WithData() {
 	// With BotActionData
-	raymond.RegisterHelper("with_bot_action", func(bot appdata.Bot, action appdata.Action, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("with_bot_action", func(bot data.Bot, action data.Action, options *raymond.Options) raymond.SafeString {
 		botActionData := bot.ActionData[action.Name]
 		return raymond.SafeString(options.FnWith(botActionData))
 	})
 
 	// With Action from Bot
-	raymond.RegisterHelper("with_action_from_bot", func(botGroup appdata.BotGroup, bot appdata.Bot, actionDataIndex int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("with_action_from_bot", func(botGroup data.BotGroup, bot data.Bot, actionDataIndex int, options *raymond.Options) raymond.SafeString {
 
 		botActionData := bot.SortedActionData[actionDataIndex]
 
@@ -99,24 +100,24 @@ func RegisterHandlebarsHelpers_IfTests() {
 
 func RegisterHandlebarsHelpers_GetAppData() {
 	// Consideration Scores: Final
-	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
 		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name]))
 	})
 
 	// Consideration Scores: Calculated (not Weighted)
-	raymond.RegisterHelper("get_bot_action_data_consideration_evaluated_score", func(bot appdata.Bot, action appdata.Action, consider appdata.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_action_data_consideration_evaluated_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
 		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name]))
 	})
 
 	// ActionData Final Score
-	raymond.RegisterHelper("get_bot_action_data_final_score", func(bot appdata.Bot, action appdata.Action) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_action_data_final_score", func(bot data.Bot, action data.Action) raymond.SafeString {
 		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore))
 	})
 }
 
 func RegisterHandlebarsHelpers_FormatData() {
 	// Queries
-	raymond.RegisterHelper("format_query_web", func(site appdata.Site, item appdata.BotQuery) string {
+	raymond.RegisterHelper("format_query_web", func(site data.Site, item data.BotQuery) string {
 		queryServer, err := appdata.GetQueryServer(site, item.QueryServer)
 		util.Check(err)
 		mapData := map[string]string{
@@ -138,7 +139,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 	})
 
 	// Variables
-	raymond.RegisterHelper("format_variable_type", func(item appdata.BotVariableType) string {
+	raymond.RegisterHelper("format_variable_type", func(item data.BotVariableType) string {
 		return item.String()
 	})
 
@@ -171,7 +172,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 	// -- Sireus Structs --
 
 	// Testing Length of Arrays for the different structs
-	raymond.RegisterHelper("if_bot_group_length", func(items []appdata.BotGroup, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_bot_group_length", func(items []data.BotGroup, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -179,7 +180,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_bot_length", func(items []appdata.Bot, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_bot_length", func(items []data.Bot, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -187,7 +188,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_action_length", func(items []appdata.Action, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_action_length", func(items []data.Action, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -195,7 +196,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_consider_length", func(items []appdata.ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_consider_length", func(items []data.ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -203,7 +204,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_query_length", func(items []appdata.BotQuery, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_query_length", func(items []data.BotQuery, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -211,7 +212,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_variable_length", func(items []appdata.BotVariable, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_variable_length", func(items []data.BotVariable, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -219,7 +220,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_state_length", func(items []appdata.BotForwardSequenceState, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_state_length", func(items []data.BotForwardSequenceState, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -227,7 +228,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_lock_timer_length", func(items []appdata.BotLockTimer, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_lock_timer_length", func(items []data.BotLockTimer, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {

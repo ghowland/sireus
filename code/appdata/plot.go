@@ -2,12 +2,13 @@ package appdata
 
 import (
 	"encoding/json"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 )
 
-func GetAPIPlotData(appConfig AppConfig, c *fiber.Ctx) string {
+func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string {
 	input := util.ParseContextBody(c)
 	//log.Println("Get API Plot Data: ", input)
 

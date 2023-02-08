@@ -1,12 +1,12 @@
 package webapp
 
 import (
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/handlebars"
 )
 
-func CreateHandlebarsEngine(appConfig appdata.AppConfig) *handlebars.Engine {
+func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine {
 	// Handlebars Engine for Fiber
 	engine := handlebars.New(appConfig.WebPath, ".hbs")
 

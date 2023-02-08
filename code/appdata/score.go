@@ -2,10 +2,11 @@ package appdata
 
 import (
 	"fmt"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 )
 
-func CalculateScore(action Action, actionData BotActionData) (float64, []string) {
+func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string) {
 	var runningScore float64 = 1
 	var considerCount int = 0
 

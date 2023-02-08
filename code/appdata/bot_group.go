@@ -4,26 +4,27 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"os"
 )
 
-func LoadBotGroupConfig(path string) BotGroup {
+func LoadBotGroupConfig(path string) data.BotGroup {
 	botGroupData, err := os.ReadFile(path)
 	util.CheckPanic(err)
 
-	var botGroup BotGroup
+	var botGroup data.BotGroup
 	err = json.Unmarshal(botGroupData, &botGroup)
 	util.CheckPanic(err)
 
 	return botGroup
 }
 
-func LoadSiteConfig(appConfig AppConfig) Site {
+func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	siteData, err := os.ReadFile(appConfig.SiteConfigPath)
 	util.CheckPanic(err)
 
-	var site Site
+	var site data.Site
 	err = json.Unmarshal(siteData, &site)
 	util.CheckPanic(err)
 
@@ -36,71 +37,71 @@ func LoadSiteConfig(appConfig AppConfig) Site {
 	return site
 }
 
-func GetQueryServer(site Site, name string) (QueryServer, error) {
+func GetQueryServer(site data.Site, name string) (data.QueryServer, error) {
 	for _, queryServer := range site.QueryServers {
 		if queryServer.Name == name {
 			return queryServer, nil
 		}
 	}
 
-	return QueryServer{}, errors.New(fmt.Sprintf("Query Server missing: %s", name))
+	return data.QueryServer{}, errors.New(fmt.Sprintf("Query Server missing: %s", name))
 }
 
-func GetQuery(botGroup BotGroup, queryName string) (BotQuery, error) {
+func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 	for _, query := range botGroup.Queries {
 		if query.Name == queryName {
 			return query, nil
 		}
 	}
-	return BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
+	return data.BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
 }
 
-func GetBotGroup(site Site, botGroupName string) (BotGroup, error) {
+func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error) {
 	for _, botGroup := range site.BotGroups {
 		if botGroup.Name == botGroupName {
 			return botGroup, nil
 		}
 	}
-	return BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
+	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
 }
 
-func GetBot(botGroup BotGroup, botName string) (Bot, error) {
+func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 	for _, bot := range botGroup.Bots {
 		if bot.Name == botName {
 			return bot, nil
 		}
 	}
-	return Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
+	return data.Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
 }
 
-func GetAction(botGroup BotGroup, actionName string) (Action, error) {
+func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
 	for _, action := range botGroup.Actions {
 		if action.Name == actionName {
 			return action, nil
 		}
 	}
-	return Action{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Action: %s", botGroup.Name, actionName))
+	return data.Action{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Action: %s", botGroup.Name, actionName))
 }
 
-func GetVariable(botGroup BotGroup, varName string) (BotVariable, error) {
+func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error) {
 	for _, variable := range botGroup.Variables {
 		if variable.Name == varName {
 			return variable, nil
 		}
 	}
-	return BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Variable: %s", botGroup.Name, varName))
+	return data.BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Variable: %s", botGroup.Name, varName))
 }
 
-func GetActionConsideration(action Action, considerName string) (ActionConsideration, error) {
+func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error) {
 	for _, consider := range action.Considerations {
 		if consider.Name == considerName {
 			return consider, nil
 		}
 	}
-	return ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
+	return data.ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
 }
 
-func AreAllActionStatesActive(action Action, bot Bot) bool {
+func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
 	for _, state := range action.RequiredStates {
 		if !util.StringInSlice(state, bot.StateValues) {
 			return false
