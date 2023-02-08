@@ -25,4 +25,8 @@ If you are interested in contributing, please start by creating issues around th
 the design RFC phase, and I want to collect opinions, feature requests and questions, so that I can fix any initial 
 design flaws in this early phase of the project.
 
+Example web page:
+
+<img src="https://github.com/ghowland/sireus/blob/main/documentation/images/webapp_example.png" width="80%">
+
 [sireus-gh]:   https://github.com/ghowland/sireus
