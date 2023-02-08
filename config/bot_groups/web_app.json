@@ -10,7 +10,7 @@
     {
       "name": "Traffic",
       "info": "What does our traffic situation look like?",
-      "labels": ["Normal", "None", "Low", "High"]
+      "labels": ["Normal", "High", "Low", "None"]
     },
     {
       "name": "Attack Risk",
