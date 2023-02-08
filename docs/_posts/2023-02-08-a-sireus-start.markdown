@@ -6,7 +6,7 @@ categories: sireus news
 ---
 Hi, I'm Geoff Howland, and I'm starting this blog to write about the Sireus project's development.
 
-Sireus is a Decision System, and sits between your Monitoring and Alerting.  It can run commands, or export state
+Sireus is a Decision System, and sits between your Monitoring and Alerting.  It can run commands and export state
 information back into your monitoring system, so you can use the information to make further decisions or execute 
 commands with another system.
 
