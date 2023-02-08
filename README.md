@@ -43,7 +43,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 ## Links
 
  - [Sireus Data Structure and Internal Function Documentation](https://github.com/ghowland/sireus/blob/main/documenation/godoc.md)
- - [Developer Chat - Invite Only for now](https://sireus.zulipchat.com/)
+ - [Developer Chat on Zulip - Invite only for now](https://sireus.zulipchat.com/)
  - Web App Example Page:
 
 ![Web App Example Page](https://github.com/ghowland/sireus/blob/main/documentation/images/webapp_example.png)
