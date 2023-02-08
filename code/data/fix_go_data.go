@@ -6,22 +6,31 @@ import (
 	"time"
 )
 
-type PairFloat64 struct {
-	Key       string
-	Value     float64
-	Formatted string
-}
+type (
+	// Allows for sorting map[string]float64 by value or key, and also stores a human readable formatted string
+	PairFloat64 struct {
+		Key       string
+		Value     float64
+		Formatted string
+	}
+)
 
-type PairFloat64List []PairFloat64
+type (
+	// Wrapper for PairFloat64 that makes sorting possible
+	PairFloat64List []PairFloat64
+)
 
 func (p PairFloat64List) Len() int           { return len(p) }
 func (p PairFloat64List) Less(i, j int) bool { return p[i].Value < p[j].Value }
 func (p PairFloat64List) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
 
-type PairBotActionData struct {
-	Key   string
-	Value BotActionData
-}
+type (
+	// Allows for sorting BotActionData by FinalScore
+	PairBotActionData struct {
+		Key   string
+		Value BotActionData
+	}
+)
 
 type PairBotActionDataList []PairBotActionData
 
@@ -36,10 +45,12 @@ type (
 	Duration time.Duration
 )
 
+// Marshal JSON for our time.Duration wrapper
 func (d Duration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(time.Duration(d).String())
 }
 
+// Unmarshal JSON for our time.Duration wrapper
 func (d *Duration) UnmarshalJSON(b []byte) error {
 	var v interface{}
 	if err := json.Unmarshal(b, &v); err != nil {

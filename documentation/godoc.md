@@ -629,7 +629,7 @@ func (bvt BotVariableType) String() string
 
 Format the BotVariableType for human readability
 
-## type [Duration](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L36>)
+## type [Duration](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L45>)
 
 Cant unmarshal JSON into time.Duration, so wrapping it
 
@@ -637,19 +637,25 @@ Cant unmarshal JSON into time.Duration, so wrapping it
 type Duration time.Duration
 ```
 
-### func \(Duration\) [MarshalJSON](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L39>)
+### func \(Duration\) [MarshalJSON](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L49>)
 
 ```go
 func (d Duration) MarshalJSON() ([]byte, error)
 ```
 
-### func \(\*Duration\) [UnmarshalJSON](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L43>)
+Marshal JSON for our time.Duration wrapper
+
+### func \(\*Duration\) [UnmarshalJSON](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L54>)
 
 ```go
 func (d *Duration) UnmarshalJSON(b []byte) error
 ```
 
-## type [PairBotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L21-L24>)
+Unmarshal JSON for our time.Duration wrapper
+
+## type [PairBotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L29-L32>)
+
+Allows for sorting BotActionData by FinalScore
 
 ```go
 type PairBotActionData struct {
@@ -658,31 +664,33 @@ type PairBotActionData struct {
 }
 ```
 
-## type [PairBotActionDataList](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L26>)
+## type [PairBotActionDataList](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L35>)
 
 ```go
 type PairBotActionDataList []PairBotActionData
 ```
 
-### func \(PairBotActionDataList\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L28>)
+### func \(PairBotActionDataList\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L37>)
 
 ```go
 func (p PairBotActionDataList) Len() int
 ```
 
-### func \(PairBotActionDataList\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L29>)
+### func \(PairBotActionDataList\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L38>)
 
 ```go
 func (p PairBotActionDataList) Less(i, j int) bool
 ```
 
-### func \(PairBotActionDataList\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L32>)
+### func \(PairBotActionDataList\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L41>)
 
 ```go
 func (p PairBotActionDataList) Swap(i, j int)
 ```
 
-## type [PairFloat64](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L9-L13>)
+## type [PairFloat64](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L11-L15>)
+
+Allows for sorting map\[string\]float64 by value or key, and also stores a human readable formatted string
 
 ```go
 type PairFloat64 struct {
@@ -692,25 +700,27 @@ type PairFloat64 struct {
 }
 ```
 
-## type [PairFloat64List](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L15>)
+## type [PairFloat64List](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L20>)
+
+Wrapper for PairFloat64 that makes sorting possible
 
 ```go
 type PairFloat64List []PairFloat64
 ```
 
-### func \(PairFloat64List\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L17>)
+### func \(PairFloat64List\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L23>)
 
 ```go
 func (p PairFloat64List) Len() int
 ```
 
-### func \(PairFloat64List\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L18>)
+### func \(PairFloat64List\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L24>)
 
 ```go
 func (p PairFloat64List) Less(i, j int) bool
 ```
 
-### func \(PairFloat64List\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L19>)
+### func \(PairFloat64List\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L25>)
 
 ```go
 func (p PairFloat64List) Swap(i, j int)
