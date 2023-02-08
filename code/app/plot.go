@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// Returns JSON data needed to create a Plotly graph for our Curves
 func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string {
 	input := util.ParseContextBody(c)
 	//log.Println("Get API Plot Data: ", input)

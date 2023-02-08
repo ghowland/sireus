@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/util"
 )
 
+// Calculate the Utility Score for a given Action using a Bot's BotActionData
 func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string) {
 	var runningScore float64 = 1
 	var considerCount int = 0

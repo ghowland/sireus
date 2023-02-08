@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Bot.VariableValues are all floats, but we want them to have human readable strings
 func FormatBotVariable(format data.BotVariableFormat, value float64) string {
 	switch format {
 	case data.FormatFloat:

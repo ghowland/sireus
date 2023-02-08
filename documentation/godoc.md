@@ -40,13 +40,15 @@ import "github.com/ghowland/sireus/code/app"
   - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
 
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L104>)
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L114>)
 
 ```go
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
 ```
 
-## func [AverageAndFixup](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L60>)
+For a given Action, does this Bot have all the RequiredStates active?
+
+## func [AverageAndFixup](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L61>)
 
 ```go
 func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)
@@ -54,103 +56,137 @@ func AverageAndFixup(runningScore float64, considerCount int) (float64, []string
 
 This is the heuristic we use to get a good "modified average" of the Considerations to a Consideration Final Score This works well when all the ActionConsideration.Weight values are \~1.0, so that they have relative importance to each other.  Try to keep ActionConsideration.Weight values between 0.1 and 10.0 for a good result.
 
-## func [CalculateScore](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L9>)
+## func [CalculateScore](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L10>)
 
 ```go
 func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)
 ```
 
-## func [FormatBotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/format_human.go#L11>)
+Calculate the Utility Score for a given Action using a Bot's BotActionData
+
+## func [FormatBotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/format_human.go#L12>)
 
 ```go
 func FormatBotVariable(format data.BotVariableFormat, value float64) string
 ```
 
-## func [GetAPIPlotData](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L11>)
+Bot.VariableValues are all floats, but we want them to have human readable strings
+
+## func [GetAPIPlotData](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L12>)
 
 ```go
 func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string
 ```
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L77>)
+Returns JSON data needed to create a Plotly graph for our Curves
+
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L84>)
 
 ```go
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
 ```
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L95>)
+Get an Action from a BotGroup, by name
+
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L104>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
 ```
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L68>)
+Get an ActionConsideration from an Action, by name
+
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L74>)
 
 ```go
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
 ```
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L59>)
+Get a Bot from the BotGroup
+
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L64>)
 
 ```go
 func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error)
 ```
 
-## func [GetCurveDataX](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L31>)
+Gets a BotGroup from the Site
+
+## func [GetCurveDataX](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L36>)
 
 ```go
 func GetCurveDataX(curveData CurveData) []float64
 ```
 
-## func [GetCurveValue](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L41>)
+Get all X axis values, which is just the step from 0\-1 at 0.1 intervals
+
+## func [GetCurveValue](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L47>)
 
 ```go
 func GetCurveValue(curveData CurveData, x float64) float64
 ```
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L50>)
+Get the Y value, at an X position, in the curve
+
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L54>)
 
 ```go
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
 ```
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L40>)
+Gets a query, scope per BotGroup
+
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L43>)
 
 ```go
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
 ```
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L86>)
+Returns a QueryServer, scope is per Site
+
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L94>)
 
 ```go
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
 ```
 
-## func [LoadBotGroupConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L12>)
+Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
+
+## func [LoadBotGroupConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L13>)
 
 ```go
 func LoadBotGroupConfig(path string) data.BotGroup
 ```
 
-## func [LoadConfig](<https://github.com/ghowland/sireus/blob/main/code/app/config.go#L10>)
+Load the BotGroup config from a path
+
+## func [LoadConfig](<https://github.com/ghowland/sireus/blob/main/code/app/config.go#L11>)
 
 ```go
 func LoadConfig(path string) data.AppConfig
 ```
 
-## func [LoadSiteConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L23>)
+Load the Server config
+
+## func [LoadSiteConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L25>)
 
 ```go
 func LoadSiteConfig(appConfig data.AppConfig) data.Site
 ```
 
-## func [SortMapStringActionDataByFinalScore](<https://github.com/ghowland/sireus/blob/main/code/app/fix_go_sort.go#L8>)
+Load our Site config for a path
+
+## func [SortMapStringActionDataByFinalScore](<https://github.com/ghowland/sireus/blob/main/code/app/fix_go_sort.go#L9>)
 
 ```go
 func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList
 ```
 
-## type [CurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L11-L14>)
+Go doesnt handle map sorting easily, so this is the fix\-up
+
+## type [CurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L13-L16>)
+
+Points to create a curve.  Standard is 0\-1 at 0.1 steps, so 1000 points
 
 ```go
 type CurveData struct {
@@ -159,11 +195,13 @@ type CurveData struct {
 }
 ```
 
-### func [LoadCurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L16>)
+### func [LoadCurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L20>)
 
 ```go
 func LoadCurveData(appConfig data.AppConfig, name string) CurveData
 ```
+
+Load the Curve data off the disk
 
 # data
 

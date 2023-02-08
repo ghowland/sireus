@@ -5,6 +5,7 @@ import (
 	"sort"
 )
 
+// Go doesnt handle map sorting easily, so this is the fix-up
 func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList {
 	pairList := data.PairBotActionDataList{}
 

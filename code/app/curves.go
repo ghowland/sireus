@@ -8,11 +8,15 @@ import (
 	"os"
 )
 
-type CurveData struct {
-	Name   string    `json:"name"`
-	Values []float64 `json:"values"`
-}
+type (
+	// Points to create a curve.  Standard is 0-1 at 0.1 steps, so 1000 points
+	CurveData struct {
+		Name   string    `json:"name"`
+		Values []float64 `json:"values"`
+	}
+)
 
+// Load the Curve data off the disk
 func LoadCurveData(appConfig data.AppConfig, name string) CurveData {
 	path := fmt.Sprintf(appConfig.CurvePathFormat, name)
 
@@ -28,6 +32,7 @@ func LoadCurveData(appConfig data.AppConfig, name string) CurveData {
 	return curveData
 }
 
+// Get all X axis values, which is just the step from 0-1 at 0.1 intervals
 func GetCurveDataX(curveData CurveData) []float64 {
 	var xArray []float64
 
@@ -38,6 +43,7 @@ func GetCurveDataX(curveData CurveData) []float64 {
 	return xArray
 }
 
+// Get the Y value, at an X position, in the curve
 func GetCurveValue(curveData CurveData, x float64) float64 {
 
 	for i := 0; i < len(curveData.Values); i++ {

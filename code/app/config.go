@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// Load the Server config
 func LoadConfig(path string) data.AppConfig {
 	appConfigData, err := os.ReadFile(path)
 	util.CheckPanic(err)

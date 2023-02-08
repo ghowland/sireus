@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// Load the BotGroup config from a path
 func LoadBotGroupConfig(path string) data.BotGroup {
 	botGroupData, err := os.ReadFile(path)
 	util.CheckPanic(err)
@@ -20,6 +21,7 @@ func LoadBotGroupConfig(path string) data.BotGroup {
 	return botGroup
 }
 
+// Load our Site config for a path
 func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	siteData, err := os.ReadFile(appConfig.SiteConfigPath)
 	util.CheckPanic(err)
@@ -37,6 +39,7 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	return site
 }
 
+// Returns a QueryServer, scope is per Site
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error) {
 	for _, queryServer := range site.QueryServers {
 		if queryServer.Name == name {
@@ -47,6 +50,7 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error) {
 	return data.QueryServer{}, errors.New(fmt.Sprintf("Query Server missing: %s", name))
 }
 
+// Gets a query, scope per BotGroup
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 	for _, query := range botGroup.Queries {
 		if query.Name == queryName {
@@ -56,6 +60,7 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 	return data.BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
 }
 
+// Gets a BotGroup from the Site
 func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error) {
 	for _, botGroup := range site.BotGroups {
 		if botGroup.Name == botGroupName {
@@ -65,6 +70,7 @@ func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error) {
 	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
 }
 
+// Get a Bot from the BotGroup
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 	for _, bot := range botGroup.Bots {
 		if bot.Name == botName {
@@ -74,6 +80,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 	return data.Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
 }
 
+// Get an Action from a BotGroup, by name
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
 	for _, action := range botGroup.Actions {
 		if action.Name == actionName {
@@ -83,6 +90,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
 	return data.Action{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Action: %s", botGroup.Name, actionName))
 }
 
+// Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error) {
 	for _, variable := range botGroup.Variables {
 		if variable.Name == varName {
@@ -92,6 +100,7 @@ func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, erro
 	return data.BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Variable: %s", botGroup.Name, varName))
 }
 
+// Get an ActionConsideration from an Action, by name
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error) {
 	for _, consider := range action.Considerations {
 		if consider.Name == considerName {
@@ -101,6 +110,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 	return data.ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
 }
 
+// For a given Action, does this Bot have all the RequiredStates active?
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
 	for _, state := range action.RequiredStates {
 		if !util.StringInSlice(state, bot.StateValues) {
