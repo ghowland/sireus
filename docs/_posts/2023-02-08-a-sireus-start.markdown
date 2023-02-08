@@ -14,10 +14,10 @@ There will be an interactive demo coming soon where I send out a Request for Com
 design is solidified for writing the first production-ready version.
 
 I am initially implementing Sireus against Prometheus and Alert Manager, as they are popular monitoring tools that
-are easy to initially set up.  Later I will add more monitoring and alerting options to collect and publish to.
+are easy to set up.  Later I will add more monitoring and alerting options to collect and publish to.
 
-Sireus will also contain a Client that can be run in various privileged environments to run commands in the correct 
-places.
+Sireus will also contain a Client that can be run in various privileged environments to run commands or send web requests 
+in the correct places.
 
 Check out the [Github page][sireus-gh] for more info about the project.
 
