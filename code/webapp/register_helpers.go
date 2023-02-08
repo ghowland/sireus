@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/BenJetson/humantime"
 	"github.com/aymerick/raymond"
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"log"
@@ -41,7 +41,7 @@ func RegisterHandlebarsHelpers_WithData() {
 
 		botActionData := bot.SortedActionData[actionDataIndex]
 
-		botAction, err := appdata.GetAction(botGroup, botActionData.Key)
+		botAction, err := app.GetAction(botGroup, botActionData.Key)
 		util.Check(err)
 		return raymond.SafeString(options.FnWith(botAction))
 	})
@@ -118,7 +118,7 @@ func RegisterHandlebarsHelpers_GetAppData() {
 func RegisterHandlebarsHelpers_FormatData() {
 	// Queries
 	raymond.RegisterHelper("format_query_web", func(site data.Site, item data.BotQuery) string {
-		queryServer, err := appdata.GetQueryServer(site, item.QueryServer)
+		queryServer, err := app.GetQueryServer(site, item.QueryServer)
 		util.Check(err)
 		mapData := map[string]string{
 			"query": item.Query,
@@ -152,7 +152,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 func RegisterHandlebarsHelpers_IfArrayLength() {
 	// -- Go Data --
 
-	// The data structure needs to be []interface{} to work, it wont auto-cast from Handlerbars to here, like []appdata.Bots -> []interface{}
+	// The data structure needs to be []interface{} to work, it wont auto-cast from Handlerbars to here, like []app.Bots -> []interface{}
 	raymond.RegisterHelper("if_array_length", func(items []interface{}, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())

@@ -1,7 +1,7 @@
 package webapp
 
 import (
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
@@ -15,13 +15,13 @@ func GetPageMapData(c *fiber.Ctx, site data.Site) fiber.Map {
 	botGroup := data.BotGroup{}
 	var err error
 	if botGroupId != "" {
-		botGroup, err = appdata.GetBotGroup(site, botGroupId)
+		botGroup, err = app.GetBotGroup(site, botGroupId)
 		util.Check(err)
 	}
 
 	bot := data.Bot{}
 	if botId != "" && botGroup.Name != "" {
-		bot, err = appdata.GetBot(botGroup, botId)
+		bot, err = app.GetBot(botGroup, botId)
 		util.Check(err)
 	}
 

@@ -1,2 +1,0 @@
-package fix_go
-

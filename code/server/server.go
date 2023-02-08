@@ -2,7 +2,7 @@ package server
 
 import (
 	"context"
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/extdata"
 	"log"
@@ -19,9 +19,9 @@ func Configure() {
 
 	data.SireusData.ServerContext = GetServerBackgroundContext()
 
-	data.SireusData.AppConfig = appdata.LoadConfig(appConfigPath)
+	data.SireusData.AppConfig = app.LoadConfig(appConfigPath)
 
-	data.SireusData.Site = appdata.LoadSiteConfig(data.SireusData.AppConfig)
+	data.SireusData.Site = app.LoadSiteConfig(data.SireusData.AppConfig)
 }
 
 // Get the global Server context, so that we can cancel everything in progress

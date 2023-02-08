@@ -1,4 +1,4 @@
-package appdata
+package app
 
 import (
 	"github.com/ghowland/sireus/code/data"

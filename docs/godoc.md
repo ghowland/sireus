@@ -592,18 +592,18 @@ import "github.com/ghowland/sireus/code/extdata"
 
 ## Index
 
-- [func ClearAllBotVariables(site *appdata.Site, botGroupIndex int)](<#func-clearallbotvariables>)
-- [func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.Bot](<#func-extractbotsfrompromdata>)
-- [func GetBotEvalMapAllVariables(bot appdata.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
-- [func GetBotEvalMapOnlyQueries(bot appdata.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
-- [func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int)](<#func-sortallvariablesandactions>)
-- [func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int)](<#func-updatebotactionconsiderations>)
-- [func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
-- [func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
-- [func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
-- [func UpdateSiteBotGroups(site *appdata.Site)](<#func-updatesitebotgroups>)
+- [func ClearAllBotVariables(site *app.Site, botGroupIndex int)](<#func-clearallbotvariables>)
+- [func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []app.Bot](<#func-extractbotsfrompromdata>)
+- [func GetBotEvalMapAllVariables(bot app.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
+- [func GetBotEvalMapOnlyQueries(bot app.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
+- [func SortAllVariablesAndActions(site *app.Site, botGroupIndex int)](<#func-sortallvariablesandactions>)
+- [func UpdateBotActionConsiderations(site *app.Site, botGroupIndex int)](<#func-updatebotactionconsiderations>)
+- [func UpdateBotGroupFromPrometheus(site *app.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
+- [func UpdateBotsFromQueries(site *app.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
+- [func UpdateBotsWithSyntheticVariables(site *app.Site, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
+- [func UpdateSiteBotGroups(site *app.Site)](<#func-updatesitebotgroups>)
 - [type PrometheusResponse](<#type-prometheusresponse>)
-  - [func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse](<#func-queryprometheus>)
+  - [func QueryPrometheus(host string, port int, queryType app.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse](<#func-queryprometheus>)
 - [type PrometheusResponseData](<#type-prometheusresponsedata>)
 - [type PrometheusResponseDataResult](<#type-prometheusresponsedataresult>)
 - [type QueryManager](<#type-querymanager>)
@@ -613,61 +613,61 @@ import "github.com/ghowland/sireus/code/extdata"
 ## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L119>)
 
 ```go
-func ClearAllBotVariables(site *appdata.Site, botGroupIndex int)
+func ClearAllBotVariables(site *app.Site, botGroupIndex int)
 ```
 
 ## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L73>)
 
 ```go
-func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []appdata.Bot
+func ExtractBotsFromPromData(data PrometheusResponse, botKey string) []app.Bot
 ```
 
 ## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L187>)
 
 ```go
-func GetBotEvalMapAllVariables(bot appdata.Bot) map[string]interface{}
+func GetBotEvalMapAllVariables(bot app.Bot) map[string]interface{}
 ```
 
 ## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L173>)
 
 ```go
-func GetBotEvalMapOnlyQueries(bot appdata.Bot, queryVariableNames []string) map[string]interface{}
+func GetBotEvalMapOnlyQueries(bot app.Bot, queryVariableNames []string) map[string]interface{}
 ```
 
 ## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L36>)
 
 ```go
-func SortAllVariablesAndActions(site *appdata.Site, botGroupIndex int)
+func SortAllVariablesAndActions(site *app.Site, botGroupIndex int)
 ```
 
 ## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L54>)
 
 ```go
-func UpdateBotActionConsiderations(site *appdata.Site, botGroupIndex int)
+func UpdateBotActionConsiderations(site *app.Site, botGroupIndex int)
 ```
 
 ## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L197>)
 
 ```go
-func UpdateBotGroupFromPrometheus(site *appdata.Site, botGroupIndex int)
+func UpdateBotGroupFromPrometheus(site *app.Site, botGroupIndex int)
 ```
 
 ## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L210>)
 
 ```go
-func UpdateBotsFromQueries(site *appdata.Site, botGroupIndex int)
+func UpdateBotsFromQueries(site *app.Site, botGroupIndex int)
 ```
 
 ## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L125>)
 
 ```go
-func UpdateBotsWithSyntheticVariables(site *appdata.Site, botGroupIndex int)
+func UpdateBotsWithSyntheticVariables(site *app.Site, botGroupIndex int)
 ```
 
 ## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L13>)
 
 ```go
-func UpdateSiteBotGroups(site *appdata.Site)
+func UpdateSiteBotGroups(site *app.Site)
 ```
 
 ## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L25-L30>)
@@ -684,7 +684,7 @@ type PrometheusResponse struct {
 ### func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L43>)
 
 ```go
-func QueryPrometheus(host string, port int, queryType appdata.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse
+func QueryPrometheus(host string, port int, queryType app.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse
 ```
 
 ## type [PrometheusResponseData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L20-L23>)
@@ -718,7 +718,7 @@ type QueryManager struct {
 ```go
 type QueryResult struct {
     QueryServer        string // Server this Query came from
-    QueryType          appdata.BotQueryType
+    QueryType          app.BotQueryType
     QueryName          string             // The Query
     PrometheusResponse PrometheusResponse // The Response
 }
@@ -909,9 +909,9 @@ import "github.com/ghowland/sireus/code/webapp"
 
 ## Index
 
-- [func CreateHandlebarsEngine(appConfig appdata.AppConfig) *handlebars.Engine](<#func-createhandlebarsengine>)
+- [func CreateHandlebarsEngine(appConfig app.AppConfig) *handlebars.Engine](<#func-createhandlebarsengine>)
 - [func CreateWebApp(engine *handlebars.Engine) *fiber.App](<#func-createwebapp>)
-- [func GetPageMapData(c *fiber.Ctx, site appdata.Site) fiber.Map](<#func-getpagemapdata>)
+- [func GetPageMapData(c *fiber.Ctx, site app.Site) fiber.Map](<#func-getpagemapdata>)
 - [func RegisterHandlebarsHelpers()](<#func-registerhandlebarshelpers>)
 - [func RegisterHandlebarsHelpers_FormatData()](<#func-registerhandlebarshelpers_formatdata>)
 - [func RegisterHandlebarsHelpers_GetAppData()](<#func-registerhandlebarshelpers_getappdata>)
@@ -923,7 +923,7 @@ import "github.com/ghowland/sireus/code/webapp"
 ## func [CreateHandlebarsEngine](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L9>)
 
 ```go
-func CreateHandlebarsEngine(appConfig appdata.AppConfig) *handlebars.Engine
+func CreateHandlebarsEngine(appConfig app.AppConfig) *handlebars.Engine
 ```
 
 ## func [CreateWebApp](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L29>)
@@ -935,7 +935,7 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App
 ## func [GetPageMapData](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L9>)
 
 ```go
-func GetPageMapData(c *fiber.Ctx, site appdata.Site) fiber.Map
+func GetPageMapData(c *fiber.Ctx, site app.Site) fiber.Map
 ```
 
 ## func [RegisterHandlebarsHelpers](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L14>)

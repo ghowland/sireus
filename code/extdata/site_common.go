@@ -3,7 +3,7 @@ package extdata
 import (
 	"fmt"
 	"github.com/Knetic/govaluate"
-	"github.com/ghowland/sireus/code/appdata"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/fix_go"
 	"github.com/ghowland/sireus/code/util"
@@ -49,14 +49,14 @@ func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
 
 	for botIndex, bot := range botGroup.Bots {
 		for varIndex, value := range bot.SortedVariableValues {
-			variable, err := appdata.GetVariable(botGroup, value.Key)
+			variable, err := app.GetVariable(botGroup, value.Key)
 			if util.CheckNoLog(err) {
 				// Mark this bot as Invalid, because it is missing information
 				site.BotGroups[botGroupIndex].Bots[botIndex].IsInvalid = true
 				site.BotGroups[botGroupIndex].Bots[botIndex].InfoInvalid += fmt.Sprintf("Missing Variable: %s.  ", value.Key)
 			}
 
-			result := appdata.FormatBotVariable(variable.Format, value.Value)
+			result := app.FormatBotVariable(variable.Format, value.Value)
 
 			newPair := site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex]
 			newPair.Formatted = result
@@ -73,7 +73,7 @@ func SortAllVariablesAndActions(site *data.Site, botGroupIndex int) {
 		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
 		// Sort ActionData
-		sortedActions := appdata.SortMapStringActionDataByFinalScore(bot.ActionData, false)
+		sortedActions := app.SortMapStringActionDataByFinalScore(bot.ActionData, false)
 		site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
 
 		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
@@ -123,14 +123,14 @@ func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int) {
 			}
 
 			// Get a Final Score for this Action
-			calculatedScore, details := appdata.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
+			calculatedScore, details := app.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
 			actionData.FinalScore = finalScore
 
-			allActionStatesAreActive := appdata.AreAllActionStatesActive(action, bot)
+			allActionStatesAreActive := app.AreAllActionStatesActive(action, bot)
 
 			// Action.WeightThreshold determines if an Action is available for possible execution
 			if finalScore >= action.WeightThreshold && allActionStatesAreActive {
@@ -237,10 +237,10 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 	return evalMap
 }
 func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
-	query, err := appdata.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
+	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
-	queryServer, err := appdata.GetQueryServer(*site, query.QueryServer)
+	queryServer, err := app.GetQueryServer(*site, query.QueryServer)
 	util.Check(err)
 
 	startTime := time.Now().Add(time.Duration(-60))
@@ -268,7 +268,7 @@ func UpdateBotsFromQueries(site *data.Site, botGroupIndex int) {
 
 	// Loop over all Bot Group Queries
 	for _, query := range botGroup.Queries {
-		queryServer, err := appdata.GetQueryServer(*site, query.QueryServer)
+		queryServer, err := app.GetQueryServer(*site, query.QueryServer)
 		util.Check(err)
 
 		startTime := time.Now().Add(time.Duration(-60))
