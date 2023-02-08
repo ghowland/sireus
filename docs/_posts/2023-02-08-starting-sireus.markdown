@@ -21,4 +21,8 @@ places.
 
 Check out the [Github page][sireus-gh] for more info about the project.
 
+If you are interested in contributing, please start by creating issues around the design.  Sireus is currently in
+the design RFC phase, and I want to collect opinions, feature requests and questions, so that I can fix any initial 
+design flaws in this early phase of the project.
+
 [sireus-gh]:   https://github.com/ghowland/sireus
