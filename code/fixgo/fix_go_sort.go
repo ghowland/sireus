@@ -1,4 +1,4 @@
-package fix_go
+package fixgo
 
 import (
 	"github.com/ghowland/sireus/code/data"

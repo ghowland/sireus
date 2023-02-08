@@ -5,7 +5,7 @@ import (
 	"github.com/Knetic/govaluate"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
-	"github.com/ghowland/sireus/code/fix_go"
+	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"math"
@@ -69,7 +69,7 @@ func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
 func SortAllVariablesAndActions(site *data.Site, botGroupIndex int) {
 	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
 		// Sort VariableValues
-		sortedVars := fix_go.SortMapStringFloat64ByKey(bot.VariableValues)
+		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
 		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
 		// Sort ActionData
