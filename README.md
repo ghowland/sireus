@@ -172,4 +172,4 @@ The Action Weight is where you differentiate Actions from each other by their we
 
 ## Sireus Portrait
 
-![Sireus Portrait](/documenation/images/sireus_dog_star.png)
+![Sireus Portrait](https://github.com/ghowland/sireus/blob/main/documentation/images/sireus_dog_star.png)
