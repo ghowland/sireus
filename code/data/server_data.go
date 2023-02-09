@@ -7,10 +7,10 @@ import (
 type (
 	// SireusServerData is Singleton structure for keeping global state
 	SireusServerData struct {
-		AppConfig     AppConfig
-		Site          Site
-		ServerContext context.Context
-		IsQuitting    bool // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
+		AppConfig     AppConfig       // App Server configuration
+		Site          Site            // For now, only 1 Site.  Later this will be dynamic
+		ServerContext context.Context // Context to quickly cancel all activities
+		IsQuitting    bool            // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
 	}
 )
 

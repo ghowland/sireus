@@ -939,25 +939,27 @@ SireusServerData is Singleton structure for keeping global state
 
 ```go
 type SireusServerData struct {
-    AppConfig     AppConfig
-    Site          Site
-    ServerContext context.Context
-    IsQuitting    bool // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
+    AppConfig     AppConfig       // App Server configuration
+    Site          Site            // For now, only 1 Site.  Later this will be dynamic
+    ServerContext context.Context // Context to quickly cancel all activities
+    IsQuitting    bool            // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
 }
 ```
 
-## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L6-L13>)
+## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L6-L15>)
 
 Top Level of the data structure.  Site silos all BotGroups and QueryServers, so that we can have multiple Sites which are using different data sets, and should not share any data with each other.
 
 ```go
 type Site struct {
-    Name          string        `json:"name"`            // Site name.  Full silo for QueryServers and BotGroups
-    Info          string        `json:"info"`            // Description
-    BotGroupPaths []string      `json:"bot_group_paths"` // Paths to bot_group_name.json configs
-    QueryServers  []QueryServer `json:"query_servers"`   // List of QueryServers for making BotQuery requests
-    BotGroups     []BotGroup    // These configure and contain ephemeral Bots which perform the Action scoring in the active States
-    FreezeActions bool          // If true, no actions will be taken for this Site.  Allows control of all BotGroups Action execution.
+    Name                    string                 `json:"name"`            // Site name.  Full silo for QueryServers and BotGroups
+    Info                    string                 `json:"info"`            // Description
+    BotGroupPaths           []string               `json:"bot_group_paths"` // Paths to bot_group_name.json configs
+    QueryServers            []QueryServer          `json:"query_servers"`   // List of QueryServers for making BotQuery requests
+    BotGroups               []BotGroup             // These configure and contain ephemeral Bots which perform the Action scoring in the active States
+    FreezeActions           bool                   // If true, no actions will be taken for this Site.  Allows control of all BotGroups Action execution.
+    QueryResultCache        QueryResultPool        // Per Site, we cache all the BotQuery results here.  Per normal server operation, and per InteractiveSession
+    InteractiveSessionCache InteractiveSessionPool // Per Site, we track web app InteractiveSession data to allow users to make changes and see how they alter the Action scoring.  Sites silo everything, so it would be an anti-feature to allow InteractiveSession data to cross Site boundaries
 }
 ```
 
