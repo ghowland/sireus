@@ -12,51 +12,8 @@ import (
 	"time"
 )
 
-type (
-	// Data inside the payload of the PrometheusResponseData
-	PrometheusResponseDataResult struct {
-		Metric map[string]string `json:"metric"`
-		Values [][]interface{}   `json:"values"`
-	}
-)
-
-type (
-	// Payload for PrometheusResponse
-	PrometheusResponseData struct {
-		ResultType string                         `json:"resultType"`
-		Result     []PrometheusResponseDataResult `json:"result"`
-	}
-)
-
-type (
-	// Response from Prometheus.  I made a short-hand version of this instead of using the one from Prometheus for convenience.
-	PrometheusResponse struct {
-		Status       string                 `json:"status"`
-		Data         PrometheusResponseData `json:"data"`
-		RequestTime  time.Time              // When the Request was made
-		ResponseTime time.Time              // When the Response was received
-	}
-)
-
-type (
-	// A single Query result
-	QueryResult struct {
-		QueryServer        string // Server this Query came from
-		QueryType          data.BotQueryType
-		QueryName          string             // The Query
-		PrometheusResponse PrometheusResponse // The Response
-	}
-)
-
-type (
-	// Stores all our QueryResults
-	QueryManager struct {
-		Results []QueryResult
-	}
-)
-
 // Query the Prometheus metric server
-func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse {
+func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse {
 	queryStartTime := time.Now()
 
 	start := timeStart.UTC().Format(time.RFC3339)
@@ -75,7 +32,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 	//log.Print("Prom Result: ", string(body))
 
-	var jsonResponse PrometheusResponse
+	var jsonResponse data.PrometheusResponse
 	err = json.Unmarshal(body, &jsonResponse)
 	util.Check(err)
 
@@ -87,7 +44,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 }
 
 // Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
-func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot {
+func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot {
 	bots := make(map[string]data.Bot)
 
 	for _, resultItem := range response.Data.Result {

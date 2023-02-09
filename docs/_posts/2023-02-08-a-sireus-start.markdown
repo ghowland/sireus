@@ -27,6 +27,6 @@ design flaws in this early phase of the project.
 
 Example web page:
 
-<img src="https://github.com/ghowland/sireus/blob/main/documentation/images/webapp_example.png" width="80%">
+<img src="https://raw.githubusercontent.com/ghowland/sireus/main/documentation/images/webapp_example.png" width="80%">
 
 [sireus-gh]:   https://github.com/ghowland/sireus
