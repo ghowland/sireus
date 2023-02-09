@@ -23,29 +23,37 @@ type (
 	// This tracks all the override changes relating to BotGroups or Bots for an InteractiveSession
 	Override struct {
 		BotGroups []OverrideBotGroup `json:"bot_groups"` // Overrides of BotGroup data: Action.Weight and ActionConsideration data
-		Bots      []OverrideBot      `json:"bots"`       // Overrides of Bot data: Bot.VariableValues
+		Bots      []OverrideBot      `json:"bots"`       // Overrides of Bot data: Bot.VariableValues and Bot.StateValues
 	}
 )
 
 type (
 	// Overrides to a BotGroup for an InteractiveSession
 	OverrideBotGroup struct {
-		BotGroupName         string                                 `json:"bot_group_name"`        // Name of the Bot to override.  This scope is Bot level
-		ActionWeight         map[string]float64                     `json:"action_weight"`         // Overrides an Action.Weight for all the Bots in this BotGroup.  Changes Action scores for all Bots in a BotGroup
-		ActionConsiderations map[string]OverrideActionConsideration `json:"action_considerations"` // Overrides ActionConsideration values for all Bots in this BotGroup
+		BotGroupName         string                        `json:"name"`                  // Name of the Bot to override.  This scope is Bot level
+		ActionWeight         map[string]float64            `json:"action_weight"`         // Overrides an Action.Weight for all the Bots in this BotGroup.  Changes Action scores for all Bots in a BotGroup
+		ActionConsiderations []OverrideActionConsideration `json:"action_considerations"` // Overrides ActionConsideration values for all Bots in this BotGroup
 	}
 )
 
 type (
-	// Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores
+	// Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores.  For simplicity, when making an ActionCconsideration override, all values are always updated.  No reason to have sparse changes here
 	OverrideActionConsideration struct {
+		ActionName        string  `json:"action_name"`        // Name of the Action to modify.  There are many ActionConsideration per Action
+		ConsiderationName string  `json:"consideration_name"` // Consideration name identifier
+		Weight            float64 `json:"weight"`             // Overrides ActionConsideration.Weight
+		CurveName         string  `json:"curve_name"`         // Overrides ActionConsideration.CurveName
+		RangeStart        float64 `json:"range_start"`        // Overrides ActionConsideration.RangeStart
+		RangeEnd          float64 `json:"range_end"`          // Overrides ActionConsideration.RangeEnd
+		//Evaluate string `json:"evaluate"` //TODO(ghowland): Not yet implemented.  This will be implemented later, leaving as reminder
 	}
 )
 
 type (
 	// Overrides to a Bot for an InteractiveSession
 	OverrideBot struct {
-		BotName           string             `json:"bot_name"`            // Name of the Bot to override.  This scope is Bot level
-		BotVariableValues map[string]float64 `json:"bot_variable_values"` // The Bot.VariableValues that are being overridden.  This is useful to see how Action scores would change if some monitoring data was different, without having to find a time in the past where that was true.  Allows planning for different situations.
+		Name           string             `json:"name"`            // Name of the Bot to override.  This scope is Bot level
+		VariableValues map[string]float64 `json:"variable_values"` // The Bot.VariableValues that are being overridden.  This is useful to see how Action scores would change if some monitoring data was different, without having to find a time in the past where that was true.  Allows planning for different situations.
+		StateValues    []string           `json:"state_values"`    // If this is not an empty list, then it will override the specified BotGroup.States for this Bot.  This allows testing different Action scores in any state.
 	}
 )
