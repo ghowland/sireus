@@ -247,6 +247,11 @@ import "github.com/ghowland/sireus/code/data"
   - [func (p PairFloat64List) Len() int](<#func-pairfloat64list-len>)
   - [func (p PairFloat64List) Less(i, j int) bool](<#func-pairfloat64list-less>)
   - [func (p PairFloat64List) Swap(i, j int)](<#func-pairfloat64list-swap>)
+- [type PrometheusResponse](<#type-prometheusresponse>)
+- [type PrometheusResponseData](<#type-prometheusresponsedata>)
+- [type PrometheusResponseDataResult](<#type-prometheusresponsedataresult>)
+- [type QueryResult](<#type-queryresult>)
+- [type QueryResultPool](<#type-queryresultpool>)
 - [type QueryServer](<#type-queryserver>)
 - [type QueryServerType](<#type-queryservertype>)
   - [func (qst QueryServerType) String() string](<#func-queryservertype-string>)
@@ -726,7 +731,62 @@ func (p PairFloat64List) Less(i, j int) bool
 func (p PairFloat64List) Swap(i, j int)
 ```
 
-## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L27-L38>)
+## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/data/prometheus_data.go#L23-L28>)
+
+Response from Prometheus.  I made a short\-hand version of this instead of using the one from Prometheus for convenience.
+
+```go
+type PrometheusResponse struct {
+    Status       string                 `json:"status"`
+    Data         PrometheusResponseData `json:"data"`
+    RequestTime  time.Time              // When the Request was made
+    ResponseTime time.Time              // When the Response was received
+}
+```
+
+## type [PrometheusResponseData](<https://github.com/ghowland/sireus/blob/main/code/data/prometheus_data.go#L15-L18>)
+
+Payload for PrometheusResponse
+
+```go
+type PrometheusResponseData struct {
+    ResultType string                         `json:"resultType"`
+    Result     []PrometheusResponseDataResult `json:"result"`
+}
+```
+
+## type [PrometheusResponseDataResult](<https://github.com/ghowland/sireus/blob/main/code/data/prometheus_data.go#L7-L10>)
+
+Data inside the payload of the PrometheusResponseData
+
+```go
+type PrometheusResponseDataResult struct {
+    Metric map[string]string `json:"metric"`
+    Values [][]interface{}   `json:"values"`
+}
+```
+
+## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L48-L53>)
+
+A single Query result
+
+```go
+type QueryResult struct {
+    QueryServer        string // Server this Query came from
+    QueryType          BotQueryType
+    QueryName          string             // The Query
+    PrometheusResponse PrometheusResponse // The Response
+}
+```
+
+## type [QueryResultPool](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L42-L43>)
+
+```go
+type QueryResultPool struct {
+}
+```
+
+## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L27-L38>)
 
 QueryServer is where we connect to get data to populate our Bots.  example: Prometheus These are stored at a Site level, so that they can be shared by all BotGroups in a Site.
 
@@ -747,7 +807,7 @@ type QueryServer struct {
 }
 ```
 
-## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L5>)
+## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L5>)
 
 QueryServerType specifies QueryServer software, defining how we make and parse Query requests
 
@@ -761,7 +821,7 @@ const (
 )
 ```
 
-### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L13>)
+### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L13>)
 
 ```go
 func (qst QueryServerType) String() string
@@ -782,7 +842,7 @@ type SireusServerData struct {
 }
 ```
 
-## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L44-L51>)
+## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L6-L13>)
 
 Top Level of the data structure.  Site silos all BotGroups and QueryServers, so that we can have multiple Sites which are using different data sets, and should not share any data with each other.
 
@@ -807,22 +867,17 @@ import "github.com/ghowland/sireus/code/extdata"
 
 - [func ClearAllBotVariables(site *data.Site, botGroupIndex int)](<#func-clearallbotvariables>)
 - [func CreateFormattedVariables(site *data.Site, botGroupIndex int)](<#func-createformattedvariables>)
-- [func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
+- [func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
 - [func InitializeStates(site *data.Site, botGroupIndex int)](<#func-initializestates>)
+- [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse](<#func-queryprometheus>)
 - [func SortAllVariablesAndActions(site *data.Site, botGroupIndex int)](<#func-sortallvariablesandactions>)
 - [func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int)](<#func-updatebotactionconsiderations>)
 - [func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
 - [func UpdateBotsFromQueries(site *data.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
 - [func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
 - [func UpdateSiteBotGroups()](<#func-updatesitebotgroups>)
-- [type PrometheusResponse](<#type-prometheusresponse>)
-  - [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse](<#func-queryprometheus>)
-- [type PrometheusResponseData](<#type-prometheusresponsedata>)
-- [type PrometheusResponseDataResult](<#type-prometheusresponsedataresult>)
-- [type QueryManager](<#type-querymanager>)
-- [type QueryResult](<#type-queryresult>)
 
 
 ## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L166>)
@@ -841,10 +896,10 @@ func CreateFormattedVariables(site *data.Site, botGroupIndex int)
 
 Create formatted variables for all our Bots.  This adds human readable strings to all the sorted Pair Lists
 
-## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L90>)
+## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L47>)
 
 ```go
-func ExtractBotsFromPromData(response PrometheusResponse, botKey string) []data.Bot
+func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot
 ```
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
@@ -872,6 +927,14 @@ func InitializeStates(site *data.Site, botGroupIndex int)
 ```
 
 Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
+
+## func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L16>)
+
+```go
+func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse
+```
+
+Query the Prometheus metric server
 
 ## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L72>)
 
@@ -920,72 +983,6 @@ func UpdateSiteBotGroups()
 ```
 
 Update all the BotGroups in this Site
-
-## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L33-L38>)
-
-Response from Prometheus.  I made a short\-hand version of this instead of using the one from Prometheus for convenience.
-
-```go
-type PrometheusResponse struct {
-    Status       string                 `json:"status"`
-    Data         PrometheusResponseData `json:"data"`
-    RequestTime  time.Time              // When the Request was made
-    ResponseTime time.Time              // When the Response was received
-}
-```
-
-### func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L59>)
-
-```go
-func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) PrometheusResponse
-```
-
-Query the Prometheus metric server
-
-## type [PrometheusResponseData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L25-L28>)
-
-Payload for PrometheusResponse
-
-```go
-type PrometheusResponseData struct {
-    ResultType string                         `json:"resultType"`
-    Result     []PrometheusResponseDataResult `json:"result"`
-}
-```
-
-## type [PrometheusResponseDataResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L17-L20>)
-
-Data inside the payload of the PrometheusResponseData
-
-```go
-type PrometheusResponseDataResult struct {
-    Metric map[string]string `json:"metric"`
-    Values [][]interface{}   `json:"values"`
-}
-```
-
-## type [QueryManager](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L53-L55>)
-
-Stores all our QueryResults
-
-```go
-type QueryManager struct {
-    Results []QueryResult
-}
-```
-
-## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L43-L48>)
-
-A single Query result
-
-```go
-type QueryResult struct {
-    QueryServer        string // Server this Query came from
-    QueryType          data.BotQueryType
-    QueryName          string             // The Query
-    PrometheusResponse PrometheusResponse // The Response
-}
-```
 
 # fixgo
 
