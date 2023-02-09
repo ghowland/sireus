@@ -59,7 +59,6 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 			}
 		}
 	}
-	//log.Print("Bots: ", bots)
 
 	// Add all the bots to a final array.  The map allowed us to ensure no duplicate entries, as that is allowed.
 	var botArray []data.Bot
@@ -68,6 +67,5 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 	}
 
 	//log.Print("Bots: ", botArray)
-
 	return botArray
 }
