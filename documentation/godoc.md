@@ -237,6 +237,12 @@ import "github.com/ghowland/sireus/code/data"
 - [type Duration](<#type-duration>)
   - [func (d Duration) MarshalJSON() ([]byte, error)](<#func-duration-marshaljson>)
   - [func (d *Duration) UnmarshalJSON(b []byte) error](<#func-duration-unmarshaljson>)
+- [type InteractiveSession](<#type-interactivesession>)
+- [type InteractiveSessionPool](<#type-interactivesessionpool>)
+- [type Override](<#type-override>)
+- [type OverrideActionConsideration](<#type-overrideactionconsideration>)
+- [type OverrideBot](<#type-overridebot>)
+- [type OverrideBotGroup](<#type-overridebotgroup>)
 - [type PairBotActionData](<#type-pairbotactiondata>)
 - [type PairBotActionDataList](<#type-pairbotactiondatalist>)
   - [func (p PairBotActionDataList) Len() int](<#func-pairbotactiondatalist-len>)
@@ -252,6 +258,7 @@ import "github.com/ghowland/sireus/code/data"
 - [type PrometheusResponseDataResult](<#type-prometheusresponsedataresult>)
 - [type QueryResult](<#type-queryresult>)
 - [type QueryResultPool](<#type-queryresultpool>)
+- [type QueryResultPoolItem](<#type-queryresultpoolitem>)
 - [type QueryServer](<#type-queryserver>)
 - [type QueryServerType](<#type-queryservertype>)
   - [func (qst QueryServerType) String() string](<#func-queryservertype-string>)
@@ -362,17 +369,20 @@ type ActionConsideration struct {
 }
 ```
 
-## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L3-L11>)
+## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L14>)
+
+Web App server configuration
 
 ```go
 type AppConfig struct {
-    WebPath               string   `json:"web_path"`
-    SiteConfigPath        string   `json:"site_config_path"`
-    CurvePathFormat       string   `json:"curve_path_format"`
-    QueryFastInternal     Duration `json:"query_fast_interval"` // BotQuery.Interval is overridden when users interact with the app, so they get fast interactive responses
-    QueryFastDuration     Duration `json:"query_fast_duration"` // Duration QueryFastInterval is maintained after the last user interaction
-    ReloadTemplatesAlways bool     `json:"reload_templates_always"`
-    LogTemplateParsing    bool     `json:"log_template_parsing"`
+    WebPath                   string   `json:"web_path"`                    // Path to the Handlebars template content.  Holds *.hbs files
+    SiteConfigPath            string   `json:"site_config_path"`            // Path to the config.yaml file that contains a Site.  For now only 1, but later will make this dynamic
+    CurvePathFormat           string   `json:"curve_path_format"`           // String to format for each of the Curve JSON files, that contain the points we use to calculate from a curve
+    QueryFastInternal         Duration `json:"query_fast_interval"`         // BotQuery.Interval is overridden when users interact with the app, so they get fast interactive responses
+    QueryFastDuration         Duration `json:"query_fast_duration"`         // Duration QueryFastInterval is maintained after the last user interaction
+    InteractiveSessionTimeout Duration `json:"interactive_session_timeout"` // Duration an InteractiveSession is kept until it is assumed finished, and can be purged
+    ReloadTemplatesAlways     bool     `json:"reload_templates_always"`     // For development, if true this will always reload Handlebars files.  Only need to reestart the server to rebuild code.
+    LogTemplateParsing        bool     `json:"log_template_parsing"`        // For web development debugging, if true this will print out all the templates that are parsed.  It's not generally useful, but if you are having a problem with Handlebars template imports or related it can help
 }
 ```
 
@@ -658,6 +668,80 @@ func (d *Duration) UnmarshalJSON(b []byte) error
 
 Unmarshal JSON for our time.Duration wrapper
 
+## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L14-L19>)
+
+An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
+
+```go
+type InteractiveSession struct {
+    UUID          int64     `json:"uuid"`           // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
+    QueryTime     time.Time `json:"query_time"`     // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
+    Override      Override  `json:"overrides"`      // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
+    TimeRequested time.Time `json:"time_requested"` // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
+}
+```
+
+## type [InteractiveSessionPool](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L7-L9>)
+
+Pool to keep our all InteractiveSession data
+
+```go
+type InteractiveSessionPool struct {
+    Sessions []InteractiveSession // All our current InteractiveSession data, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+}
+```
+
+## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L24-L27>)
+
+This tracks all the override changes relating to BotGroups or Bots for an InteractiveSession
+
+```go
+type Override struct {
+    BotGroups []OverrideBotGroup `json:"bot_groups"` // Overrides of BotGroup data: Action.Weight and ActionConsideration data
+    Bots      []OverrideBot      `json:"bots"`       // Overrides of Bot data: Bot.VariableValues and Bot.StateValues
+}
+```
+
+## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L41-L49>)
+
+Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores.  For simplicity, when making an ActionCconsideration override, all values are always updated.  No reason to have sparse changes here
+
+```go
+type OverrideActionConsideration struct {
+    ActionName        string  `json:"action_name"`        // Name of the Action to modify.  There are many ActionConsideration per Action
+    ConsiderationName string  `json:"consideration_name"` // Consideration name identifier
+    Weight            float64 `json:"weight"`             // Overrides ActionConsideration.Weight
+    CurveName         string  `json:"curve_name"`         // Overrides ActionConsideration.CurveName
+    RangeStart        float64 `json:"range_start"`        // Overrides ActionConsideration.RangeStart
+    RangeEnd          float64 `json:"range_end"`          // Overrides ActionConsideration.RangeEnd
+
+}
+```
+
+## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L54-L58>)
+
+Overrides to a Bot for an InteractiveSession
+
+```go
+type OverrideBot struct {
+    Name           string             `json:"name"`            // Name of the Bot to override.  This scope is Bot level
+    VariableValues map[string]float64 `json:"variable_values"` // The Bot.VariableValues that are being overridden.  This is useful to see how Action scores would change if some monitoring data was different, without having to find a time in the past where that was true.  Allows planning for different situations.
+    StateValues    []string           `json:"state_values"`    // If this is not an empty list, then it will override the specified BotGroup.States for this Bot.  This allows testing different Action scores in any state.
+}
+```
+
+## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L32-L36>)
+
+Overrides to a BotGroup for an InteractiveSession
+
+```go
+type OverrideBotGroup struct {
+    BotGroupName         string                        `json:"name"`                  // Name of the Bot to override.  This scope is Bot level
+    ActionWeight         map[string]float64            `json:"action_weight"`         // Overrides an Action.Weight for all the Bots in this BotGroup.  Changes Action scores for all Bots in a BotGroup
+    ActionConsiderations []OverrideActionConsideration `json:"action_considerations"` // Overrides ActionConsideration values for all Bots in this BotGroup
+}
+```
+
 ## type [PairBotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L29-L32>)
 
 Allows for sorting BotActionData by FinalScore
@@ -766,7 +850,7 @@ type PrometheusResponseDataResult struct {
 }
 ```
 
-## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L48-L53>)
+## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L44-L49>)
 
 A single Query result
 
@@ -779,14 +863,34 @@ type QueryResult struct {
 }
 ```
 
-## type [QueryResultPool](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L42-L43>)
+## type [QueryResultPool](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L54-L56>)
+
+QueryResultPool is the cache for all BotGroup.Queries.  It contains normal BotQuery results from intervals, and special InteractiveUUID versions of the results, so that users can request the same query from a different time to test their Action scoring
 
 ```go
 type QueryResultPool struct {
+    PoolItems []QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
 }
 ```
 
-## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L27-L38>)
+## type [QueryResultPoolItem](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L60-L69>)
+
+An entry in QueryResultPool with a single BotQuery result for a BotGroup.  These can be normal queries \(InteractiveUUID==0\) that take current monitoring results, or from an InteractiveSession where the InteractiveSession.QueryTime is in the past
+
+```go
+type QueryResultPoolItem struct {
+    QueryServer     string      // Server to make the query, from Site.QueryServers
+    BotGroupName    string      // BotGroup where the query came from, so they namescape the QueryNames
+    QueryName       string      // Name of the query in the BotGroup, query identifier
+    InteractiveUUID int64       // This is 0 for normal server operation, but when a user wants to look at alternative time queries, this is set to their InteractiveUUID
+    TimeRequested   time.Time   // Time the BotQuery was requested
+    TimeReceived    time.Time   // Time the Response was received
+    Result          QueryResult // Response from the QueryServer
+    IsValid         bool        // Is the response valid?  If false, it can't be used
+}
+```
+
+## type [QueryServer](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L11-L22>)
 
 QueryServer is where we connect to get data to populate our Bots.  example: Prometheus These are stored at a Site level, so that they can be shared by all BotGroups in a Site.
 
@@ -807,7 +911,7 @@ type QueryServer struct {
 }
 ```
 
-## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L5>)
+## type [QueryServerType](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L26>)
 
 QueryServerType specifies QueryServer software, defining how we make and parse Query requests
 
@@ -821,7 +925,7 @@ const (
 )
 ```
 
-### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L13>)
+### func \(QueryServerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L34>)
 
 ```go
 func (qst QueryServerType) String() string
