@@ -56,6 +56,7 @@ type (
 	}
 )
 type (
+	// An entry in QueryResultPool with a single BotQuery result for a BotGroup.  These can be normal queries (InteractiveUUID==0) that take current monitoring results, or from an InteractiveSession where the InteractiveSession.QueryTime is in the past
 	QueryResultPoolItem struct {
 		QueryServer     string      // Server to make the query, from Site.QueryServers
 		BotGroupName    string      // BotGroup where the query came from, so they namescape the QueryNames
