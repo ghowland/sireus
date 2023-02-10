@@ -148,6 +148,10 @@ func RegisterHandlebarsHelpers_FormatData() {
 		return raymond.SafeString(humanize.Time(t))
 	})
 
+	raymond.RegisterHelper("format_time", func(t time.Time) raymond.SafeString {
+		return raymond.SafeString(util.FormatTimeLong(t))
+	})
+
 	// Variables
 	raymond.RegisterHelper("format_variable_type", func(item data.BotVariableType) string {
 		return item.String()

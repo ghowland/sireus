@@ -4,6 +4,7 @@
         <thead>
         <tr>
             <th><span class="has-tooltip-arrow" data-tooltip="Locked Time">Time Locked</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Helper: Locked Time Since...">Since</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Query Key Lock: QueryServer.Query">Lock Key</span></th>
         </tr>
         </thead>
@@ -11,6 +12,7 @@
             <tfoot>
             <tr>
                 <th><span class="has-tooltip-arrow" data-tooltip="Locked Time">Time Locked</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Helper: Locked Time Since...">Since</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Query Key Lock: QueryServer.Query">Lock Key</span></th>
             </tr>
             </tfoot>
@@ -20,7 +22,8 @@
 
         {{#each site.QueryResultCache.QueryLocks as |lock lockKey|}} <!-- Pool Item:Start -->
             <tr>
-                <th>{{lock}}</th>
+                <th>{{format_time lock}}</th>
+                <th>{{format_time_since_precise lock}}</th>
                 <th>{{lockKey}}</th>
             </tr>
 
