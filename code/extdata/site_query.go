@@ -30,8 +30,8 @@ func GetCachedQueryResult(site *data.Site, query data.BotQuery, errorOverInterva
 	queryKey := GetQueryKey(query)
 
 	// Block until we can lock, for goroutine safety
-	site.QueryResultCache.QueryLocksSyncLock.Lock()
-	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
+	site.QueryResultCache.QueryPoolSyncLock.Lock()
+	defer site.QueryResultCache.QueryPoolSyncLock.Unlock()
 
 	result, ok := site.QueryResultCache.PoolItems[queryKey]
 	if !ok {
@@ -58,8 +58,8 @@ func QueryCacheSet(site *data.Site, query data.BotQuery, newCacheItem data.Query
 	queryKey := GetQueryKey(query)
 
 	// Block until we can lock, for goroutine safety
-	site.QueryResultCache.QueryLocksSyncLock.Lock()
-	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
+	site.QueryResultCache.QueryPoolSyncLock.Lock()
+	defer site.QueryResultCache.QueryPoolSyncLock.Unlock()
 
 	site.QueryResultCache.PoolItems[queryKey] = newCacheItem
 }

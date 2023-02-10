@@ -255,13 +255,15 @@ func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
 	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
-	queryServer, err := app.GetQueryServer(*site, query.QueryServer)
-	util.Check(err)
+	//queryServer, err := app.GetQueryServer(*site, query.QueryServer)
+	//util.Check(err)
+	//
+	//startTime := time.Now().Add(time.Duration(-60))
+	//promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
 
-	startTime := time.Now().Add(time.Duration(-60))
-	promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
+	queryResult, err := GetCachedQueryResult(site, query, false)
 
-	site.BotGroups[botGroupIndex].Bots = ExtractBotsFromPromData(promData, "name")
+	site.BotGroups[botGroupIndex].Bots = ExtractBotsFromPromData(queryResult.PrometheusResponse, "name")
 
 	// Initialize all the Bot Group states in Bot
 	InitializeStates(site, botGroupIndex)
