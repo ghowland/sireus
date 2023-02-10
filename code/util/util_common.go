@@ -3,11 +3,13 @@ package util
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/aymerick/raymond"
 	"log"
 	"math"
 	"os"
 	"strings"
+	"time"
 )
 
 // Call Check when we only want to log the error and wrap error testing, but it does not require an exceptional response
@@ -132,4 +134,12 @@ func PrintStringArrayCSV(slice []string) string {
 	output := strings.Join(slice, ", ")
 
 	return string(output)
+}
+
+func FormatTimeLong(t time.Time) string {
+	utc := t.UTC()
+
+	output := fmt.Sprintf("%d-%02d-%02d %02d:%02d:%02d", utc.Year(), utc.Month(), utc.Day(), utc.Hour(), utc.Minute(), utc.Second())
+
+	return output
 }

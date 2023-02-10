@@ -27,6 +27,10 @@ func main() {
 		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
 	})
 
+	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
+		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
+	})
+
 	web.Get("/", func(c *fiber.Ctx) error {
 		pageDataMap := webapp.GetPageMapData(c, data.SireusData.Site)
 		return c.Render("overwatch", pageDataMap, "layouts/main_common")

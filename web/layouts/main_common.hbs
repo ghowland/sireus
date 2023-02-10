@@ -45,32 +45,32 @@
 
 </head>
 <body>
-<div class="container">
-{{> 'partials/navbar_common' }}
+    <div class="container">
+        {{> 'partials/navbar_common' }}
 
-{{embed}}
-
-    <footer class="footer">
-        <div class="content has-text-centered">
-            <p>
-                <strong>Sireus</strong> by <a href="https://www.linkedin.com/in/ghowland/">Geoff Howland</a>. The source code is licensed
-                <a href="http://opensource.org/licenses/mit-license.php">MIT</a> and available on <a href="https://github.com/ghowland/sireus">GitHub</a>.
-            </p>
+        <div id="embed">
+        {{embed}}
         </div>
-    </footer>
+
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>
+                    <strong>Sireus</strong> by <a href="https://www.linkedin.com/in/ghowland/">Geoff Howland</a>. The source code is licensed
+                    <a href="http://opensource.org/licenses/mit-license.php">MIT</a> and available on <a href="https://github.com/ghowland/sireus">GitHub</a>.
+                </p>
+            </div>
+        </footer>
 
 
-    <div class="modal" id="modal_plot">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-            <div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+        <div class="modal" id="modal_plot">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div id='plot'><!-- Plotly chart will be drawn inside this DIV --></div>
+            </div>
+            <button class="modal-close is-large" aria-label="close" onclick="$('#modal_plot').removeClass('is-active')"></button>
         </div>
-        <button class="modal-close is-large" aria-label="close" onclick="$('#modal_plot').removeClass('is-active')"></button>
+
     </div>
-
-</div>
-
 </body>
 </html>
 {{> 'partials/jquery_main_common' }}
-
