@@ -43,17 +43,6 @@ func (qst QueryServerType) String() string {
 }
 
 type (
-	// A single Query result
-	QueryResult struct {
-		QueryServer        string             // Server this Query came from.  These are stored in Site.QueryServers
-		QueryType          BotQueryType       // Type of the query, for formatting the API request
-		Query              string             // The Query.  We cache off this, so any repeats into the same QueryServer are shared
-		PrometheusResponse PrometheusResponse // The Response.  TODO(ghowland): Abstract this for N data sources
-		IsExpired          bool               // If true, this query result has expired.  It can still be used, but all Bots using this in a Variable are not Stale and so never IsAvailable and Actions cannot execute
-	}
-)
-
-type (
 	// QueryResultPool is the cache for all BotGroup.Queries.  It contains normal BotQuery results from intervals, and special InteractiveUUID versions of the results, so that users can request the same query from a different time to test their Action scoring
 	QueryResultPool struct {
 		PoolItems          []QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
@@ -72,5 +61,16 @@ type (
 		TimeReceived    time.Time   // Time the Response was received
 		Result          QueryResult // Response from the QueryServer
 		IsValid         bool        // Is the response valid?  If false, it can't be used
+	}
+)
+
+type (
+	// A single Query result
+	QueryResult struct {
+		QueryServer        string             // Server this Query came from.  These are stored in Site.QueryServers
+		QueryType          BotQueryType       // Type of the query, for formatting the API request
+		Query              string             // The Query.  We cache off this, so any repeats into the same QueryServer are shared
+		PrometheusResponse PrometheusResponse // The Response.  TODO(ghowland): Abstract this for N data sources
+		IsExpired          bool               // If true, this query result has expired.  It can still be used, but all Bots using this in a Variable are not Stale and so never IsAvailable and Actions cannot execute
 	}
 )

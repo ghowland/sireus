@@ -31,7 +31,7 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	err = json.Unmarshal(siteData, &site)
 	util.CheckPanic(err)
 
-	// Initialize the data
+	// Initialize data that isn't auto-initialized or loaded from JSON
 	site.QueryResultCache = data.QueryResultPool{
 		QueryLocks: make(map[string]time.Time),
 	}

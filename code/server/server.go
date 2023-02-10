@@ -21,6 +21,15 @@ func Configure() {
 
 	data.SireusData.ServerContext = GetServerBackgroundContext()
 
+	// Load for the first time too...
+	LoadConfig()
+}
+
+// Load and reload config.  Will set ServerLock so this is safe to do
+func LoadConfig() {
+	data.SireusData.ServerLock.Lock()
+	defer data.SireusData.ServerLock.Unlock()
+
 	data.SireusData.AppConfig = app.LoadConfig(appConfigPath)
 
 	data.SireusData.Site = app.LoadSiteConfig(data.SireusData.AppConfig)

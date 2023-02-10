@@ -7,7 +7,6 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
-	"log"
 	"math"
 	"strconv"
 	"time"
@@ -338,6 +337,4 @@ func UpdateBotsFromQueries(site *data.Site, botGroupIndex int) {
 			}
 		}
 	}
-
-	log.Printf("Done with initial Bot queries...")
 }

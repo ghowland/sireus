@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"sync"
 )
 
 type (
@@ -9,8 +10,9 @@ type (
 	SireusServerData struct {
 		AppConfig     AppConfig       // App Server configuration
 		Site          Site            // For now, only 1 Site.  Later this will be dynamic
-		ServerContext context.Context // Context to quickly cancel all activities
 		IsQuitting    bool            // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
+		ServerContext context.Context // Context to quickly cancel all activities
+		ServerLock    sync.RWMutex    // For making changes to the server where we need to lock
 	}
 )
 
