@@ -1,0 +1,16 @@
+<section class="section">
+{{> 'partials/breadcrumbs_common' }}
+    <h1 class="title is-1">
+        Site: {{site.Name}}
+    </h1>
+    <p class="subtitle">
+        {{site.Info}}
+    </p>
+
+    {{#each bot.SortedActionData as |actionData actionDataIndex|}} <!-- Site Query:Start -->
+        {{#with_action_from_bot botGroup bot actionDataIndex as |action|}}
+            {{> 'partials/query/table_site_query' }}
+        {{/with_action_from_bot}}
+    {{/each}} <!-- Site Query:End -->
+
+</section>

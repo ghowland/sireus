@@ -7,6 +7,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"os"
+	"time"
 )
 
 // Load the BotGroup config from a path
@@ -29,6 +30,11 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	var site data.Site
 	err = json.Unmarshal(siteData, &site)
 	util.CheckPanic(err)
+
+	// Initialize the data
+	site.QueryResultCache = data.QueryResultPool{
+		QueryLocks: make(map[string]time.Time),
+	}
 
 	// Load all our Bot Groups
 	for _, botGroupPath := range site.BotGroupPaths {

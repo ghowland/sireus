@@ -6,6 +6,8 @@ type (
 		WebPath                   string   `json:"web_path"`                    // Path to the Handlebars template content.  Holds *.hbs files
 		SiteConfigPath            string   `json:"site_config_path"`            // Path to the config.yaml file that contains a Site.  For now only 1, but later will make this dynamic
 		CurvePathFormat           string   `json:"curve_path_format"`           // String to format for each of the Curve JSON files, that contain the points we use to calculate from a curve
+		ServerLoopDelay           Duration `json:"server_loop_delay"`           // After running the server loop, how long to delay, so we aren't in full spin lock.  This should be short like "0.8s"
+		QueryLockTimeout          Duration `json:"query_lock_timeout"`          // We run Queries in the background, if they run longer than this, clear the lock.  This should be a longer time, like "60s".  TODO(ghowland): Pass in custom contexts and cancel them?  Better to really control it.
 		QueryFastInternal         Duration `json:"query_fast_interval"`         // BotQuery.Interval is overridden when users interact with the app, so they get fast interactive responses
 		QueryFastDuration         Duration `json:"query_fast_duration"`         // Duration QueryFastInterval is maintained after the last user interaction
 		InteractiveSessionTimeout Duration `json:"interactive_session_timeout"` // Duration an InteractiveSession is kept until it is assumed finished, and can be purged

@@ -3,6 +3,9 @@
   "site_config_path": "config/site.json",
   "curve_path_format": "config/curves/%s.json",
 
+  "server_loop_delay": "0.8s",
+  "query_lock_timeout": "60s",
+
   "query_fast_interval": "2s",
   "query_fast_duration": "30s",
 

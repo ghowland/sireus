@@ -280,14 +280,14 @@ func UpdateBotsFromQueries(site *data.Site, botGroupIndex int) {
 
 	// Loop over all Bot Group Queries
 	for _, query := range botGroup.Queries {
-		queryServer, err := app.GetQueryServer(*site, query.QueryServer)
-		util.Check(err)
-
-		startTime := time.Now().Add(time.Duration(-60))
-		promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
+		// Get the cached query result, even if it is expired
+		queryResult, err := GetCachedQueryResult(site, query, false)
+		if util.CheckNoLog(err) {
+			continue // Couldn't get this query, skip
+		}
 
 		// Loop over the Prom Results, matching Variables to Bots to save their VariableValues
-		for _, promResult := range promData.Data.Result {
+		for _, promResult := range queryResult.PrometheusResponse.Data.Result {
 			// Loop through all the Variables, for every Bot.  In a Bot Group, all Bots are expected to have the same vars
 			for _, variable := range botGroup.Variables {
 				// Skip variables that don't match this query, OR we have an Evaluate value, so this is a Synthetic Variable (not from Query)

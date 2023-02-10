@@ -11,6 +11,6 @@ type (
 		BotGroups               []BotGroup             // These configure and contain ephemeral Bots which perform the Action scoring in the active States
 		FreezeActions           bool                   // If true, no actions will be taken for this Site.  Allows control of all BotGroups Action execution.
 		QueryResultCache        QueryResultPool        // Per Site, we cache all the BotQuery results here.  Per normal server operation, and per InteractiveSession
-		InteractiveSessionCache InteractiveSessionPool // Per Site, we track web app InteractiveSession data to allow users to make changes and see how they alter the Action scoring.  Sites silo everything, so it would be an anti-feature to allow InteractiveSession data to cross Site boundaries
+		InteractiveSessionCache InteractiveSessionPool // Per Site, we track web app InteractiveSession data to allow users to make changes and see how they alter the Action scoring.  Sites silo everything, so it would be an anti-feature to allow InteractiveSession data to cross Site boundarie
 	}
 )
