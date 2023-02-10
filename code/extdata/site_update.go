@@ -20,8 +20,8 @@ func UpdateSiteBotGroups() {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(&site, index)
 
-		// Clear all the bot variables, so our map starts fresh every time
-		ClearAllBotVariables(&site, index)
+		//// Clear all the bot variables, so our map starts fresh every time
+		//ClearAllBotVariables(&site, index)
 
 		// Update Bot Variables from our Queries
 		UpdateBotsFromQueries(&site, index)

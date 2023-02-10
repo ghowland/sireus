@@ -40,7 +40,7 @@ import "github.com/ghowland/sireus/code/app"
   - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
 
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L120>)
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L121>)
 
 ```go
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
@@ -80,7 +80,7 @@ func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string
 
 Returns JSON data needed to create a Plotly graph for our Curves
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L90>)
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L91>)
 
 ```go
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
@@ -88,7 +88,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
 
 Get an Action from a BotGroup, by name
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L110>)
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L111>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
@@ -96,7 +96,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 
 Get an ActionConsideration from an Action, by name
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L80>)
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L81>)
 
 ```go
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
@@ -104,7 +104,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
 
 Get a Bot from the BotGroup
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L70>)
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L71>)
 
 ```go
 func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error)
@@ -128,7 +128,7 @@ func GetCurveValue(curveData CurveData, x float64) float64
 
 Get the Y value, at an X position, in the curve
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L60>)
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L61>)
 
 ```go
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
@@ -136,7 +136,7 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
 
 Gets a query, scope per BotGroup
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L49>)
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L50>)
 
 ```go
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
@@ -144,7 +144,7 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
 
 Returns a QueryServer, scope is per Site
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L100>)
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L101>)
 
 ```go
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
@@ -852,7 +852,7 @@ type PrometheusResponseDataResult struct {
 }
 ```
 
-## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L47-L53>)
+## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L70-L75>)
 
 A single Query result
 
@@ -862,23 +862,23 @@ type QueryResult struct {
     QueryType          BotQueryType       // Type of the query, for formatting the API request
     Query              string             // The Query.  We cache off this, so any repeats into the same QueryServer are shared
     PrometheusResponse PrometheusResponse // The Response.  TODO(ghowland): Abstract this for N data sources
-    IsExpired          bool               // If true, this query result has expired.  It can still be used, but all Bots using this in a Variable are not Stale and so never IsAvailable and Actions cannot execute
 }
 ```
 
-## type [QueryResultPool](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L58-L62>)
+## type [QueryResultPool](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L47-L52>)
 
 QueryResultPool is the cache for all BotGroup.Queries.  It contains normal BotQuery results from intervals, and special InteractiveUUID versions of the results, so that users can request the same query from a different time to test their Action scoring
 
 ```go
 type QueryResultPool struct {
-    PoolItems          []QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
-    QueryLocksSyncLock sync.RWMutex          // Sync Lock for QueryLocks, to read or write, first obtain this lock for goroutine safety
-    QueryLocks         map[string]time.Time  // Key="(QueryServer.Name).(BotQuery.name)" Time this query was made, so we don't make it again until it finishes and clears this lock (time.Unix(0,0)) or AppConfig.QueryLockTimeout expires and we clear it.  TODO(ghowland): Use a Context wrapper here instead and then I can cancel any wedged query?
+    QueryPoolSyncLock  sync.RWMutex                   // Sync Lock for PoolItems, to read or write, first obtain this lock for goroutine safety
+    PoolItems          map[string]QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
+    QueryLocksSyncLock sync.RWMutex                   // Sync Lock for QueryLocks, to read or write, first obtain this lock for goroutine safety
+    QueryLocks         map[string]time.Time           // Key="(QueryServer.Name).(BotQuery.name)" Time this query was made, so we don't make it again until it finishes and clears this lock (time.Unix(0,0)) or AppConfig.QueryLockTimeout expires and we clear it.  TODO(ghowland): Use a Context wrapper here instead and then I can cancel any wedged query?
 }
 ```
 
-## type [QueryResultPoolItem](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L67-L75>)
+## type [QueryResultPoolItem](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L57-L65>)
 
 An entry in QueryResultPool with a single BotQuery result for a BotGroup.  These can be normal queries \(InteractiveUUID==0\) that take current monitoring results, or from an InteractiveSession where the InteractiveSession.QueryTime is in the past
 
@@ -937,7 +937,7 @@ func (qst QueryServerType) String() string
 
 Format the QueryServerType for human readability
 
-## type [SireusServerData](<https://github.com/ghowland/sireus/blob/main/code/data/server_data.go#L9-L14>)
+## type [SireusServerData](<https://github.com/ghowland/sireus/blob/main/code/data/server_data.go#L10-L16>)
 
 SireusServerData is Singleton structure for keeping global state
 
@@ -945,8 +945,9 @@ SireusServerData is Singleton structure for keeping global state
 type SireusServerData struct {
     AppConfig     AppConfig       // App Server configuration
     Site          Site            // For now, only 1 Site.  Later this will be dynamic
-    ServerContext context.Context // Context to quickly cancel all activities
     IsQuitting    bool            // When true, this server is quitting and everything will shut down.  Controls RunUntilContextCancelled()
+    ServerContext context.Context // Context to quickly cancel all activities
+    ServerLock    sync.RWMutex    // For making changes to the server where we need to lock
 }
 ```
 
@@ -981,9 +982,10 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
 - [func GetCachedQueryResult(site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error)](<#func-getcachedqueryresult>)
+- [func GetQueryKey(query data.BotQuery) string](<#func-getquerykey>)
 - [func InitializeStates(site *data.Site, botGroupIndex int)](<#func-initializestates>)
-- [func QueryCacheAppend(site *data.Site, newCacheItem data.QueryResultPoolItem)](<#func-querycacheappend>)
-- [func QueryCacheSet(site *data.Site, poolIndex int, newCacheItem data.QueryResultPoolItem)](<#func-querycacheset>)
+- [func IsQueryLocked(site *data.Site, query data.BotQuery) bool](<#func-isquerylocked>)
+- [func QueryCacheSet(site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem)](<#func-querycacheset>)
 - [func QueryLockClear(site *data.Site, queryKey string)](<#func-querylockclear>)
 - [func QueryLockSet(site *data.Site, queryKey string)](<#func-querylockset>)
 - [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse](<#func-queryprometheus>)
@@ -996,7 +998,7 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func UpdateSiteBotGroups()](<#func-updatesitebotgroups>)
 
 
-## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L172>)
+## func [ClearAllBotVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L171>)
 
 ```go
 func ClearAllBotVariables(site *data.Site, botGroupIndex int)
@@ -1004,7 +1006,7 @@ func ClearAllBotVariables(site *data.Site, botGroupIndex int)
 
 Clear all the Bot.VariableValues, so we can start fresh.  If we are missing any values, that Bot IsInvalid
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L49>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L48>)
 
 ```go
 func CreateFormattedVariables(site *data.Site, botGroupIndex int)
@@ -1012,7 +1014,7 @@ func CreateFormattedVariables(site *data.Site, botGroupIndex int)
 
 Create formatted variables for all our Bots.  This adds human readable strings to all the sorted Pair Lists
 
-## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L47>)
+## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L42>)
 
 ```go
 func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot
@@ -1020,7 +1022,7 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L243>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L242>)
 
 ```go
 func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}
@@ -1028,7 +1030,7 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}
 
 Returns the map for doing the Evaluate with a Bot's VariableValues.  Uses Govaluate.Evaluate\(\)
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L228>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L227>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
@@ -1036,15 +1038,23 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 
 Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate\(\)
 
-## func [GetCachedQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L38>)
+## func [GetCachedQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L29>)
 
 ```go
 func GetCachedQueryResult(site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error)
 ```
 
-Returns a cached query result.  Web App requests should set errorOverIntervall=false, which is used by the background query system to test missing or expired query results as equivolent.
+GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which is used by the background query system to test missing or expired query results as equivalent.
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L272>)
+## func [GetQueryKey](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L87>)
+
+```go
+func GetQueryKey(query data.BotQuery) string
+```
+
+GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
+
+## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L273>)
 
 ```go
 func InitializeStates(site *data.Site, botGroupIndex int)
@@ -1052,35 +1062,37 @@ func InitializeStates(site *data.Site, botGroupIndex int)
 
 Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
 
-## func [QueryCacheAppend](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L72>)
+## func [IsQueryLocked](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L94>)
 
 ```go
-func QueryCacheAppend(site *data.Site, newCacheItem data.QueryResultPoolItem)
+func IsQueryLocked(site *data.Site, query data.BotQuery) bool
 ```
 
-## func [QueryCacheSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L63>)
+IsQueryLocked returned whether this Query currently being requested.  Don't want to request more than once at a time
+
+## func [QueryCacheSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L57>)
 
 ```go
-func QueryCacheSet(site *data.Site, poolIndex int, newCacheItem data.QueryResultPoolItem)
+func QueryCacheSet(site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem)
 ```
 
-## func [QueryLockClear](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L82>)
+## func [QueryLockClear](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L68>)
 
 ```go
 func QueryLockClear(site *data.Site, queryKey string)
 ```
 
-Clear the Query Lock, so we can make this Query again after the Interval
+QueryLockClear will clear the Query Lock, so we can make this Query again after the Interval
 
-## func [QueryLockSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L91>)
+## func [QueryLockSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L78>)
 
 ```go
 func QueryLockSet(site *data.Site, queryKey string)
 ```
 
-Set the Query Lock, so we won't request this Query again until it finishes or the AppConfig.QueryLockTimeout expires
+QueryLockSet will set the Query Lock for a QueryKey, so we won't request this Query again until it finishes or the AppConfig.QueryLockTimeout expires
 
-## func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L16>)
+## func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L15>)
 
 ```go
 func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse
@@ -1088,7 +1100,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L72>)
+## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L71>)
 
 ```go
 func SortAllVariablesAndActions(site *data.Site, botGroupIndex int)
@@ -1102,9 +1114,9 @@ Sort all the Variables by name and Actions by Final Score
 func StoreQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult)
 ```
 
-Store this QueryResult in the cache
+StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L88>)
+## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L87>)
 
 ```go
 func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int)
@@ -1112,7 +1124,7 @@ func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int)
 
 For this BotGroup, update all the BotActionData with new ActionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L255>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L254>)
 
 ```go
 func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int)
@@ -1120,7 +1132,7 @@ func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int)
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L284>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L285>)
 
 ```go
 func UpdateBotsFromQueries(site *data.Site, botGroupIndex int)
@@ -1128,7 +1140,7 @@ func UpdateBotsFromQueries(site *data.Site, botGroupIndex int)
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L179>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L178>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int)
@@ -1136,7 +1148,7 @@ func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int)
 
 Update bot with Synethic Variables.  Happens after all the Query Variables are set.  Sythnetics cant work on each other
 
-## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_common.go#L17>)
+## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L16>)
 
 ```go
 func UpdateSiteBotGroups()
@@ -1182,14 +1194,13 @@ import "github.com/ghowland/sireus/code/server"
 
 - [func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64)](<#func-backgroundquery>)
 - [func Configure()](<#func-configure>)
-- [func GetQueryKey(query data.BotQuery) string](<#func-getquerykey>)
 - [func GetServerBackgroundContext() context.Context](<#func-getserverbackgroundcontext>)
-- [func IsQueryLocked(site *data.Site, botGroup data.BotGroup, query data.BotQuery) bool](<#func-isquerylocked>)
+- [func LoadConfig()](<#func-loadconfig>)
 - [func RunAllSiteQueries(site *data.Site)](<#func-runallsitequeries>)
 - [func RunForever()](<#func-runforever>)
 
 
-## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L121>)
+## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L105>)
 
 ```go
 func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64)
@@ -1197,21 +1208,13 @@ func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64
 
 Query in the background with a goroutine
 
-## func [Configure](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L19>)
+## func [Configure](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L18>)
 
 ```go
 func Configure()
 ```
 
-## func [GetQueryKey](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L77>)
-
-```go
-func GetQueryKey(query data.BotQuery) string
-```
-
-QueryKey is "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
-
-## func [GetServerBackgroundContext](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L30>)
+## func [GetServerBackgroundContext](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L38>)
 
 ```go
 func GetServerBackgroundContext() context.Context
@@ -1219,15 +1222,15 @@ func GetServerBackgroundContext() context.Context
 
 Get the global Server context, so that we can cancel everything in progress
 
-## func [IsQueryLocked](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L84>)
+## func [LoadConfig](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L28>)
 
 ```go
-func IsQueryLocked(site *data.Site, botGroup data.BotGroup, query data.BotQuery) bool
+func LoadConfig()
 ```
 
-Is this Query currently being requested?  We dont want to request more than once at a time
+Load and reload config.  Will set ServerLock so this is safe to do
 
-## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L103>)
+## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L87>)
 
 ```go
 func RunAllSiteQueries(site *data.Site)
@@ -1235,7 +1238,7 @@ func RunAllSiteQueries(site *data.Site)
 
 Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval. Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale Actions are not available.
 
-## func [RunForever](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L54>)
+## func [RunForever](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L62>)
 
 ```go
 func RunForever()
