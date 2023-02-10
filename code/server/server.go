@@ -140,5 +140,5 @@ func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64
 		PrometheusResponse: promData,
 	}
 
-	extdata.StoreQueryResult(interactiveUUID, site, query, queryServer, startTime, newResult)
+	extdata.StoreQueryResult(interactiveUUID, site, query, startTime, newResult)
 }

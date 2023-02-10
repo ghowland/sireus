@@ -47,9 +47,9 @@ func main() {
 		return c.Render("bot", pageDataMap, "layouts/main_common")
 	})
 
-	web.Get("/site_queries", func(c *fiber.Ctx) error {
+	web.Get("/site_query", func(c *fiber.Ctx) error {
 		pageDataMap := webapp.GetPageMapData(c, data.SireusData.Site)
-		return c.Render("site_queries", pageDataMap, "layouts/main_common")
+		return c.Render("site_query", pageDataMap, "layouts/main_common")
 	})
 
 	web.Get("/test", func(c *fiber.Ctx) error {

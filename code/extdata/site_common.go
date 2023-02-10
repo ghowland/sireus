@@ -106,11 +106,17 @@ func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int) {
 				util.Check(err)
 
 				resultInt, err := expression.Evaluate(evalMap)
-				util.Check(err)
+				if util.CheckNoLog(err) {
+					// Invalidate this consideration, evaluation failed
+					//log.Printf("ERROR: Evaluate failed on Eval Map data: %s   Map: %s", consider.Evaluate, util.PrintJson(evalMap))
+					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
+					continue
+				}
 
 				result, err := util.ConvertInterfaceToFloat(resultInt)
-				if util.Check(err) {
-					// Invalidate this variable, result was invalid
+				if util.CheckNoLog(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
+					// Invalidate this consideration, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
 					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
 					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64

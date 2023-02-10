@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/BenJetson/humantime"
 	"github.com/aymerick/raymond"
+	"github.com/dustin/go-humanize"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
@@ -141,6 +142,10 @@ func RegisterHandlebarsHelpers_FormatData() {
 	// Format Time
 	raymond.RegisterHelper("format_time_since", func(t time.Time) raymond.SafeString {
 		return raymond.SafeString(humantime.Since(t))
+	})
+
+	raymond.RegisterHelper("format_time_since_precise", func(t time.Time) raymond.SafeString {
+		return raymond.SafeString(humanize.Time(t))
 	})
 
 	// Variables

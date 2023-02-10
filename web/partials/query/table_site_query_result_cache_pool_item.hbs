@@ -1,0 +1,43 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Server">Server</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query">Query</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Interactive Session UUID">Int UUID</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Time Requested">Requested</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Time Received">Received</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Is Valid Response?">Valid</span></th>
+        </tr>
+        </thead>
+        {{#if_query_length Queries 10}}
+            <tfoot>
+            <tr>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Server">Server</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query">Query</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Interactive Session UUID">Int UUID</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Time Requested">Requested</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Time Received">Received</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Is Valid Response?">Valid</span></th>
+            </tr>
+            </tfoot>
+        {{/if_query_length}}
+        <tbody>
+        </tbody>
+
+        {{#each site.QueryResultCache.PoolItems as |poolItem poolItemIndex|}} <!-- Pool Item:Start -->
+
+            <tr>
+                <th>{{poolItem.QueryServer}}</th>
+                <th>{{poolItem.Query}}</th>
+                <th>{{poolItem.InteractiveUUID}}</th>
+                <th>{{format_time_since_precise poolItem.TimeRequested}}</th>
+                <th>{{format_time_since_precise poolItem.TimeReceived}}</th>
+                <th>{{poolItem.IsValid}}</th>
+            </tr>
+
+        {{/each}} <!-- Pool Item:End -->
+
+    </table>
+</div>
