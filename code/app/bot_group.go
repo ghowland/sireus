@@ -33,6 +33,7 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 
 	// Initialize data that isn't auto-initialized or loaded from JSON
 	site.QueryResultCache = data.QueryResultPool{
+		PoolItems:  make(map[string]data.QueryResultPoolItem),
 		QueryLocks: make(map[string]time.Time),
 	}
 

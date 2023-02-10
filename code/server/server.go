@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/extdata"
@@ -82,30 +81,6 @@ func RunForever() {
 	log.Printf("Server: Run Forever: Stopping (%v)", data.SireusData.IsQuitting)
 }
 
-// QueryKey is "(QueryServer).(Query)", so it can be shared by any BotGroup
-func GetQueryKey(query data.BotQuery) string {
-	// Key on the Query itself, so if different BotGroups share the same query from the same QueryServer, it's shared
-	output := fmt.Sprintf("%s.%s", query.QueryServer, query.Query)
-	return output
-}
-
-// Is this Query currently being requested?  We dont want to request more than once at a time
-func IsQueryLocked(site *data.Site, botGroup data.BotGroup, query data.BotQuery) bool {
-	queryKey := GetQueryKey(query)
-
-	queryLockTime, ok := site.QueryResultCache.QueryLocks[queryKey]
-	if !ok {
-		return false
-	}
-
-	since := time.Now().Sub(queryLockTime)
-	if since.Seconds() < time.Duration(data.SireusData.AppConfig.QueryLockTimeout).Seconds() {
-		return true
-	}
-
-	return false
-}
-
 // Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval.
 // Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale
 // Actions are not available.
@@ -113,7 +88,7 @@ func RunAllSiteQueries(site *data.Site) {
 	for _, botGroup := range site.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
-			if IsQueryLocked(site, botGroup, query) {
+			if extdata.IsQueryLocked(site, botGroup, query) {
 				continue
 			}
 
@@ -128,7 +103,7 @@ func RunAllSiteQueries(site *data.Site) {
 
 // Query in the background with a goroutine
 func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64) {
-	queryKey := GetQueryKey(query)
+	queryKey := extdata.GetQueryKey(query)
 
 	// Set the lock, and defer to clear it when done
 	extdata.QueryLockSet(site, queryKey)

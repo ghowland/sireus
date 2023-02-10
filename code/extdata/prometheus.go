@@ -21,15 +21,11 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 	requestUrl := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
 
-	//log.Print("Prom URL: ", requestUrl)
-
 	resp, err := http.Get(requestUrl)
 	util.Check(err)
 
 	body, err := io.ReadAll(resp.Body)
 	util.Check(err)
-
-	//log.Print("Prom Result: ", string(body))
 
 	var jsonResponse data.PrometheusResponse
 	err = json.Unmarshal(body, &jsonResponse)

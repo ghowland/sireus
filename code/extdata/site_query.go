@@ -20,62 +20,48 @@ func StoreQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuer
 		IsValid:         true, //TODO(ghowland): Check instead of force set.  If it's not valid, we need a way to tell them about the problem, and show them for the BotGroup and Bots so they arent confused as to why it's not working.  Can tell them why it's malformed and show them the result so they can troubleshoot it.
 	}
 
-	for poolIndex, result := range site.QueryResultCache.PoolItems {
-		// Is this result a match?
-		if result.QueryServer == query.QueryServer && result.Query == query.Query {
-			// Mark found and set it back over the current location, we're done
-			QueryCacheSet(site, poolIndex, newCacheItem)
-			return
-		}
-	}
-
-	// If we didn't find this result and return already, append it
-	QueryCacheAppend(site, newCacheItem)
+	// Save this result to the cache
+	QueryCacheSet(site, query, newCacheItem)
 }
 
 // Returns a cached query result.  Web App requests should set errorOverIntervall=false, which is used by the
 // background query system to test missing or expired query results as equivolent.
 func GetCachedQueryResult(site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
+	queryKey := GetQueryKey(query)
 
-	for _, result := range site.QueryResultCache.PoolItems {
-		// Is this result a match?
-		if result.QueryServer == query.QueryServer && result.Query == query.Query {
-			since := time.Now().Sub(result.TimeReceived)
+	// Block until we can lock, for goroutine safety
+	site.QueryResultCache.QueryLocksSyncLock.Lock()
+	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
 
-			// If we don't want to return values if they are over the interval, then mark them
-			if since.Seconds() > time.Duration(query.Interval).Seconds() {
-				if errorOverInterval {
-					return data.QueryResult{}, errors.New(fmt.Sprintf("Query Result found, but over interval: Server: %s  Name: %s", query.QueryServer, query.Name))
-				} else {
-					// This is an expired result.  Any Bots that use this are now Stale and can't be IsAvailable, so can't execute Actions
-					result.Result.IsExpired = true
-				}
-			}
+	result, ok := site.QueryResultCache.PoolItems[queryKey]
+	if !ok {
+		return data.QueryResult{}, errors.New(fmt.Sprintf("Could not find Query Result: Server: %s  Name: %s", query.QueryServer, query.Name))
+	}
 
-			// Returning the cached result.  May have set IsExpired above.
-			return result.Result, nil
+	// Test if it is older than the Interval refresh, this
+	since := time.Now().Sub(result.TimeReceived)
+
+	// If we don't want to return values if they are over the Interval, then mark them
+	if since.Seconds() > time.Duration(query.Interval).Seconds() {
+		if errorOverInterval {
+			return data.QueryResult{}, errors.New(fmt.Sprintf("Query Result found, but over interval: Server: %s  Name: %s", query.QueryServer, query.Name))
+		} else {
+			//TODO(ghowland): For specific BotGroup queries, we have an additional check for Staleness, it doesnt use Interval above...  Deal with that later.
 		}
 	}
 
-	return data.QueryResult{}, errors.New(fmt.Sprintf("Could not find Query Result: Server: %s  Name: %s", query.QueryServer, query.Name))
+	// Returning the cached result
+	return result.Result, nil
 }
 
-func QueryCacheSet(site *data.Site, poolIndex int, newCacheItem data.QueryResultPoolItem) {
+func QueryCacheSet(site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem) {
+	queryKey := GetQueryKey(query)
+
 	// Block until we can lock, for goroutine safety
 	site.QueryResultCache.QueryLocksSyncLock.Lock()
 	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
 
-	// Mark found and set it back over the current location, we're done
-	site.QueryResultCache.PoolItems[poolIndex] = newCacheItem
-}
-
-func QueryCacheAppend(site *data.Site, newCacheItem data.QueryResultPoolItem) {
-	// Block until we can lock, for goroutine safety
-	site.QueryResultCache.QueryLocksSyncLock.Lock()
-	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
-
-	// If we didn't find this result and return already, append it
-	site.QueryResultCache.PoolItems = append(site.QueryResultCache.PoolItems, newCacheItem)
+	site.QueryResultCache.PoolItems[queryKey] = newCacheItem
 }
 
 // Clear the Query Lock, so we can make this Query again after the Interval
@@ -94,4 +80,28 @@ func QueryLockSet(site *data.Site, queryKey string) {
 	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
 
 	site.QueryResultCache.QueryLocks[queryKey] = time.Now()
+}
+
+// QueryKey is "(QueryServer).(Query)", so it can be shared by any BotGroup
+func GetQueryKey(query data.BotQuery) string {
+	// Key on the Query itself, so if different BotGroups share the same query from the same QueryServer, it's shared
+	output := fmt.Sprintf("%s.%s", query.QueryServer, query.Query)
+	return output
+}
+
+// Is this Query currently being requested?  We dont want to request more than once at a time
+func IsQueryLocked(site *data.Site, botGroup data.BotGroup, query data.BotQuery) bool {
+	queryKey := GetQueryKey(query)
+
+	queryLockTime, ok := site.QueryResultCache.QueryLocks[queryKey]
+	if !ok {
+		return false
+	}
+
+	since := time.Now().Sub(queryLockTime)
+	if since.Seconds() < time.Duration(data.SireusData.AppConfig.QueryLockTimeout).Seconds() {
+		return true
+	}
+
+	return false
 }

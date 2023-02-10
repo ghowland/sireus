@@ -45,9 +45,9 @@ func (qst QueryServerType) String() string {
 type (
 	// QueryResultPool is the cache for all BotGroup.Queries.  It contains normal BotQuery results from intervals, and special InteractiveUUID versions of the results, so that users can request the same query from a different time to test their Action scoring
 	QueryResultPool struct {
-		PoolItems          []QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
-		QueryLocksSyncLock sync.RWMutex          // Sync Lock for QueryLocks, to read or write, first obtain this lock for goroutine safety
-		QueryLocks         map[string]time.Time  // Key="(QueryServer.Name).(BotQuery.name)" Time this query was made, so we don't make it again until it finishes and clears this lock (time.Unix(0,0)) or AppConfig.QueryLockTimeout expires and we clear it.  TODO(ghowland): Use a Context wrapper here instead and then I can cancel any wedged query?
+		QueryLocksSyncLock sync.RWMutex                   // Sync Lock for QueryLocks, to read or write, first obtain this lock for goroutine safety
+		PoolItems          map[string]QueryResultPoolItem // These are all the items in our pool.  When we get a data request (web or internal), we get the result from here, if it exists.  New queries are run in the background and then their lateste results go here
+		QueryLocks         map[string]time.Time           // Key="(QueryServer.Name).(BotQuery.name)" Time this query was made, so we don't make it again until it finishes and clears this lock (time.Unix(0,0)) or AppConfig.QueryLockTimeout expires and we clear it.  TODO(ghowland): Use a Context wrapper here instead and then I can cancel any wedged query?
 	}
 )
 
@@ -71,6 +71,5 @@ type (
 		QueryType          BotQueryType       // Type of the query, for formatting the API request
 		Query              string             // The Query.  We cache off this, so any repeats into the same QueryServer are shared
 		PrometheusResponse PrometheusResponse // The Response.  TODO(ghowland): Abstract this for N data sources
-		IsExpired          bool               // If true, this query result has expired.  It can still be used, but all Bots using this in a Variable are not Stale and so never IsAvailable and Actions cannot execute
 	}
 )
