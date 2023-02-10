@@ -49,8 +49,16 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-// Format Handlebars string, so I don't have to remember any arguments
+// Format Handlebars string from strings, so I don't have to remember any arguments
 func HandlebarFormatText(format string, mapData map[string]string) string {
+	result, err := raymond.Render(format, mapData)
+	Check(err)
+
+	return result
+}
+
+// Format Handlebars string from data, so I don't have to remember any arguments
+func HandlebarFormatData(format string, mapData map[string]interface{}) string {
 	result, err := raymond.Render(format, mapData)
 	Check(err)
 

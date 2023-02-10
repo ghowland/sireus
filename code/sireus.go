@@ -27,38 +27,41 @@ func main() {
 		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
 	})
 
-	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
-		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
-	})
+	//web.Post("/api/web/bot", func(c *fiber.Ctx) error {
+	//	renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
+	//
+	//	output := util.HandlebarFormatData(formatString, renderMap)
+	//	return c.SendString(output)
+	//})
 
 	web.Get("/", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("overwatch", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("overwatch", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/site", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("site", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("site", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/bot_group", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("bot_group", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("bot_group", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/bot", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("bot", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("bot", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/site_query", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("site_query", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("site_query", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/test", func(c *fiber.Ctx) error {
-		pageDataMap := webapp.GetPageMapData(c, &data.SireusData.Site)
-		return c.Render("test", pageDataMap, "layouts/main_common")
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("test", renderMap, "layouts/main_common")
 	})
 
 	// Static Files: JS, Images
