@@ -88,7 +88,7 @@ func RunAllSiteQueries(site *data.Site) {
 	for _, botGroup := range site.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
-			if extdata.IsQueryLocked(site, botGroup, query) {
+			if extdata.IsQueryLocked(site, query) {
 				continue
 			}
 

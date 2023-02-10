@@ -48,9 +48,10 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 		_, exists := bots[name]
 		if !exists {
 			bots[name] = data.Bot{
-				Name:        name,
-				ActionData:  map[string]data.BotActionData{},
-				StateValues: []string{},
+				Name:           name,
+				ActionData:     map[string]data.BotActionData{},
+				StateValues:    []string{},
+				VariableValues: map[string]float64{},
 			}
 		}
 	}

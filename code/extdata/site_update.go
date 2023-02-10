@@ -14,37 +14,37 @@ import (
 
 // Update all the BotGroups in this Site
 func UpdateSiteBotGroups() {
-	site := data.SireusData.Site
+	//site := data.SireusData.Site
 
-	for index := range site.BotGroups {
+	for index := range data.SireusData.Site.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
-		UpdateBotGroupFromPrometheus(&site, index)
+		UpdateBotGroupFromPrometheus(&data.SireusData.Site, index)
 
 		//// Clear all the bot variables, so our map starts fresh every time
 		//ClearAllBotVariables(&site, index)
 
 		// Update Bot Variables from our Queries
-		UpdateBotsFromQueries(&site, index)
+		UpdateBotsFromQueries(&data.SireusData.Site, index)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
-		UpdateBotsWithSyntheticVariables(&site, index)
+		UpdateBotsWithSyntheticVariables(&data.SireusData.Site, index)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(&site, index)
+		UpdateBotActionConsiderations(&data.SireusData.Site, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(&site, index)
+		SortAllVariablesAndActions(&data.SireusData.Site, index)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
-		CreateFormattedVariables(&site, index)
+		CreateFormattedVariables(&data.SireusData.Site, index)
 	}
 
-	// Assign the site back into the server data.  This allows atomic updates
-	data.SireusData.Site = site
+	//// Assign the site back into the server data.  This allows atomic updates
+	//data.SireusData.Site = site
 }
 
-// Create formatted variables for all our Bots.  This adds human readable strings to all the sorted Pair Lists
+// Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
 func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
@@ -174,11 +174,11 @@ func ClearAllBotVariables(site *data.Site, botGroupIndex int) {
 	}
 }
 
-// Update bot with Synethic Variables.  Happens after all the Query Variables are set.  Sythnetics cant work on each other
+// Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
 func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
-	// Clear all teh Bot VariableValues
+	// Clear all the Bot VariableValues
 
 	// Create a list of names
 	var queryVariableNames []string
@@ -214,7 +214,7 @@ func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int) {
 				continue // Skip this variable, it was invalid
 			}
 
-			//log.Printf("Set Synethtic Variable: %s = %v", variable.Name, result)
+			//log.Printf("Set Synthetic Variable: %s = %v", variable.Name, result)
 
 			// Set the value.  Only valid values will exist.
 			//NOTE(ghowland): A separate test will occur to see if this bot is missing variables and cant be processed
@@ -223,13 +223,13 @@ func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int) {
 	}
 }
 
-// Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate()
+// GetBotEvalMapOnlyQueries returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate()
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
-	// Build a map from this bot's variables
+	// Build a map from bots variables
 	for variableName, value := range bot.VariableValues {
-		// Only add variables that are Query Variables, because they are known before synethetic evaluation
+		// Only add variables that are Query Variables, because they are known before synthetic evaluation
 		if util.StringInSlice(variableName, queryVariableNames) {
 			evalMap[variableName] = value
 		}
@@ -238,11 +238,11 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 	return evalMap
 }
 
-// Returns the map for doing the Evaluate with a Bot's VariableValues.  Uses Govaluate.Evaluate()
+// Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate()
 func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
-	// Build a map from this bot's variables
+	// Build a map bot variables
 	for variableName, value := range bot.VariableValues {
 		evalMap[variableName] = value
 	}
@@ -254,12 +254,6 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
 	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
-
-	//queryServer, err := app.GetQueryServer(*site, query.QueryServer)
-	//util.Check(err)
-	//
-	//startTime := time.Now().Add(time.Duration(-60))
-	//promData := QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
 
 	queryResult, err := GetCachedQueryResult(site, query, false)
 
@@ -273,7 +267,7 @@ func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
 func InitializeStates(site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
-	for botIndex, _ := range botGroup.Bots {
+	for botIndex := range botGroup.Bots {
 		for _, state := range botGroup.States {
 			key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
 			site.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(site.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
