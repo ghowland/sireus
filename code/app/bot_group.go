@@ -68,7 +68,7 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 }
 
 // Gets a BotGroup from the Site
-func GetBotGroup(site data.Site, botGroupName string) (data.BotGroup, error) {
+func GetBotGroup(site *data.Site, botGroupName string) (data.BotGroup, error) {
 	for _, botGroup := range site.BotGroups {
 		if botGroup.Name == botGroupName {
 			return botGroup, nil

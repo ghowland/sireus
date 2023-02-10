@@ -9,8 +9,7 @@ import (
 )
 
 // This is the function that passes in all the data for a given Handlebars page render, using Fiber
-func GetPageMapData(c *fiber.Ctx, site data.Site) fiber.Map {
-	siteId := site.Name
+func GetPageMapData(c *fiber.Ctx, site *data.Site) fiber.Map {
 	botGroupId := c.Query("bot_group_id")
 	botId := c.Query("bot_id")
 
@@ -27,21 +26,27 @@ func GetPageMapData(c *fiber.Ctx, site data.Site) fiber.Map {
 		util.Check(err)
 	}
 
+	pageDataMap := BuildRenderMap(site, botGroup, bot)
+
+	return pageDataMap
+}
+
+func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot) fiber.Map {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
 
-	pageDataMap := fiber.Map{
+	renderMap := fiber.Map{
 		"title":        "Sireus",
 		"site":         site,
+		"site_id":      site.Name,
 		"botGroup":     botGroup,
-		"site_id":      siteId,
-		"bot_group_id": botGroupId,
-		"bot_id":       botId,
+		"bot_group_id": botGroup.Name,
 		"bot":          bot,
+		"bot_id":       bot.Name,
 		"render_time":  renderTimeStr,
 	}
 
-	return pageDataMap
+	return renderMap
 }
