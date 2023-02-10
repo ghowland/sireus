@@ -84,7 +84,7 @@ func QueryLockClear(site *data.Site, queryKey string) {
 	site.QueryResultCache.QueryLocksSyncLock.Lock()
 	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
 
-	site.QueryResultCache.QueryLocks[queryKey] = time.UnixMilli(0)
+	delete(site.QueryResultCache.QueryLocks, queryKey)
 }
 
 // Set the Query Lock, so we won't request this Query again until it finishes or the AppConfig.QueryLockTimeout expires

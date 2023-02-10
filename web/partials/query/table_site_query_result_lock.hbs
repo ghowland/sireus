@@ -1,0 +1,30 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><span class="has-tooltip-arrow" data-tooltip="Locked Time">Time Locked</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Key Lock: QueryServer.Query">Lock Key</span></th>
+        </tr>
+        </thead>
+        {{#if_query_length Queries 10}}
+            <tfoot>
+            <tr>
+                <th><span class="has-tooltip-arrow" data-tooltip="Locked Time">Time Locked</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Key Lock: QueryServer.Query">Lock Key</span></th>
+            </tr>
+            </tfoot>
+        {{/if_query_length}}
+        <tbody>
+        </tbody>
+
+        {{#each site.QueryResultCache.QueryLocks as |lock lockKey|}} <!-- Pool Item:Start -->
+            <tr>
+                <th>{{lock}}</th>
+                <th>{{lockKey}}</th>
+            </tr>
+
+        {{/each}} <!-- Pool Item:End -->
+
+    </table>
+</div>
