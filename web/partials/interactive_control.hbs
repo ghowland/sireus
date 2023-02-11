@@ -22,17 +22,18 @@
                     </div>
                     <div class="column">
                         <div class="field">
-                            <input id="switchRoundedDefault" type="checkbox" name="switchRoundedDefault" class="switch is-outlined is-info" checked="checked">
-                            <label for="switchRoundedDefault">Play</label>
+                            <input id="interQueryTime" type="checkbox" name="interQueryTime" class="switch is-outlined is-info" checked="checked">
+                            <label for="interQueryTime">Query Time</label>
+                        </div>
+                        <div class="field">
+                            <input id="interPlayForward" type="checkbox" name="interPlayForward" class="switch is-outlined is-info">
+                            <label for="interPlayForward">Play</label>
                         </div>
                     </div>
                 </div>
                 <div class="columns">
                     <div class="column">
-                        <div class="field">
-                            <input class="is-checkradio has-background-color is-info" id="enable_time_control" type="checkbox" name="enable_time_control" checked="checked">
-                            <label for="enable_time_control">Query Time Start: <span id="time_control_start"></span></label>
-                        </div>
+                        <p>Query Time Start:</p>
                     </div>
                     <div class="column">
                         <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_start" onchange="SetTimeControl('time_control_slider_start', 'queryStartTime', 'time_control_start')">
@@ -40,18 +41,30 @@
                 </div>
                 <div class="columns">
                     <div class="column">
-                        <div class="field">
-                            <input class="is-checkradio has-background-color is-info" id="enable_time_control" type="checkbox" name="enable_time_control" checked="checked">
-                            <label for="enable_time_control">Query Time End: <span id="time_control_end"></span></label>
-                        </div>
+                        <p>Query Time Duration:</p>
                     </div>
                     <div class="column">
-                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_end" onchange="SetTimeControl('time_control_slider_end', 'queryEndTime', 'time_control_end')">
+                        <div class="field">
+                            <p class="control has-icons-left has-icons-right">
+                                <input class="input" type="duration" placeholder="Duration in Minutes" value="60">
+                                <span class="icon is-small is-left">
+                                    <i class="fa-regular fa-clock"></i>
+                                </span>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 <h4>Override States</h4>
+                <div class="field">
+                    <input class="is-checkradio has-background-color is-info" id="enable_state_override_1" type="checkbox" name="state_override_1" checked="checked">
+                    <label for="enable_state_override_1">State Override: <span id=""></span></label>
+                </div>
                 <h4>Override Variables</h4>
+                <div class="field">
+                    <input class="is-checkradio has-background-color is-info" id="enable_var_override_1" type="checkbox" name="var_override_1" checked="checked">
+                    <label for="enable_var_override_1">Variable Override: <span id=""></span></label>
+                </div>
             </div>
         </div>
     </div>
@@ -93,18 +106,6 @@
         // Get the UTC time in milliseconds
         interactiveControl[interactiveVarName] = d2.getTime();
 
-        // If we have both our values here, test to see if they are invalid and mark them with colors
-        if (interactiveControl['queryStartTime'] !== undefined && interactiveControl['queryEndTime'] !== undefined) {
-            // If end time is before start time, it's an error
-            if (interactiveControl['queryEndTime'] < interactiveControl['queryStartTime']) {
-                $('#time_control_slider_end').removeClass('is-info');
-                $('#time_control_slider_end').addClass('is-danger');
-            }
-            else {
-                $('#time_control_slider_end').removeClass('is-danger');
-                $('#time_control_slider_end').addClass('is-info');
-            }
-        }
 
         $('#'+outputElementId).html(output);
     }
