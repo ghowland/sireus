@@ -17,7 +17,8 @@
             <div class="has-background-white has-text-black no-draggon" style="padding: 1.5em;">
                 <div class="columns">
                     <div class="column is-three-quarters">
-                        <h4>Set Override Values</h4>
+                        <h4>Set Interactive Time Range</h4>
+                        <p>All interactive sessions use a set time range to cache metrics data and perform quick tests.</p>
                     </div>
                     <div class="column">
                         <div class="field">
@@ -30,11 +31,22 @@
                     <div class="column">
                         <div class="field">
                             <input class="is-checkradio has-background-color is-info" id="enable_time_control" type="checkbox" name="enable_time_control" checked="checked">
-                            <label for="enable_time_control">Query Time From: <span id="time_control"></span></label>
+                            <label for="enable_time_control">Query Time Start: <span id="time_control_start"></span></label>
                         </div>
                     </div>
                     <div class="column">
-                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider" onchange="SetTimeControl()">
+                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_start" onchange="SetTimeControl('time_control_slider_start', 'queryStartTime', 'time_control_start')">
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <div class="field">
+                            <input class="is-checkradio has-background-color is-info" id="enable_time_control" type="checkbox" name="enable_time_control" checked="checked">
+                            <label for="enable_time_control">Query Time End: <span id="time_control_end"></span></label>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_end" onchange="SetTimeControl('time_control_slider_end', 'queryEndTime', 'time_control_end')">
                     </div>
                 </div>
 
@@ -47,6 +59,7 @@
 <script>
     var interactiveControl = {
         queryStartTime: undefined,
+        queryEndTime: undefined,
         playFromQueryTime: true,
     };
 
@@ -61,14 +74,14 @@
         return output;
     }
 
-    function SetTimeControl() {
+    function SetTimeControl(valueElementId, interactiveVarName, outputElementId) {
         var d = new Date();
 
         d.setTime(Date.now())
 
         var timeNum = d.getTime();
 
-        var value = 100 - $('#time_control_slider').val();
+        var value = 100 - $('#'+valueElementId).val();
 
         var timeSpan = 86400 / 100; // One hour timespan
         // var timeSpan = 3600 / 100; // One hour timespan
@@ -78,9 +91,22 @@
         var output = PrintUTCTime(d2);
 
         // Get the UTC time in milliseconds
-        interactiveControl['queryStartTime'] = d2.getTime();
+        interactiveControl[interactiveVarName] = d2.getTime();
 
-        $('#time_control').html(output);
+        // If we have both our values here, test to see if they are invalid and mark them with colors
+        if (interactiveControl['queryStartTime'] !== undefined && interactiveControl['queryEndTime'] !== undefined) {
+            // If end time is before start time, it's an error
+            if (interactiveControl['queryEndTime'] < interactiveControl['queryStartTime']) {
+                $('#time_control_slider_end').removeClass('is-info');
+                $('#time_control_slider_end').addClass('is-danger');
+            }
+            else {
+                $('#time_control_slider_end').removeClass('is-danger');
+                $('#time_control_slider_end').addClass('is-info');
+            }
+        }
+
+        $('#'+outputElementId).html(output);
     }
     SetTimeControl();
 </script>

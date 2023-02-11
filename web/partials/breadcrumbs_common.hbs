@@ -33,10 +33,24 @@
         <li class="is-active"><a href="#" aria-current="page">{{page_type}}</a></li>
         {{/if}}
         {{#if render_time}}
-            <li class="is-active"><a href="#" aria-current="page">{{render_time}} UTC</a></li>
+            <li class="is-active">
+                <a href="#" aria-current="page">
+                <span class="icon is-small">
+                  <i class="fa-regular fa-clock"></i>
+                </span>
+                    <span>{{render_time}} UTC</span>
+                </a>
+            </li>
         {{/if}}
         {{#if query_time}}
-            <li class="is-active"><a href="#" aria-current="page">Query: {{query_time}} UTC</a></li>
+            <li class="is-active">
+                <a href="#" aria-current="page">
+                <span class="icon is-small">
+                  <i class="fa-solid fa-database"></i>
+                </span>
+                <span>{{query_time}} UTC</span>
+                </a>
+            </li>
         {{/if}}
     </ul>
 </nav>
