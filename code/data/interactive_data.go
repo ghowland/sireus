@@ -57,3 +57,11 @@ type (
 		StateValues    []string           `json:"state_values"`    // If this is not an empty list, then it will override the specified BotGroup.States for this Bot.  This allows testing different Action scores in any state.
 	}
 )
+
+type (
+	// InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
+	InteractiveControl struct {
+		PlayFromQueryTime bool    `json:"playFromQueryTime"`
+		QueryStartTime    float64 `json:"queryStartTime"`
+	}
+)

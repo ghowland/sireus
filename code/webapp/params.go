@@ -1,6 +1,7 @@
 package webapp
 
 import (
+	"encoding/json"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
@@ -40,6 +41,14 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	input := util.ParseContextBody(c)
 
+	// Get our Interactive Controls, if it exists
+	var interactiveControl data.InteractiveControl
+	interactiveControlJSON, ok := input["interactive_control"]
+	if ok {
+		json.Unmarshal([]byte(interactiveControlJSON), &interactiveControl)
+	}
+	//log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
+
 	botGroupId := input["bot_group_id"]
 	botId := input["bot_id"]
 
@@ -60,7 +69,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	inputData["bot_group_id"] = botGroupId
 	inputData["bot_id"] = botId
 
-	renderMap := BuildRenderMap(site, botGroup, bot, inputData)
+	renderMap := BuildRenderMap(site, botGroup, bot, inputData, interactiveControl)
 
 	return renderMap
 }
@@ -93,11 +102,14 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 	return renderMap
 }
 
-func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) map[string]interface{} {
+func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
+
+	queryTime := time.UnixMilli(int64(interactiveControl.QueryStartTime))
+	queryTimeStr := util.FormatTimeLong(queryTime)
 
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
 
@@ -107,15 +119,17 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 	}
 
 	renderMap := map[string]interface{}{
-		"title":        "Sireus",
-		"site":         site,
-		"site_id":      site.Name,
-		"botGroup":     botGroup,
-		"bot_group_id": botGroup.Name,
-		"bot":          bot,
-		"bot_id":       bot.Name,
-		"render_time":  renderTimeStr,
-		"input_data":   inputDataStr,
+		"title":               "Sireus",
+		"site":                site,
+		"site_id":             site.Name,
+		"botGroup":            botGroup,
+		"bot_group_id":        botGroup.Name,
+		"bot":                 bot,
+		"bot_id":              bot.Name,
+		"render_time":         renderTimeStr,
+		"query_time":          queryTimeStr,
+		"input_data":          inputDataStr,
+		"interactive_control": interactiveControl,
 	}
 
 	return renderMap

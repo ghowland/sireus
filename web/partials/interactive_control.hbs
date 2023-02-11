@@ -38,13 +38,18 @@
                     </div>
                 </div>
 
-                <p>Other stuff</p>
-                <p>Yeah</p>
+                <h4>Override States</h4>
+                <h4>Override Variables</h4>
             </div>
         </div>
     </div>
 </div>
 <script>
+    var interactiveControl = {
+        queryStartTime: undefined,
+        playFromQueryTime: true,
+    };
+
     function ZeroPad(num, places) {
         var zero = places - num.toString().length + 1;
         return Array(+(zero > 0 && zero)).join("0") + num;
@@ -71,6 +76,9 @@
         var d2 = new Date(timeNum - (value * 1000 * timeSpan));
 
         var output = PrintUTCTime(d2);
+
+        // Get the UTC time in milliseconds
+        interactiveControl['queryStartTime'] = d2.getTime();
 
         $('#time_control').html(output);
     }

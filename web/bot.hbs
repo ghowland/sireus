@@ -36,5 +36,6 @@
 </section>
 <script>
     var inputData = JSON.parse("{{{ input_data }}}");
+    inputData['interactive_control'] = JSON.stringify(interactiveControl);
     setTimeout(function() { RPC('/api/web/bot', inputData) }, 5000)
 </script>
