@@ -42,7 +42,7 @@ function ProcessRPCData(data) {
 
     // alert(data);
     data = JSON.parse(data);
-    alert(JSON.stringify(data));
+    // alert(JSON.stringify(data));
 
     // Process the HTML sections, skip __js and __js_data
     for (var key in data)

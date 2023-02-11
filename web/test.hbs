@@ -688,7 +688,7 @@
 
     <div class="modal" id="modal2">
         <!--<div class="modal-background"></div>-->
-        <div class="modal-card dodrag">
+        <div class="modal-card draggon">
             <header class="modal-card-head has-background-info">
                 <p class="modal-card-title">Modal title</p>
                 <button class="delete" aria-label="close" onclick="$('#modal2').removeClass('is-active')"></button>
@@ -704,7 +704,7 @@
     </div>
 
 
-    <div class="card" class="dodrag">
+    <div class="card" class="draggon">
         <div class="card-content">
             <h2 class="title is-primary">Something</h2>
             <h3 class="subtitle">Else</h3>
@@ -712,8 +712,90 @@
     </div>
 
 
-    <div class="dodrag">Go go go!
+    <div class="draggon">Go go go!
 
+    </div>
+
+    <div id="interactive_control" class="is-hidden" style="position: absolute; z-index: 1;">
+        <div class="content" style="width: 550px;">
+            <div class="box draggon has-background-info has-text-white">
+                <div class="columns">
+                    <div class="column is-three-quarters">
+                        <h1 class="is-5 has-text-white">Interactive Controls</h1>
+                    </div>
+                    <div class="column" style="text-align: right">
+                    <span style="padding-left: 1.5em; font-size: 1.4em;">
+                        <span class="icon has-text-white has-tooltip-arrow" data-tooltip="Close" style="border-bottom: 0 solid !important;">
+                          <i class="fa-solid fa-circle-xmark" onclick="$('#interactive_control').toggleClass('is-hidden')"></i>
+                        </span>
+                    </span>
+                    </div>
+                </div>
+
+                <div class="has-background-white has-text-black no-draggon" style="padding: 1.5em;">
+                    <div class="columns">
+                        <div class="column is-three-quarters">
+                            <h4>Set Override Values</h4>
+                        </div>
+                        <div class="column">
+                            <div class="field">
+                                <input id="switchRoundedDefault" type="checkbox" name="switchRoundedDefault" class="switch is-outlined is-info" checked="checked">
+                                <label for="switchRoundedDefault">Play</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="columns">
+                        <div class="column">
+                            <p>Set Previous Time</p>
+                        </div>
+                        <div class="column">
+                            <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="50" type="range">
+                        </div>
+                    </div>
+
+                    <p>Other stuff</p>
+                    <p>Yeah</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="timeline">
+        <header class="timeline-header">
+            <span class="tag is-medium is-primary">Start</span>
+        </header>
+        <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <p class="heading">January 2016</p>
+                <p>Timeline content - Can include any HTML element</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-marker is-image is-32x32">
+                <img src="https://bulma.io/images/placeholders/32x32.png">
+            </div>
+            <div class="timeline-content">
+                <p class="heading">February 2016</p>
+                <p>Timeline content - Can include any HTML element</p>
+            </div>
+        </div>
+        <header class="timeline-header">
+            <span class="tag is-primary">2017</span>
+        </header>
+        <div class="timeline-item">
+            <div class="timeline-marker is-icon">
+                <i class="fa fa-flag"></i>
+            </div>
+            <div class="timeline-content">
+                <p class="heading">March 2017</p>
+                <p>Timeline content - Can include any HTML element</p>
+            </div>
+        </div>
+        <div class="timeline-header">
+            <span class="tag is-medium is-primary">End</span>
+        </div>
     </div>
 
     <script>

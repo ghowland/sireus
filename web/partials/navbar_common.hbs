@@ -56,10 +56,13 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
+                    <a class="button is-warning" onclick="$('#interactive_control').toggleClass('is-hidden')">
+                        Interactive
+                    </a>
+                    <!--
                     <a class="button is-light" onclick="Toast('info', 'Not Implemented', 'This is a prototype.  Account management not implemented.')">
                         Log in
                     </a>
-                    <!--
                     <a class="button is-primary" onclick="Toast('error', 'Not Implemented', 'This is a prototype.  Account management not implemented.')">
                         <strong>Sign up</strong>
                     </a>
@@ -69,3 +72,46 @@
         </div>
     </div>
 </nav>
+<div id="interactive_control" class="is-hidden">
+    <div class="content">
+        <div class="box has-background-info has-text-white">
+            <div class="columns">
+                <div class="column is-three-quarters">
+                    <h1 class="is-5 has-text-white">Interactive Controls</h1>
+                </div>
+                <div class="column" style="text-align: right">
+                    <span style="padding-left: 1.5em; font-size: 1.4em;">
+                        <span class="icon has-text-white has-tooltip-arrow" data-tooltip="Close" style="border-bottom: 0 solid !important;">
+                          <i class="fa-solid fa-circle-xmark" onclick="$('#interactive_control').toggleClass('is-hidden')"></i>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="has-background-white has-text-black no-draggon" style="padding: 1.5em;">
+                <div class="columns">
+                    <div class="column is-three-quarters">
+                        <h4>Set Override Values</h4>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <input id="switchRoundedDefault" type="checkbox" name="switchRoundedDefault" class="switch is-outlined is-info" checked="checked">
+                            <label for="switchRoundedDefault">Play</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <p>Set Previous Time</p>
+                    </div>
+                    <div class="column">
+                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="50" type="range">
+                    </div>
+                </div>
+
+                <p>Other stuff</p>
+                <p>Yeah</p>
+            </div>
+        </div>
+    </div>
+</div>
