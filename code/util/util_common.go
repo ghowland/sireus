@@ -80,7 +80,6 @@ func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string,
 			partialName := strings.Replace(topPath, ".hbs", "", 1)
 			partialName = strings.Replace(partialName, removeBasePath, "", 1)
 			content, _ := FileLoad(topPath)
-			log.Printf("Add Partial: %s  Path: %s", partialName, topPath)
 			template.RegisterPartial(partialName, content)
 		} else if fileInfo.IsDir() {
 			nextPath := fmt.Sprintf("%s/*", topPath)

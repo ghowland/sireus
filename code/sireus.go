@@ -29,7 +29,6 @@ func main() {
 	})
 
 	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
-		log.Printf("API: Web: Bot: ")
 		renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
 		formatString, err := util.FileLoad("web/bot.hbs")
 		if err == nil {
@@ -38,7 +37,6 @@ func main() {
 				"embed": output,
 			}
 			jsonOutput := util.PrintJson(payload)
-			log.Printf("RPC: %s", jsonOutput)
 			return c.SendString(jsonOutput)
 		} else {
 			return c.SendString("{\"message\": \"Couldn't find path\"}")
