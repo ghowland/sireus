@@ -38,8 +38,10 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 
 // GetRenderMapFromRPC parses RPC params and passes in all the data for a given Handlebars page render, using go map
 func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
-	botGroupId := c.Query("bot_group_id")
-	botId := c.Query("bot_id")
+	input := util.ParseContextBody(c)
+
+	botGroupId := input["bot_group_id"]
+	botId := input["bot_id"]
 
 	botGroup := data.BotGroup{}
 	var err error
