@@ -5,6 +5,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 	"time"
 )
 
@@ -26,7 +27,11 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 		util.Check(err)
 	}
 
-	renderMap := BuildRenderMapFiber(site, botGroup, bot)
+	inputData := make(map[string]interface{})
+	inputData["bot_group_id"] = botGroupId
+	inputData["bot_id"] = botId
+
+	renderMap := BuildRenderMapFiber(site, botGroup, bot, inputData)
 
 	return renderMap
 }
@@ -49,16 +54,27 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 		util.Check(err)
 	}
 
-	renderMap := BuildRenderMap(site, botGroup, bot)
+	inputData := make(map[string]interface{})
+	inputData["bot_group_id"] = botGroupId
+	inputData["bot_id"] = botId
+
+	renderMap := BuildRenderMap(site, botGroup, bot, inputData)
 
 	return renderMap
 }
 
-func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot) fiber.Map {
+func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
+
+	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
+
+	// If we got nothing, pass in empty values, so the JSON is still valid
+	if len(inputData) == 0 {
+		inputDataStr = "{}"
+	}
 
 	renderMap := fiber.Map{
 		"title":        "Sireus",
@@ -69,16 +85,24 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot) 
 		"bot":          bot,
 		"bot_id":       bot.Name,
 		"render_time":  renderTimeStr,
+		"input_data":   inputDataStr,
 	}
 
 	return renderMap
 }
 
-func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot) map[string]interface{} {
+func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) map[string]interface{} {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
+
+	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
+
+	// If we got nothing, pass in empty values, so the JSON is still valid
+	if len(inputData) == 0 {
+		inputDataStr = "{}"
+	}
 
 	renderMap := map[string]interface{}{
 		"title":        "Sireus",
@@ -89,6 +113,7 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot) map[s
 		"bot":          bot,
 		"bot_id":       bot.Name,
 		"render_time":  renderTimeStr,
+		"input_data":   inputDataStr,
 	}
 
 	return renderMap

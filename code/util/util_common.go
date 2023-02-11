@@ -8,6 +8,7 @@ import (
 	"log"
 	"math"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -49,6 +50,15 @@ func FileExists(filename string) bool {
 	return !info.IsDir()
 }
 
+func FileLoad(path string) (string, error) {
+	dat, err := os.ReadFile(path)
+	if Check(err) {
+		return "", err
+	}
+
+	return string(dat), nil
+}
+
 // Format Handlebars string from strings, so I don't have to remember any arguments
 func HandlebarFormatText(format string, mapData map[string]string) string {
 	result, err := raymond.Render(format, mapData)
@@ -57,10 +67,35 @@ func HandlebarFormatText(format string, mapData map[string]string) string {
 	return result
 }
 
+func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template) {
+	topPaths, err := filepath.Glob(partialsDirPrefix)
+	Check(err)
+
+	// Import partials into handlebars template
+	for _, topPath := range topPaths {
+		fileInfo, err := os.Stat(topPath)
+		Check(err)
+
+		if strings.HasSuffix(topPath, ".hbs") {
+			partialName := strings.Replace(topPath, ".hbs", "", 1)
+			partialName = strings.Replace(partialName, removeBasePath, "", 1)
+			content, _ := FileLoad(topPath)
+			log.Printf("Add Partial: %s  Path: %s", partialName, topPath)
+			template.RegisterPartial(partialName, content)
+		} else if fileInfo.IsDir() {
+			nextPath := fmt.Sprintf("%s/*", topPath)
+			HandlebarsRegisterPartials(nextPath, removeBasePath, template)
+		}
+	}
+}
+
 // Format Handlebars string from data, so I don't have to remember any arguments
 func HandlebarFormatData(format string, mapData map[string]interface{}) string {
-	result, err := raymond.Render(format, mapData)
-	Check(err)
+	template := raymond.MustParse(format)
+
+	HandlebarsRegisterPartials("web/partials/*", "web/", template)
+
+	result := template.MustExec(mapData)
 
 	return result
 }
@@ -132,6 +167,14 @@ func BoolToFloatString(value bool) string {
 // Print JSON, for debugging
 func PrintJson(value interface{}) string {
 	output, err := json.MarshalIndent(value, "", "  ")
+	Check(err)
+
+	return string(output)
+}
+
+// Print JSON, for transport
+func PrintJsonData(value interface{}) string {
+	output, err := json.Marshal(value)
 	Check(err)
 
 	return string(output)

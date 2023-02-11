@@ -4,6 +4,7 @@ import (
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/server"
+	"github.com/ghowland/sireus/code/util"
 	"github.com/ghowland/sireus/code/webapp"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -27,12 +28,22 @@ func main() {
 		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
 	})
 
-	//web.Post("/api/web/bot", func(c *fiber.Ctx) error {
-	//	renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
-	//
-	//	output := util.HandlebarFormatData(formatString, renderMap)
-	//	return c.SendString(output)
-	//})
+	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
+		log.Printf("API: Web: Bot: ")
+		renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
+		formatString, err := util.FileLoad("web/bot.hbs")
+		if err == nil {
+			output := util.HandlebarFormatData(formatString, renderMap)
+			payload := map[string]interface{}{
+				"embed": output,
+			}
+			jsonOutput := util.PrintJson(payload)
+			log.Printf("RPC: %s", jsonOutput)
+			return c.SendString(jsonOutput)
+		} else {
+			return c.SendString("{\"message\": \"Couldn't find path\"}")
+		}
+	})
 
 	web.Get("/", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
