@@ -33,10 +33,10 @@
                 </div>
                 <div class="columns">
                     <div class="column">
-                        <p>Query Time Start:</p>
+                        <p>Query Time Start: <span id="time_control_start"></span></p>
                     </div>
                     <div class="column">
-                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_start" onchange="SetTimeControl('time_control_slider_start', 'queryStartTime', 'time_control_start')">
+                        <input id="queryTimeStart" class="input" type="datetime" value="01/11/2023">
                     </div>
                 </div>
                 <div class="columns">
@@ -46,7 +46,7 @@
                     <div class="column">
                         <div class="field">
                             <p class="control has-icons-left has-icons-right">
-                                <input class="input" type="duration" placeholder="Duration in Minutes" value="60">
+                                <input class="input" type="duration" id="interQueryDuration" placeholder="Duration in Minutes" value="60">
                                 <span class="icon is-small is-left">
                                     <i class="fa-regular fa-clock"></i>
                                 </span>
@@ -54,27 +54,56 @@
                         </div>
                     </div>
                 </div>
+                <div class="columns">
+                    <div class="column">
+                        <p>Query Time Scrubber: <span id="time_control_scrubber"></span></p>
+                    </div>
+                    <div class="column">
+                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_scrubber" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
+                    </div>
+                </div>
 
                 <h4>Override States</h4>
+                <p>Overriding states will only allow actions that match these states to be shown.  Overriding states will be turned </p>
                 <div class="field">
                     <input class="is-checkradio has-background-color is-info" id="enable_state_override_1" type="checkbox" name="state_override_1" checked="checked">
                     <label for="enable_state_override_1">State Override: <span id=""></span></label>
                 </div>
+                <button class="button is-warning">
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-arrows-spin"></i>
+                    </span>
+                    <span>Add State Override</span>
+                </button>
+                <p></p>
+
                 <h4>Override Variables</h4>
                 <div class="field">
                     <input class="is-checkradio has-background-color is-info" id="enable_var_override_1" type="checkbox" name="var_override_1" checked="checked">
                     <label for="enable_var_override_1">Variable Override: <span id=""></span></label>
                 </div>
+                <button class="button is-warning">
+                    <span class="icon is-small">
+                      <i class="fa-solid fa-chart-line"></i>
+                    </span>
+                    <span>Add Variable Override</span>
+                </button>
             </div>
         </div>
     </div>
 </div>
 <script>
+    // Global interactive control data, gets passed to RPC, and updated each time
     var interactiveControl = {
         queryStartTime: undefined,
-        queryEndTime: undefined,
+        queryDuration: 60,
+        queryScrubTime: undefined,
         playFromQueryTime: true,
     };
+
+
+    $('#queryTimeStart').tempusDominus({});
+
 
     function ZeroPad(num, places) {
         var zero = places - num.toString().length + 1;
@@ -106,6 +135,8 @@
         // Get the UTC time in milliseconds
         interactiveControl[interactiveVarName] = d2.getTime();
 
+        // Set the duration.  Should this happen somewhere else?
+        interactiveControl['queryDuration'] = $('#interQueryDuration').val();
 
         $('#'+outputElementId).html(output);
     }
