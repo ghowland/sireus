@@ -124,7 +124,7 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
 
-	queryTime := time.UnixMilli(int64(interactiveControl.QueryStartTime))
+	queryTime := time.UnixMilli(int64(interactiveControl.QueryScrubTime))
 	queryTimeStr := util.FormatTimeLong(queryTime)
 
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
