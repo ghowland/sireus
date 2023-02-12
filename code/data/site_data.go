@@ -8,9 +8,11 @@ type (
 		Info                    string                 `json:"info"`            // Description
 		BotGroupPaths           []string               `json:"bot_group_paths"` // Paths to bot_group_name.json configs
 		QueryServers            []QueryServer          `json:"query_servers"`   // List of QueryServers for making BotQuery requests
-		BotGroups               []BotGroup             // These configure and contain ephemeral Bots which perform the Action scoring in the active States
 		FreezeActions           bool                   // If true, no actions will be taken for this Site.  Allows control of all BotGroups Action execution.
 		QueryResultCache        QueryResultPool        // Per Site, we cache all the BotQuery results here.  Per normal server operation, and per InteractiveSession
 		InteractiveSessionCache InteractiveSessionPool // Per Site, we track web app InteractiveSession data to allow users to make changes and see how they alter the Action scoring.  Sites silo everything, so it would be an anti-feature to allow InteractiveSession data to cross Site boundarie
+
+		//TODO(ghowland):REMOVE: This was the original way, but now everything will go through the InteractiveSessionCache, with production UUID==0.  Only 1 path for all actions, this is correct and minimal logic.
+		//BotGroups               []BotGroup             // These configure and contain ephemeral Bots which perform the Action scoring in the active States
 	}
 )
