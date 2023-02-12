@@ -21,13 +21,13 @@ func StoreQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuer
 	}
 
 	// Save this result to the cache
-	QueryCacheSet(site, query, newCacheItem)
+	QueryCacheSet(interactiveUUID, site, query, newCacheItem)
 }
 
 // GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which
 // is used by the background query system to test missing or expired query results as equivalent.
 func GetCachedQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
-	queryKey := GetQueryKey(query)
+	queryKey := GetQueryKey(interactiveUUID, query)
 
 	// Block until we can lock, for goroutine safety
 	site.QueryResultCache.QueryPoolSyncLock.Lock()
@@ -54,8 +54,8 @@ func GetCachedQueryResult(interactiveUUID int64, site *data.Site, query data.Bot
 	return result.Result, nil
 }
 
-func QueryCacheSet(site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem) {
-	queryKey := GetQueryKey(query)
+func QueryCacheSet(interactiveUUID int64, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem) {
+	queryKey := GetQueryKey(interactiveUUID, query)
 
 	// Block until we can lock, for goroutine safety
 	site.QueryResultCache.QueryPoolSyncLock.Lock()
@@ -84,15 +84,15 @@ func QueryLockSet(site *data.Site, queryKey string) {
 }
 
 // GetQueryKey returns "(QueryServer).(Query)", so it can be shared by any BotGroup
-func GetQueryKey(query data.BotQuery) string {
+func GetQueryKey(interactiveUUID int64, query data.BotQuery) string {
 	// Key on the Query itself, so if different BotGroups share the same query from the same QueryServer, it's shared
-	output := fmt.Sprintf("%s.%s", query.QueryServer, query.Query)
+	output := fmt.Sprintf("%d.%s.%s", interactiveUUID, query.QueryServer, query.Query)
 	return output
 }
 
 // IsQueryLocked returned whether this Query currently being requested.  Don't want to request more than once at a time
-func IsQueryLocked(site *data.Site, query data.BotQuery) bool {
-	queryKey := GetQueryKey(query)
+func IsQueryLocked(interactiveUUID int64, site *data.Site, query data.BotQuery) bool {
+	queryKey := GetQueryKey(interactiveUUID, query)
 
 	queryLockTime, ok := site.QueryResultCache.QueryLocks[queryKey]
 	if !ok {

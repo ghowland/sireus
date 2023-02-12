@@ -90,22 +90,22 @@ func RunAllSiteQueries(interactiveUUID int64, site *data.Site) {
 	for _, botGroup := range site.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
-			if extdata.IsQueryLocked(site, query) {
+			if extdata.IsQueryLocked(interactiveUUID, site, query) {
 				continue
 			}
 
 			// If we don't have this query for any reason (first time, or is over the BotQuery.Interval
 			_, err := extdata.GetCachedQueryResult(interactiveUUID, site, query, true)
 			if util.CheckNoLog(err) {
-				go BackgroundQuery(site, query, 0)
+				go BackgroundQuery(interactiveUUID, site, query)
 			}
 		}
 	}
 }
 
 // Query in the background with a goroutine
-func BackgroundQuery(site *data.Site, query data.BotQuery, interactiveUUID int64) {
-	queryKey := extdata.GetQueryKey(query)
+func BackgroundQuery(interactiveUUID int64, site *data.Site, query data.BotQuery) {
+	queryKey := extdata.GetQueryKey(interactiveUUID, query)
 
 	// Set the lock, and defer to clear it when done
 	extdata.QueryLockSet(site, queryKey)
