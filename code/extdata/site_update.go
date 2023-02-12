@@ -13,35 +13,26 @@ import (
 )
 
 // Update all the BotGroups in this Site
-func UpdateSiteBotGroups(interactiveUUID data.SessionUUID) {
-	site := &data.SireusData.Site
-
-	if interactiveUUID != 0 {
-		site = site //TODO(ghowland): Get our cloned site here...
-	}
-
-	for index := range data.SireusData.Site.BotGroups {
+func UpdateSiteBotGroups(session *data.InteractiveSession) {
+	for index := range session.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
-		UpdateBotGroupFromPrometheus(interactiveUUID, site, index)
-
-		//// Clear all the bot variables, so our map starts fresh every time
-		//ClearAllBotVariables(&site, index)
+		UpdateBotGroupFromPrometheus(session, &data.SireusData.Site, index)
 
 		// Update Bot Variables from our Queries
-		UpdateBotsFromQueries(interactiveUUID, site, index)
+		UpdateBotsFromQueries(session, &data.SireusData.Site, index)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
-		UpdateBotsWithSyntheticVariables(interactiveUUID, site, index)
+		UpdateBotsWithSyntheticVariables(session, &data.SireusData.Site, index)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(interactiveUUID, site, index)
+		UpdateBotActionConsiderations(session, &data.SireusData.Site, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(interactiveUUID, site, index)
+		SortAllVariablesAndActions(session, &data.SireusData.Site, index)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
-		CreateFormattedVariables(interactiveUUID, site, index)
+		CreateFormattedVariables(session, &data.SireusData.Site, index)
 	}
 
 	//// Assign the site back into the server data.  This allows atomic updates
@@ -49,55 +40,55 @@ func UpdateSiteBotGroups(interactiveUUID data.SessionUUID) {
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
-func CreateFormattedVariables(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	botGroup := site.BotGroups[botGroupIndex]
+func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
 		for varIndex, value := range bot.SortedVariableValues {
 			variable, err := app.GetVariable(botGroup, value.Key)
 			if util.CheckNoLog(err) {
 				// Mark this bot as Invalid, because it is missing information
-				site.BotGroups[botGroupIndex].Bots[botIndex].IsInvalid = true
-				site.BotGroups[botGroupIndex].Bots[botIndex].InfoInvalid += fmt.Sprintf("Missing Variable: %s.  ", value.Key)
+				session.BotGroups[botGroupIndex].Bots[botIndex].IsInvalid = true
+				session.BotGroups[botGroupIndex].Bots[botIndex].InfoInvalid += fmt.Sprintf("Missing Variable: %s.  ", value.Key)
 			}
 
 			result := app.FormatBotVariable(variable.Format, value.Value)
 
-			newPair := site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex]
+			newPair := session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex]
 			newPair.Formatted = result
 
-			site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex] = newPair
+			session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex] = newPair
 		}
 	}
 }
 
 // Sort all the Variables by name and Actions by Final Score
-func SortAllVariablesAndActions(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
+func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	for botIndex, bot := range session.BotGroups[botGroupIndex].Bots {
 		// Sort VariableValues
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
-		site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
+		session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
 		// Sort ActionData
 		sortedActions := app.SortMapStringActionDataByFinalScore(bot.ActionData, false)
-		site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
+		session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
 
-		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
-		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(site.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
+		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
+		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
 	}
 }
 
 // For this BotGroup, update all the BotActionData with new ActionConsideration scores
-func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	botGroup := site.BotGroups[botGroupIndex]
+func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
 		evalMap := GetBotEvalMapAllVariables(bot)
 
 		for _, action := range botGroup.Actions {
 			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
-			if _, ok := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = data.BotActionData{
+			if _, ok := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = data.BotActionData{
 					ConsiderationFinalScores:     map[string]float64{},
 					ConsiderationEvaluatedScores: map[string]float64{},
 				}
@@ -112,8 +103,8 @@ func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.
 				if util.CheckNoLog(err) {
 					// Invalidate this consideration, evaluation failed
 					//log.Printf("ERROR: Evaluate failed on Eval Map data: %s   Map: %s", consider.Evaluate, util.PrintJson(evalMap))
-					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
-					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
+					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
@@ -121,8 +112,8 @@ func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.
 				if util.CheckNoLog(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
 					// Invalidate this consideration, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
-					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
-					site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
+					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
@@ -131,16 +122,16 @@ func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.
 				considerationScore := result * consider.Weight
 
 				// Set the value.  Only valid values will exist.
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
-				site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = result
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = result
 			}
 
 			// Get a Final Score for this Action
-			calculatedScore, details := app.CalculateScore(action, site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
+			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
-			actionData := site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
+			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
 			actionData.FinalScore = finalScore
 
 			allActionStatesAreActive := app.AreAllActionStatesActive(action, bot)
@@ -166,21 +157,14 @@ func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.
 
 			// Details explain what happen in text, so users can better understand their results
 			actionData.Details = details
-			site.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
+			session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}
 	}
 }
 
-// Clear all the Bot.VariableValues, so we can start fresh.  If we are missing any values, that Bot IsInvalid
-func ClearAllBotVariables(site *data.Site, botGroupIndex int) {
-	for botIndex := range site.BotGroups[botGroupIndex].Bots {
-		site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues = map[string]float64{}
-	}
-}
-
 // Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
-func UpdateBotsWithSyntheticVariables(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	botGroup := site.BotGroups[botGroupIndex]
+func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
 
 	// Clear all the Bot VariableValues
 
@@ -222,7 +206,7 @@ func UpdateBotsWithSyntheticVariables(interactiveUUID data.SessionUUID, site *da
 
 			// Set the value.  Only valid values will exist.
 			//NOTE(ghowland): A separate test will occur to see if this bot is missing variables and cant be processed
-			site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[variable.Name] = result
+			session.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[variable.Name] = result
 		}
 	}
 }
@@ -255,11 +239,11 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 }
 
 // Runs Queries against Prometheus for a BotGroup
-func UpdateBotGroupFromPrometheus(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
+func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	query, err := app.GetQuery(session.BotGroups[botGroupIndex], session.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
-	queryResult, err := GetCachedQueryResult(interactiveUUID, site, query, false)
+	queryResult, err := GetCachedQueryResult(session, site, query, false)
 
 	extractedBots := ExtractBotsFromPromData(queryResult.PrometheusResponse, "name")
 
@@ -267,41 +251,41 @@ func UpdateBotGroupFromPrometheus(interactiveUUID data.SessionUUID, site *data.S
 	//NOTE(ghowland): Removing bots is done by looking at bots that haven't had data updated past BotGroup.BotTimeoutRemove
 	for _, botNew := range extractedBots {
 		var foundBot bool
-		for _, botCur := range site.BotGroups[botGroupIndex].Bots {
+		for _, botCur := range session.BotGroups[botGroupIndex].Bots {
 			if botCur.Name == botNew.Name {
 				foundBot = true
 			}
 		}
 
 		if !foundBot {
-			site.BotGroups[botGroupIndex].Bots = append(site.BotGroups[botGroupIndex].Bots, botNew)
+			session.BotGroups[botGroupIndex].Bots = append(session.BotGroups[botGroupIndex].Bots, botNew)
 		}
 	}
 
 	// Initialize all the Bot Group states in Bot
-	InitializeStates(site, botGroupIndex)
+	InitializeStates(session, botGroupIndex)
 }
 
 // Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
-func InitializeStates(site *data.Site, botGroupIndex int) {
-	botGroup := site.BotGroups[botGroupIndex]
+func InitializeStates(session *data.InteractiveSession, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
 		for _, state := range botGroup.States {
 			key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
-			site.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(site.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
+			session.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(session.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
 		}
 	}
 }
 
 // Update all the Bot VariableValues from our Queries
-func UpdateBotsFromQueries(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
-	botGroup := site.BotGroups[botGroupIndex]
+func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
 
 	// Loop over all Bot Group Queries
 	for _, query := range botGroup.Queries {
 		// Get the cached query result, even if it is expired
-		queryResult, err := GetCachedQueryResult(interactiveUUID, site, query, false)
+		queryResult, err := GetCachedQueryResult(session, site, query, false)
 		if util.CheckNoLog(err) {
 			continue // Couldn't get this query, skip
 		}
@@ -340,7 +324,7 @@ func UpdateBotsFromQueries(interactiveUUID data.SessionUUID, site *data.Site, bo
 
 							nameFormatted := util.HandlebarFormatText(variable.Name, promResult.Metric)
 
-							site.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[nameFormatted] = value
+							session.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[nameFormatted] = value
 
 							// If we were matching on a BotKey (normal), stop looking.  If no BotKey, do them all.
 							if len(variable.BotKey) > 0 {

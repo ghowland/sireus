@@ -8,12 +8,12 @@ import (
 )
 
 // StoreQueryResult will store a QueryResult in the cache
-func StoreQueryResult(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult) {
+func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult) {
 	// Create and store the QueryResult pool item
 	newCacheItem := data.QueryResultPoolItem{
 		QueryServer:     query.QueryServer,
 		Query:           query.Query,
-		InteractiveUUID: interactiveUUID,
+		InteractiveUUID: session.UUID,
 		TimeRequested:   startTime,
 		TimeReceived:    time.Now(),
 		Result:          queryResult,
@@ -21,13 +21,13 @@ func StoreQueryResult(interactiveUUID data.SessionUUID, site *data.Site, query d
 	}
 
 	// Save this result to the cache
-	QueryCacheSet(interactiveUUID, site, query, newCacheItem)
+	QueryCacheSet(session, site, query, newCacheItem)
 }
 
 // GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which
 // is used by the background query system to test missing or expired query results as equivalent.
-func GetCachedQueryResult(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
-	queryKey := GetQueryKey(interactiveUUID, query)
+func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
+	queryKey := GetQueryKey(session, query)
 
 	// Block until we can lock, for goroutine safety
 	site.QueryResultCache.QueryPoolSyncLock.Lock()
@@ -54,8 +54,8 @@ func GetCachedQueryResult(interactiveUUID data.SessionUUID, site *data.Site, que
 	return result.Result, nil
 }
 
-func QueryCacheSet(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem) {
-	queryKey := GetQueryKey(interactiveUUID, query)
+func QueryCacheSet(session *data.InteractiveSession, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem) {
+	queryKey := GetQueryKey(session, query)
 
 	// Block until we can lock, for goroutine safety
 	site.QueryResultCache.QueryPoolSyncLock.Lock()
@@ -84,15 +84,15 @@ func QueryLockSet(site *data.Site, queryKey string) {
 }
 
 // GetQueryKey returns "(QueryServer).(Query)", so it can be shared by any BotGroup
-func GetQueryKey(interactiveUUID data.SessionUUID, query data.BotQuery) string {
+func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string {
 	// Key on the Query itself, so if different BotGroups share the same query from the same QueryServer, it's shared
-	output := fmt.Sprintf("%d.%s.%s", interactiveUUID, query.QueryServer, query.Query)
+	output := fmt.Sprintf("%d.%s.%s", session.UUID, query.QueryServer, query.Query)
 	return output
 }
 
 // IsQueryLocked returned whether this Query currently being requested.  Don't want to request more than once at a time
-func IsQueryLocked(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery) bool {
-	queryKey := GetQueryKey(interactiveUUID, query)
+func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data.BotQuery) bool {
+	queryKey := GetQueryKey(session, query)
 
 	queryLockTime, ok := site.QueryResultCache.QueryLocks[queryKey]
 	if !ok {

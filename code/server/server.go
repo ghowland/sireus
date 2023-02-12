@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/extdata"
 	"github.com/ghowland/sireus/code/util"
+	"github.com/ghowland/sireus/code/webapp"
 	"log"
 	"os"
 	"os/signal"
@@ -62,17 +63,20 @@ func GetServerBackgroundContext() context.Context {
 func RunForever() {
 	log.Printf("Server: Run Forever: Starting (%v)", data.SireusData.IsQuitting)
 
+	productionControl := webapp.GetProductionInteractiveControl()
+	productionSession := app.GetInteractiveSession(productionControl, &data.SireusData.Site)
+
 	// Run until we are quitting
 	for !data.SireusData.IsQuitting {
 		// Run all queries that need running
 
 		// Run all the queries that have passed their interval, or haven't been set yet
 		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
-		RunAllSiteQueries(0, &data.SireusData.Site)
+		RunAllSiteQueries(&productionSession, &data.SireusData.Site)
 
 		// Update everything from the queries.  This will need time to warm up, but just let it fail in the beginning
 		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
-		extdata.UpdateSiteBotGroups(0)
+		extdata.UpdateSiteBotGroups(&productionSession)
 
 		// Pause a short time (~0.8s) to not fully spin lock the CPU ever.  This doesn't need to be more rapid
 		if !data.SireusData.IsQuitting {
@@ -86,26 +90,26 @@ func RunForever() {
 // Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval.
 // Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale
 // Actions are not available.
-func RunAllSiteQueries(interactiveUUID data.SessionUUID, site *data.Site) {
-	for _, botGroup := range site.BotGroups {
+func RunAllSiteQueries(session *data.InteractiveSession, site *data.Site) {
+	for _, botGroup := range session.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
-			if extdata.IsQueryLocked(interactiveUUID, site, query) {
+			if extdata.IsQueryLocked(session, site, query) {
 				continue
 			}
 
 			// If we don't have this query for any reason (first time, or is over the BotQuery.Interval
-			_, err := extdata.GetCachedQueryResult(interactiveUUID, site, query, true)
+			_, err := extdata.GetCachedQueryResult(session, site, query, true)
 			if util.CheckNoLog(err) {
-				go BackgroundQuery(interactiveUUID, site, query)
+				go BackgroundQuery(session, site, query)
 			}
 		}
 	}
 }
 
 // Query in the background with a goroutine
-func BackgroundQuery(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery) {
-	queryKey := extdata.GetQueryKey(interactiveUUID, query)
+func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query data.BotQuery) {
+	queryKey := extdata.GetQueryKey(session, query)
 
 	// Set the lock, and defer to clear it when done
 	extdata.QueryLockSet(site, queryKey)
@@ -126,5 +130,5 @@ func BackgroundQuery(interactiveUUID data.SessionUUID, site *data.Site, query da
 		PrometheusResponse: promData,
 	}
 
-	extdata.StoreQueryResult(interactiveUUID, site, query, startTime, newResult)
+	extdata.StoreQueryResult(session, site, query, startTime, newResult)
 }

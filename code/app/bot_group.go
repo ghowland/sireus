@@ -32,18 +32,36 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	util.CheckPanic(err)
 
 	// Initialize data that isn't auto-initialized or loaded from JSON
+	site.InteractiveSessionCache.Sessions = make(map[data.SessionUUID]data.InteractiveSession)
 	site.QueryResultCache = data.QueryResultPool{
 		PoolItems:  make(map[string]data.QueryResultPoolItem),
 		QueryLocks: make(map[string]time.Time),
 	}
 
-	// Load all our Bot Groups
+	// Load all our Bot Groups.  We keep these cached for cloning, so we don't have to parse JSON all the time, but put nothing dynamic into them
 	for _, botGroupPath := range site.BotGroupPaths {
 		botGroup := LoadBotGroupConfig(botGroupPath)
-		site.BotGroups = append(site.BotGroups, botGroup)
+		site.LoadedBotGroups = append(site.LoadedBotGroups, botGroup)
 	}
 
 	return site
+}
+
+func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession {
+	session, ok := site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID]
+	if !ok {
+		session = data.InteractiveSession{
+			UUID:           interactiveControl.SessionUUID,
+			TimeRequested:  time.Now(),
+			QueryStartTime: time.UnixMilli(int64(interactiveControl.QueryStartTime)),
+			QueryDuration:  data.Duration(interactiveControl.QueryDuration),
+			QueryScrubTime: time.UnixMilli(int64(interactiveControl.QueryScrubTime)),
+			BotGroups:      site.LoadedBotGroups,
+		}
+		site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
+	}
+
+	return session
 }
 
 // Returns a QueryServer, scope is per Site
@@ -108,16 +126,6 @@ func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
 	return true
 }
 
-// Gets a BotGroup from the Site
-func GetBotGroup(site *data.Site, botGroupName string) (data.BotGroup, error) {
-	for _, botGroup := range site.BotGroups {
-		if botGroup.Name == botGroupName {
-			return botGroup, nil
-		}
-	}
-	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
-}
-
 // Get a Bot from the BotGroup
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 	for _, bot := range botGroup.Bots {
@@ -129,24 +137,14 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 }
 
 // Gets a BotGroup from the Site, using the InteractiveControl
-func GetBotGroupInteractive(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error) {
-	session, ok := site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID]
-	if !ok {
-		session = data.InteractiveSession{
-			UUID:           interactiveControl.SessionUUID,
-			TimeRequested:  time.Now(),
-			QueryStartTime: time.UnixMilli(int64(interactiveControl.QueryStartTime)),
-			QueryDuration:  data.Duration(interactiveControl.QueryDuration),
-			QueryScrubTime: time.UnixMilli(int64(interactiveControl.QueryScrubTime)),
-		}
-		site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
-	}
+func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error) {
+	session := GetInteractiveSession(interactiveControl, site)
 
-	for _, botGroup := range site.BotGroups {
+	for _, botGroup := range session.BotGroups {
 		if botGroup.Name == botGroupName {
 			return botGroup, nil
 		}
 	}
 
-	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
+	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Group Missing: %s", botGroupName))
 }
