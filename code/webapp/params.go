@@ -39,7 +39,8 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 	return renderMap
 }
 
-// GetRenderMapFromRPC parses RPC params and passes in all the data for a given Handlebars page render, using go map
+// GetRenderMapFromRPC parses RPC params and passes in all the data for a given Handlebars page render, using go map.
+// This uses the Interactive Control data to modify data based on the settings.
 func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	input := util.ParseContextBody(c)
 
@@ -60,13 +61,14 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 
 	botGroup := data.BotGroup{}
 	var err error
-	if botGroupId != "" {
-		botGroup, err = app.GetBotGroup(site, botGroupId)
+	if len(botGroupId) != 0 {
+		// Only the BotGroup needs to be extracted for the Interactive Control, the bots will come from this group
+		botGroup, err = app.GetBotGroupInteractive(site, botGroupId, interactiveControl)
 		util.Check(err)
 	}
 
 	bot := data.Bot{}
-	if botId != "" && botGroup.Name != "" {
+	if len(botId) != 0 && len(botGroup.Name) != 0 {
 		bot, err = app.GetBot(botGroup, botId)
 		util.Check(err)
 	}

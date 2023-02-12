@@ -67,26 +67,6 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 	return data.BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
 }
 
-// Gets a BotGroup from the Site
-func GetBotGroup(site *data.Site, botGroupName string) (data.BotGroup, error) {
-	for _, botGroup := range site.BotGroups {
-		if botGroup.Name == botGroupName {
-			return botGroup, nil
-		}
-	}
-	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
-}
-
-// Get a Bot from the BotGroup
-func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
-	for _, bot := range botGroup.Bots {
-		if bot.Name == botName {
-			return bot, nil
-		}
-	}
-	return data.Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
-}
-
 // Get an Action from a BotGroup, by name
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
 	for _, action := range botGroup.Actions {
@@ -126,4 +106,34 @@ func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
 	}
 
 	return true
+}
+
+// Gets a BotGroup from the Site
+func GetBotGroup(site *data.Site, botGroupName string) (data.BotGroup, error) {
+	for _, botGroup := range site.BotGroups {
+		if botGroup.Name == botGroupName {
+			return botGroup, nil
+		}
+	}
+	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
+}
+
+// Get a Bot from the BotGroup
+func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
+	for _, bot := range botGroup.Bots {
+		if bot.Name == botName {
+			return bot, nil
+		}
+	}
+	return data.Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
+}
+
+// Gets a BotGroup from the Site, using the Interactive Session UUID
+func GetBotGroupInteractive(site *data.Site, botGroupName string, interactiveControl data.InteractiveControl) (data.BotGroup, error) {
+	for _, botGroup := range site.BotGroups {
+		if botGroup.Name == botGroupName {
+			return botGroup, nil
+		}
+	}
+	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
 }
