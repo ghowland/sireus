@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
+	"log"
 	"strings"
 	"time"
 )
@@ -47,7 +48,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	if ok {
 		json.Unmarshal([]byte(interactiveControlJSON), &interactiveControl)
 	}
-	//log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
+	log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
 
 	botGroupId := input["bot_group_id"]
 	botId := input["bot_id"]

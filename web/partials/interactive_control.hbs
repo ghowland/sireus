@@ -22,11 +22,11 @@
                     </div>
                     <div class="column">
                         <div class="field">
-                            <input id="interQueryTime" type="checkbox" name="interQueryTime" class="switch is-outlined is-info" checked="checked">
+                            <input id="interQueryTime" type="checkbox" name="interQueryTime" id="interQueryTime" class="switch is-outlined is-info" checked="checked" onchange="ToggleCheckboxData(this, 'useQueryTime')">
                             <label for="interQueryTime">Query Time</label>
                         </div>
                         <div class="field">
-                            <input id="interPlayForward" type="checkbox" name="interPlayForward" class="switch is-outlined is-info">
+                            <input id="interPlayForward" type="checkbox" name="interPlayForward" id="interPlayForward" class="switch is-outlined is-info" onchange="ToggleCheckboxData(this, 'playForward')">
                             <label for="interPlayForward">Play</label>
                         </div>
                     </div>
@@ -167,6 +167,18 @@
         return millis;
     }
 
+    function ToggleCheckboxData(element, varNam) {
+        var checked = $(element).is(':checked');
+        if (checked) {
+            $(element).attr('checked', 'checked');
+            interactiveControl[varNam] = true;
+        }
+        else {
+            $(element).removeAttr('checked');
+            interactiveControl[varNam] = false;
+        }
+    }
+
     function SetTimeControl(valueElementId, interactiveVarName, outputElementId) {
         var d = new Date();
 
@@ -190,6 +202,11 @@
         // Set the duration.  Should this happen somewhere else?
         interactiveControl['queryStartTime'] = startMillis;
         interactiveControl['queryDuration'] = durationMillis;
+
+        interactiveControl['useQueryTime'] = $("#interQueryTime").is(':checked');
+        interactiveControl['playForward'] = $("#interPlayForward").is(':checked');
+
+        // alert('Query Time: ' + interactiveControl['useQueryTime'] + '  Play: ' + interactiveControl['playForward'])
 
         // Set the Scrubber time UTC time in milliseconds
         interactiveControl[interactiveVarName] = d2.getTime();

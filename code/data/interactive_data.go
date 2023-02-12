@@ -61,9 +61,10 @@ type (
 type (
 	// InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 	InteractiveControl struct {
-		PlayFromQueryTime bool    `json:"playFromQueryTime"`
-		QueryStartTime    float64 `json:"queryStartTime"`
-		QueryDuration     float64 `json:"queryDuration"`
-		QueryScrubTime    float64 `json:"queryScrubTime"`
+		UseQueryTime   bool    `json:"useQueryTime"`
+		PlayForward    bool    `json:"playForward"`
+		QueryStartTime float64 `json:"queryStartTime"`
+		QueryDuration  float64 `json:"queryDuration"`
+		QueryScrubTime float64 `json:"queryScrubTime"`
 	}
 )
