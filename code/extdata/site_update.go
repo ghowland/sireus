@@ -7,7 +7,6 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
-	"log"
 	"math"
 	"strconv"
 	"time"
@@ -16,31 +15,24 @@ import (
 // Update all the BotGroups in this Site
 func UpdateSiteBotGroups(session *data.InteractiveSession) {
 	for index := range session.BotGroups {
-		log.Printf("Session: %d  Site Update: 1", session.UUID)
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 2", session.UUID)
 
 		// Update Bot Variables from our Queries
 		UpdateBotsFromQueries(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 3", session.UUID)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
 		UpdateBotsWithSyntheticVariables(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 4", session.UUID)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
 		UpdateBotActionConsiderations(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 5", session.UUID)
 
 		// Sort alpha, so they print consistently
 		SortAllVariablesAndActions(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 6", session.UUID)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, &data.SireusData.Site, index)
-		log.Printf("Session: %d  Site Update: 7 Done", session.UUID)
 	}
 }
 
@@ -336,9 +328,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 					for botIndex := range botGroup.Bots {
 						// Lock
-						//log.Printf("UpdateBotsFromQueries: %d  Lock: 1   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
 						session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
-						//log.Printf("UpdateBotsFromQueries: %d  Lock: 2   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
 
 						// If this Metric BotKey matches the Bot name OR the BotKey is empty, it is always accepted
 						//NOTE(ghowland): Empty BotKey is used to pull data that is not specific to this Bot, but can be used as a general signal
@@ -367,9 +357,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 						}
 
 						// Unlock
-						//log.Printf("UpdateBotsFromQueries: %d  Lock: 3   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
 						session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
-						//log.Printf("UpdateBotsFromQueries: %d  Lock: 4   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
 					}
 				}
 			}
