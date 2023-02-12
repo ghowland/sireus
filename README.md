@@ -46,7 +46,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
  - [Discord](https://discord.gg/VTVXrXJWxk)
  - [Data Structure and Internal Function Documentation](https://github.com/ghowland/sireus/blob/main/documentation/godoc.md)
  - [Developer Chat on Zulip - Invite only for now](https://sireus.zulipchat.com/) - If you want to join the development process, please start by [creating Issues.](https://github.com/ghowland/sireus/issues)  Sireus is currently in the Design RFC phase.
- - Web App Example Page:
+ - Web App Example Page, with interactive query time controls showing:
 
 ![Web App Example Page](https://github.com/ghowland/sireus/blob/main/documentation/images/webapp_example.png)
 
