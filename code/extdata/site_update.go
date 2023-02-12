@@ -7,6 +7,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -15,24 +16,31 @@ import (
 // Update all the BotGroups in this Site
 func UpdateSiteBotGroups(session *data.InteractiveSession) {
 	for index := range session.BotGroups {
+		log.Printf("Session: %d  Site Update: 1", session.UUID)
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 2", session.UUID)
 
 		// Update Bot Variables from our Queries
 		UpdateBotsFromQueries(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 3", session.UUID)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
 		UpdateBotsWithSyntheticVariables(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 4", session.UUID)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
 		UpdateBotActionConsiderations(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 5", session.UUID)
 
 		// Sort alpha, so they print consistently
 		SortAllVariablesAndActions(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 6", session.UUID)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, &data.SireusData.Site, index)
+		log.Printf("Session: %d  Site Update: 7 Done", session.UUID)
 	}
 }
 
@@ -40,8 +48,8 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
-	for botIndex, bot := range botGroup.Bots {
-		for varIndex, value := range bot.SortedVariableValues {
+	for botIndex := range botGroup.Bots {
+		for varIndex, value := range session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues {
 			variable, err := app.GetVariable(botGroup, value.Key)
 			if util.CheckNoLog(err) {
 				// Mark this bot as Invalid, because it is missing information
@@ -61,9 +69,11 @@ func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site,
 
 // Sort all the Variables by name and Actions by Final Score
 func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
-	for botIndex, bot := range session.BotGroups[botGroupIndex].Bots {
+	for botIndex := range session.BotGroups[botGroupIndex].Bots {
 		// Cant use defer, because we are processing many in 1 action
-		bot.AccessLock.Lock()
+		session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
+
+		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
 
 		// Sort VariableValues
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
@@ -74,7 +84,7 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Sit
 		session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
 
 		// Cant use defer, because we are processing many in 1 action
-		bot.AccessLock.Unlock()
+		session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
 
 		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
 		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
@@ -85,7 +95,11 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Sit
 func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
-	for botIndex, bot := range botGroup.Bots {
+	for botIndex := range botGroup.Bots {
+		// Cant use defer, because we are processing many in 1 action
+		session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
+		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
+
 		evalMap := GetBotEvalMapAllVariables(bot)
 
 		for _, action := range botGroup.Actions {
@@ -137,7 +151,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
 			actionData.FinalScore = finalScore
 
-			allActionStatesAreActive := app.AreAllActionStatesActive(action, bot)
+			allActionStatesAreActive := app.AreAllActionStatesActive(action, *bot)
 
 			// Action.WeightThreshold determines if an Action is available for possible execution
 			if finalScore >= action.WeightThreshold && allActionStatesAreActive {
@@ -162,6 +176,9 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 			actionData.Details = details
 			session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
 		}
+
+		// Cant use defer, because we are processing many in 1 action
+		session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
 	}
 }
 
@@ -190,8 +207,11 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *da
 		expression, err := govaluate.NewEvaluableExpression(variable.Evaluate)
 		util.Check(err)
 
-		for botIndex, bot := range botGroup.Bots {
-			evalMap := GetBotEvalMapOnlyQueries(bot, queryVariableNames)
+		for botIndex := range botGroup.Bots {
+			// Lock the bot
+			session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
+
+			evalMap := GetBotEvalMapOnlyQueries(session.BotGroups[botGroupIndex].Bots[botIndex], queryVariableNames)
 
 			//log.Printf("Eval Map: %v", evalMap)
 
@@ -200,6 +220,7 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *da
 
 			result, err := util.ConvertInterfaceToFloat(resultInt)
 			if util.Check(err) {
+				session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
 				continue // Skip this variable, it was invalid
 			}
 
@@ -208,16 +229,17 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *da
 			// Set the value.  Only valid values will exist.
 			//NOTE(ghowland): A separate test will occur to see if this bot is missing variables and cant be processed
 			session.BotGroups[botGroupIndex].Bots[botIndex].VariableValues[variable.Name] = result
+
+			// Unlock the bot
+			session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
 		}
 	}
 }
 
-// GetBotEvalMapOnlyQueries returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate()
+// Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate()
+// NOTE(ghowland): bot.AccessLock should already be locked before we come here, because we are accessing a map
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{} {
 	evalMap := make(map[string]interface{})
-
-	bot.AccessLock.Lock()
-	defer bot.AccessLock.Unlock()
 
 	// Build a map from bots variables
 	for variableName, value := range bot.VariableValues {
@@ -231,11 +253,9 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 }
 
 // Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate()
-func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
+// NOTE(ghowland): bot.AccessLock should already be locked before we come here, because we are accessing a map
+func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{} {
 	evalMap := make(map[string]interface{})
-
-	bot.AccessLock.Lock()
-	defer bot.AccessLock.Unlock()
 
 	// Build a map bot variables
 	for variableName, value := range bot.VariableValues {
@@ -314,10 +334,15 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 					//	log.Printf("Bot Group: %s   Var Bot Key: '%s'  Variable: %s  Key: %s == %v -> %v", botGroup.Name, variable.BotKey, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey], variable.QueryKeyValue == promResult.Metric[variable.QueryKey])
 					//}
 
-					for botIndex, bot := range botGroup.Bots {
+					for botIndex := range botGroup.Bots {
+						// Lock
+						//log.Printf("UpdateBotsFromQueries: %d  Lock: 1   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
+						session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
+						//log.Printf("UpdateBotsFromQueries: %d  Lock: 2   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
+
 						// If this Metric BotKey matches the Bot name OR the BotKey is empty, it is always accepted
 						//NOTE(ghowland): Empty BotKey is used to pull data that is not specific to this Bot, but can be used as a general signal
-						if promResult.Metric[variable.BotKey] == bot.Name || len(variable.BotKey) == 0 {
+						if promResult.Metric[variable.BotKey] == session.BotGroups[botGroupIndex].Bots[botIndex].Name || len(variable.BotKey) == 0 {
 
 							//if variable.QueryName == "CPU Usage" {
 							//	log.Printf("Bot Group: %s  Bot: %s   Var Bot Key: '%s'  Variable: %s  Key: %s == %v -> %v", botGroup.Name, bot.Name, variable.BotKey, variable.Name, variable.QueryKeyValue, promResult.Metric[variable.QueryKey], variable.QueryKeyValue == promResult.Metric[variable.QueryKey])
@@ -335,9 +360,16 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 							// If we were matching on a BotKey (normal), stop looking.  If no BotKey, do them all.
 							if len(variable.BotKey) > 0 {
+								// Unlock
+								session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
 								break
 							}
 						}
+
+						// Unlock
+						//log.Printf("UpdateBotsFromQueries: %d  Lock: 3   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
+						session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Unlock()
+						//log.Printf("UpdateBotsFromQueries: %d  Lock: 4   Bot: %s", session.UUID, session.BotGroups[botGroupIndex].Bots[botIndex].Name)
 					}
 				}
 			}
