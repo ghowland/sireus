@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"log"
 	"strings"
 	"time"
@@ -50,6 +51,10 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	}
 	log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
 
+	if interactiveControl.SessionUUID == 0 {
+		interactiveControl.SessionUUID = uuid.New().ID()
+	}
+
 	botGroupId := input["bot_group_id"]
 	botId := input["bot_id"]
 
@@ -89,15 +94,16 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 	}
 
 	renderMap := fiber.Map{
-		"title":        "Sireus",
-		"site":         site,
-		"site_id":      site.Name,
-		"botGroup":     botGroup,
-		"bot_group_id": botGroup.Name,
-		"bot":          bot,
-		"bot_id":       bot.Name,
-		"render_time":  renderTimeStr,
-		"input_data":   inputDataStr,
+		"title":               "Sireus",
+		"site":                site,
+		"site_id":             site.Name,
+		"botGroup":            botGroup,
+		"bot_group_id":        botGroup.Name,
+		"bot":                 bot,
+		"bot_id":              bot.Name,
+		"render_time":         renderTimeStr,
+		"input_data":          inputDataStr,
+		"interactive_control": "{}", // Always empty from initial page render
 	}
 
 	return renderMap
@@ -114,9 +120,14 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
 
+	interactiveControlStr := strings.Replace(util.PrintJsonData(interactiveControl), "\"", "\\\"", -1)
+
 	// If we got nothing, pass in empty values, so the JSON is still valid
-	if len(inputData) == 0 {
+	if len(inputDataStr) == 0 {
 		inputDataStr = "{}"
+	}
+	if len(interactiveControlStr) == 0 {
+		interactiveControlStr = "{}"
 	}
 
 	renderMap := map[string]interface{}{
@@ -130,7 +141,7 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 		"render_time":         renderTimeStr,
 		"query_time":          queryTimeStr,
 		"input_data":          inputDataStr,
-		"interactive_control": interactiveControl,
+		"interactive_control": interactiveControlStr,
 	}
 
 	return renderMap
