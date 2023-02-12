@@ -106,17 +106,18 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 	interactiveStartTime := FormatInteractiveStartTime()
 
 	renderMap := fiber.Map{
-		"title":                    "Sireus",
-		"site":                     site,
-		"site_id":                  site.Name,
-		"botGroup":                 botGroup,
-		"bot_group_id":             botGroup.Name,
-		"bot":                      bot,
-		"bot_id":                   bot.Name,
-		"render_time":              renderTimeStr,
-		"input_data":               inputDataStr,
-		"interactive_starter_time": interactiveStartTime,
-		"interactive_control":      "{}", // Always empty from initial page render
+		"title":                        "Sireus",
+		"site":                         site,
+		"site_id":                      site.Name,
+		"botGroup":                     botGroup,
+		"bot_group_id":                 botGroup.Name,
+		"bot":                          bot,
+		"bot_id":                       bot.Name,
+		"render_time":                  renderTimeStr,
+		"input_data":                   inputDataStr,
+		"interactive_starter_time":     interactiveStartTime,
+		"interactive_starter_duration": data.SireusData.AppConfig.InteractiveDurationMinutesDefault,
+		"interactive_control":          "{}", // Always empty from initial page render
 	}
 
 	return renderMap
@@ -125,7 +126,7 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 func FormatInteractiveStartTime() string {
 	// 15 minutes ago
 	//TODO(ghowland): Remove hard-code, put into AppConfig, also make default Duration in the webapp
-	var t = time.Now().Add(-15 * 60 * time.Second).UTC()
+	var t = time.Now().Add(time.Duration(-data.SireusData.AppConfig.InteractiveDurationMinutesDefault*60) * time.Second).UTC()
 
 	ampm := "AM"
 	hour := t.Hour()

@@ -9,6 +9,8 @@
   "query_fast_interval": "2s",
   "query_fast_duration": "30s",
 
+  "interactive_duration_minutes_default": 15,
+
   "reload_templates_always": true,
   "log_template_parsing": false
 }
