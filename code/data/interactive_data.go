@@ -61,11 +61,12 @@ type (
 type (
 	// InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 	InteractiveControl struct {
-		SessionUUID           uint32  `json:"sessionUUID"`           // Interactive Session UUID
-		UseInteractiveSession bool    `json:"useInteractiveSession"` // If true, we will use all the Interactive session data.  If false, this will use normal production data.
-		PlayForward           bool    `json:"playForward"`           // Should we move the Scrubber forward as we return data?
-		QueryStartTime        float64 `json:"queryStartTime"`        // When should the Interactive query start?
-		QueryDuration         float64 `json:"queryDuration"`         // Duration from the Query Start, creates the Query End
-		QueryScrubTime        float64 `json:"queryScrubTime"`        // This is where the Scrubbed currently is, so use this data from the metrics data
+		SessionUUID            uint32  `json:"sessionUUID"`            // Interactive Session UUID
+		UseInteractiveSession  bool    `json:"useInteractiveSession"`  // If true, we will use all the Interactive session data.  If false, this will use normal production data.
+		UseInteractiveOverride bool    `json:"useInteractiveOverride"` // If true, we will use the state and variable overrides.  If false, we can still use Query Time for interactive session, but will not use override states and vars
+		PlayForward            bool    `json:"playForward"`            // Should we move the Scrubber forward as we return data?
+		QueryStartTime         float64 `json:"queryStartTime"`         // When should the Interactive query start?
+		QueryDuration          float64 `json:"queryDuration"`          // Duration from the Query Start, creates the Query End
+		QueryScrubTime         float64 `json:"queryScrubTime"`         // This is where the Scrubbed currently is, so use this data from the metrics data
 	}
 )
