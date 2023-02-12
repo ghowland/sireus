@@ -2,6 +2,7 @@ package webapp
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
@@ -102,20 +103,39 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 		inputDataStr = "{}"
 	}
 
+	interactiveStartTime := FormatInteractiveStartTime()
+
 	renderMap := fiber.Map{
-		"title":               "Sireus",
-		"site":                site,
-		"site_id":             site.Name,
-		"botGroup":            botGroup,
-		"bot_group_id":        botGroup.Name,
-		"bot":                 bot,
-		"bot_id":              bot.Name,
-		"render_time":         renderTimeStr,
-		"input_data":          inputDataStr,
-		"interactive_control": "{}", // Always empty from initial page render
+		"title":                    "Sireus",
+		"site":                     site,
+		"site_id":                  site.Name,
+		"botGroup":                 botGroup,
+		"bot_group_id":             botGroup.Name,
+		"bot":                      bot,
+		"bot_id":                   bot.Name,
+		"render_time":              renderTimeStr,
+		"input_data":               inputDataStr,
+		"interactive_starter_time": interactiveStartTime,
+		"interactive_control":      "{}", // Always empty from initial page render
 	}
 
 	return renderMap
+}
+
+func FormatInteractiveStartTime() string {
+	// 15 minutes ago
+	//TODO(ghowland): Remove hard-code, put into AppConfig, also make default Duration in the webapp
+	var t = time.Now().Add(-15 * 60 * time.Second).UTC()
+
+	ampm := "AM"
+	hour := t.Hour()
+	if hour > 12 {
+		hour -= 12
+		ampm = "PM"
+	}
+
+	output := fmt.Sprintf("%02d/%02d/%d, %d:%02d %s", t.Day(), t.Month(), t.Year(), hour, t.Minute(), ampm)
+	return output
 }
 
 func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
