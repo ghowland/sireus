@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div class="column">
-                        <p>Query Time Scrubber: <span id="time_control_scrubber"></span></p>
+                        <p>Query Time Scrubber: <strong><span id="time_control_scrubber"></span></strong></p>
                     </div>
                     <div class="column">
                         <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="0" type="range" id="time_control_slider_scrubber" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
@@ -197,8 +197,6 @@
 
         var d2 = new Date(timeNum + (value * timeSpan));
 
-        var output = PrintUTCTime(d2);
-
         // Set the duration.  Should this happen somewhere else?
         interactiveControl['queryStartTime'] = startMillis;
         interactiveControl['queryDuration'] = durationMillis;
@@ -211,6 +209,8 @@
         // Set the Scrubber time UTC time in milliseconds
         interactiveControl[interactiveVarName] = d2.getTime();
 
+        // Write the output
+        var output = PrintUTCTime(d2).replace(' UTC', '');
         $('#'+outputElementId).html(output);
     }
 
