@@ -36,30 +36,26 @@
                         <p>Query Time Start: <span id="time_control_start"></span></p>
                     </div>
                     <div class="column">
-                        <input id="queryTimeStart" class="input" type="datetime" value="01/11/2023">
+                        <input id="queryStartTime" class="input" type="datetime" value="01-11-2023" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
                     </div>
-                </div>
-                <div class="columns">
                     <div class="column">
                         <p>Query Time Duration:</p>
                     </div>
                     <div class="column">
                         <div class="field">
                             <p class="control has-icons-left has-icons-right">
-                                <input class="input" type="duration" id="interQueryDuration" placeholder="Duration in Minutes" value="60">
+                                <input class="input" type="duration" id="queryDuration" placeholder="Duration in Minutes" value="15" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
                                 <span class="icon is-small is-left">
                                     <i class="fa-regular fa-clock"></i>
                                 </span>
                             </p>
                         </div>
                     </div>
-                </div>
-                <div class="columns">
                     <div class="column">
                         <p>Query Time Scrubber: <span id="time_control_scrubber"></span></p>
                     </div>
                     <div class="column">
-                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="100" type="range" id="time_control_slider_scrubber" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
+                        <input class="slider is-fullwidth is-info" step="1" min="0" max="100" value="0" type="range" id="time_control_slider_scrubber" onchange="SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber')">
                     </div>
                 </div>
 
@@ -102,8 +98,10 @@
     };
 
 
-    $('#queryTimeStart').tempusDominus({});
-
+    // Configure the datetime picker
+    var picker = $('#queryStartTime').tempusDominus({
+        // format: 'yyyy-MM-dd HH:mm',
+    });
 
     function ZeroPad(num, places) {
         var zero = places - num.toString().length + 1;
@@ -116,29 +114,88 @@
         return output;
     }
 
+    function GetStartInputMillis(datePickerElementId) {
+        var fullString = $('#'+datePickerElementId).val();
+        fullSplitArray = fullString.replace(',', '').split(" ")
+
+        fullDate = fullSplitArray[0]
+        fullTime = fullSplitArray[1]
+        fullAMPM = fullSplitArray[2]
+
+        // alert('Full Date: ' + fullDate + '  Full Time: ' + fullTime + '  AMPM: ' + fullAMPM)
+
+        dateArray = fullDate.split("/")
+        timeArray = fullTime.split(":")
+
+        // alert('Date: ' + dateArray + '  Time: ' + timeArray + '  AMPM: ' + fullAMPM)
+        // alert('D0: ' + dateArray[0] + '  D1: ' + dateArray[1] + '  D2: ' + dateArray[2])
+
+        var day = parseInt(dateArray[1]);
+        var month = parseInt(dateArray[0]);
+        var year = parseInt(dateArray[2]);
+
+        hours = parseInt(timeArray[0])
+        minutes = parseInt(timeArray[1])
+
+        var test = 'Day: ' + day + '  Month: ' + month + '  Year: ' + year + '  Hours: ' + hours + '  Minutes: ' + minutes;
+
+        if (fullAMPM === 'PM') {
+            hours += 12;
+        }
+
+        var d = new Date();
+        d.setUTCDate(day)
+        d.setUTCMonth(month)
+        d.setUTCFullYear(year)
+        d.setUTCHours(hours)
+        d.setUTCMinutes(minutes)
+        d.setUTCSeconds(0)
+        d.setUTCMilliseconds(0)
+
+        var millis = d.getTime()
+
+        // alert("Get Start: " + millis + ' -- ' + test + ' -- ' + d.toUTCString())
+
+        return millis
+    }
+
+    function GetDurationMillis(durationElementId) {
+        var fullString = $('#'+durationElementId).val();
+        var minutes = parseFloat(fullString);
+
+        var millis = minutes * 60 * 1000;
+        return millis;
+    }
+
     function SetTimeControl(valueElementId, interactiveVarName, outputElementId) {
         var d = new Date();
 
-        d.setTime(Date.now())
+        var startMillis = GetStartInputMillis('queryStartTime');
+        var durationMillis = GetDurationMillis('queryDuration');
+
+        d.setTime(startMillis)
 
         var timeNum = d.getTime();
 
-        var value = 100 - $('#'+valueElementId).val();
+        // Get the slider value (0-100)
+        var value = $('#'+valueElementId).val();
 
-        var timeSpan = 86400 / 100; // One hour timespan
-        // var timeSpan = 3600 / 100; // One hour timespan
+        // Timespan is dynamic based on duration, but there are always 100 segments because of the scrubber
+        var timeSpan = durationMillis / 100;
 
-        var d2 = new Date(timeNum - (value * 1000 * timeSpan));
+        var d2 = new Date(timeNum + (value * timeSpan));
 
         var output = PrintUTCTime(d2);
 
-        // Get the UTC time in milliseconds
-        interactiveControl[interactiveVarName] = d2.getTime();
-
         // Set the duration.  Should this happen somewhere else?
-        interactiveControl['queryDuration'] = $('#interQueryDuration').val();
+        interactiveControl['queryStartTime'] = startMillis;
+        interactiveControl['queryDuration'] = durationMillis;
+
+        // Set the Scrubber time UTC time in milliseconds
+        interactiveControl[interactiveVarName] = d2.getTime();
 
         $('#'+outputElementId).html(output);
     }
-    SetTimeControl();
+
+    SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber');
 </script>

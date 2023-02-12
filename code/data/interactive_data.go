@@ -63,5 +63,7 @@ type (
 	InteractiveControl struct {
 		PlayFromQueryTime bool    `json:"playFromQueryTime"`
 		QueryStartTime    float64 `json:"queryStartTime"`
+		QueryDuration     float64 `json:"queryDuration"`
+		QueryScrubTime    float64 `json:"queryScrubTime"`
 	}
 )
