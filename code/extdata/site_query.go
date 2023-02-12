@@ -26,7 +26,7 @@ func StoreQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuer
 
 // GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which
 // is used by the background query system to test missing or expired query results as equivalent.
-func GetCachedQueryResult(site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
+func GetCachedQueryResult(interactiveUUID int64, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
 	queryKey := GetQueryKey(query)
 
 	// Block until we can lock, for goroutine safety

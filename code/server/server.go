@@ -67,10 +67,12 @@ func RunForever() {
 		// Run all queries that need running
 
 		// Run all the queries that have passed their interval, or haven't been set yet
-		RunAllSiteQueries(&data.SireusData.Site)
+		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
+		RunAllSiteQueries(0, &data.SireusData.Site)
 
 		// Update everything from the queries.  This will need time to warm up, but just let it fail in the beginning
-		extdata.UpdateSiteBotGroups()
+		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
+		extdata.UpdateSiteBotGroups(0)
 
 		// Pause a short time (~0.8s) to not fully spin lock the CPU ever.  This doesn't need to be more rapid
 		if !data.SireusData.IsQuitting {
@@ -84,7 +86,7 @@ func RunForever() {
 // Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval.
 // Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale
 // Actions are not available.
-func RunAllSiteQueries(site *data.Site) {
+func RunAllSiteQueries(interactiveUUID int64, site *data.Site) {
 	for _, botGroup := range site.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
@@ -93,7 +95,7 @@ func RunAllSiteQueries(site *data.Site) {
 			}
 
 			// If we don't have this query for any reason (first time, or is over the BotQuery.Interval
-			_, err := extdata.GetCachedQueryResult(site, query, true)
+			_, err := extdata.GetCachedQueryResult(interactiveUUID, site, query, true)
 			if util.CheckNoLog(err) {
 				go BackgroundQuery(site, query, 0)
 			}

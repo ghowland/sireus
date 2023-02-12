@@ -13,31 +13,35 @@ import (
 )
 
 // Update all the BotGroups in this Site
-func UpdateSiteBotGroups() {
-	//site := data.SireusData.Site
+func UpdateSiteBotGroups(interactiveUUID int64) {
+	site := &data.SireusData.Site
+
+	if interactiveUUID != 0 {
+		site = site //TODO(ghowland): Get our cloned site here...
+	}
 
 	for index := range data.SireusData.Site.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
-		UpdateBotGroupFromPrometheus(&data.SireusData.Site, index)
+		UpdateBotGroupFromPrometheus(interactiveUUID, site, index)
 
 		//// Clear all the bot variables, so our map starts fresh every time
 		//ClearAllBotVariables(&site, index)
 
 		// Update Bot Variables from our Queries
-		UpdateBotsFromQueries(&data.SireusData.Site, index)
+		UpdateBotsFromQueries(interactiveUUID, site, index)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
-		UpdateBotsWithSyntheticVariables(&data.SireusData.Site, index)
+		UpdateBotsWithSyntheticVariables(interactiveUUID, site, index)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(&data.SireusData.Site, index)
+		UpdateBotActionConsiderations(interactiveUUID, site, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(&data.SireusData.Site, index)
+		SortAllVariablesAndActions(interactiveUUID, site, index)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
-		CreateFormattedVariables(&data.SireusData.Site, index)
+		CreateFormattedVariables(interactiveUUID, site, index)
 	}
 
 	//// Assign the site back into the server data.  This allows atomic updates
@@ -45,7 +49,7 @@ func UpdateSiteBotGroups() {
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
-func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
+func CreateFormattedVariables(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -68,7 +72,7 @@ func CreateFormattedVariables(site *data.Site, botGroupIndex int) {
 }
 
 // Sort all the Variables by name and Actions by Final Score
-func SortAllVariablesAndActions(site *data.Site, botGroupIndex int) {
+func SortAllVariablesAndActions(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
 		// Sort VariableValues
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
@@ -84,7 +88,7 @@ func SortAllVariablesAndActions(site *data.Site, botGroupIndex int) {
 }
 
 // For this BotGroup, update all the BotActionData with new ActionConsideration scores
-func UpdateBotActionConsiderations(site *data.Site, botGroupIndex int) {
+func UpdateBotActionConsiderations(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -175,7 +179,7 @@ func ClearAllBotVariables(site *data.Site, botGroupIndex int) {
 }
 
 // Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
-func UpdateBotsWithSyntheticVariables(site *data.Site, botGroupIndex int) {
+func UpdateBotsWithSyntheticVariables(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Clear all the Bot VariableValues
@@ -251,11 +255,11 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 }
 
 // Runs Queries against Prometheus for a BotGroup
-func UpdateBotGroupFromPrometheus(site *data.Site, botGroupIndex int) {
+func UpdateBotGroupFromPrometheus(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
-	queryResult, err := GetCachedQueryResult(site, query, false)
+	queryResult, err := GetCachedQueryResult(interactiveUUID, site, query, false)
 
 	extractedBots := ExtractBotsFromPromData(queryResult.PrometheusResponse, "name")
 
@@ -291,13 +295,13 @@ func InitializeStates(site *data.Site, botGroupIndex int) {
 }
 
 // Update all the Bot VariableValues from our Queries
-func UpdateBotsFromQueries(site *data.Site, botGroupIndex int) {
+func UpdateBotsFromQueries(interactiveUUID int64, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Loop over all Bot Group Queries
 	for _, query := range botGroup.Queries {
 		// Get the cached query result, even if it is expired
-		queryResult, err := GetCachedQueryResult(site, query, false)
+		queryResult, err := GetCachedQueryResult(interactiveUUID, site, query, false)
 		if util.CheckNoLog(err) {
 			continue // Couldn't get this query, skip
 		}
