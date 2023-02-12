@@ -130,6 +130,17 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 
 // Gets a BotGroup from the Site, using the InteractiveControl
 func GetBotGroupInteractive(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error) {
+	session, ok := site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID]
+	if !ok {
+		session = data.InteractiveSession{
+			UUID:           interactiveControl.SessionUUID,
+			TimeRequested:  time.Now(),
+			QueryStartTime: time.UnixMilli(int64(interactiveControl.QueryStartTime)),
+			QueryDuration:  data.Duration(interactiveControl.QueryDuration),
+			QueryScrubTime: time.UnixMilli(int64(interactiveControl.QueryScrubTime)),
+		}
+		site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
+	}
 
 	for _, botGroup := range site.BotGroups {
 		if botGroup.Name == botGroupName {

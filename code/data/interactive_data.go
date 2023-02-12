@@ -17,10 +17,13 @@ type (
 type (
 	// An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
 	InteractiveSession struct {
-		UUID          SessionUUID `json:"uuid"`           // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
-		QueryTime     time.Time   `json:"query_time"`     // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
-		Override      Override    `json:"overrides"`      // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
-		TimeRequested time.Time   `json:"time_requested"` // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
+		UUID           SessionUUID `json:"uuid"`             // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
+		TimeRequested  time.Time   `json:"time_requested"`   // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
+		QueryStartTime time.Time   `json:"query_start_time"` // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
+		QueryDuration  Duration    `json:"query_duration"`   // Duration to query past QueryStartTime
+		QueryScrubTime time.Time   `json:"query_scrub_time"` // Time our Scrubber is currently on.  Somewhere between QueryStartTime and QueryStartTime + QueryDuration
+		Override       Override    `json:"overrides"`        // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
+		BotGroups      []BotGroup  // These are the BotGroups we create and cache for this Session
 	}
 )
 
@@ -29,6 +32,7 @@ type (
 	Override struct {
 		BotGroups []OverrideBotGroup `json:"bot_groups"` // Overrides of BotGroup data: Action.Weight and ActionConsideration data
 		Bots      []OverrideBot      `json:"bots"`       // Overrides of Bot data: Bot.VariableValues and Bot.StateValues
+		States    []string           `json:"states"`     // Overrides of States.  Can only set 1 per state.  By default, all should be set, so we know where we are.
 	}
 )
 
