@@ -1,6 +1,6 @@
 <div id="interactive_control" class="is-hidden-not">
     <div class="content">
-        <div class="box has-background-info has-text-white">
+        <div class="box has-background-info has-text-white" id="interactive_control_border">
             <div class="columns">
                 <div class="column is-three-quarters">
                     <h1 class="is-5 has-text-white">Interactive Controls</h1>
@@ -22,8 +22,8 @@
                     </div>
                     <div class="column">
                         <div class="field">
-                            <input id="interQueryTime" type="checkbox" name="interQueryTime" id="interQueryTime" class="switch is-outlined is-info" checked="checked" onchange="ToggleCheckboxData(this, 'useQueryTime')">
-                            <label for="interQueryTime">Query Time</label>
+                            <input id="interQueryTime" type="checkbox" name="interQueryTime" id="interQueryTime" class="switch is-outlined is-info" checked="checked" onchange="if (ToggleCheckboxData(this, 'useInteractiveSession')) { $('#interactive_control_border').addClass('has-background-info'); $('#interactive_control_border').removeClass('has-background-grey-light'); } else { $('#interactive_control_border').removeClass('has-background-info'); $('#interactive_control_border').addClass('has-background-grey-light'); } ">
+                            <label for="interQueryTime">Use Interactive Session</label>
                         </div>
                         <div class="field">
                             <input id="interPlayForward" type="checkbox" name="interPlayForward" id="interPlayForward" class="switch is-outlined is-info" onchange="ToggleCheckboxData(this, 'playForward')">
@@ -172,10 +172,12 @@
         if (checked) {
             $(element).attr('checked', 'checked');
             interactiveControl[varNam] = true;
+            return true;
         }
         else {
             $(element).removeAttr('checked');
             interactiveControl[varNam] = false;
+            return false;
         }
     }
 
@@ -201,7 +203,7 @@
         interactiveControl['queryStartTime'] = startMillis;
         interactiveControl['queryDuration'] = durationMillis;
 
-        interactiveControl['useQueryTime'] = $("#interQueryTime").is(':checked');
+        interactiveControl['useInteractiveSession'] = $("#interQueryTime").is(':checked');
         interactiveControl['playForward'] = $("#interPlayForward").is(':checked');
 
         // alert('Query Time: ' + interactiveControl['useQueryTime'] + '  Play: ' + interactiveControl['playForward'])

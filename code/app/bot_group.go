@@ -127,13 +127,3 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 	}
 	return data.Bot{}, errors.New(fmt.Sprintf("Bot Group: %s  Bot Missing: %s", botGroup.Name, botName))
 }
-
-// Gets a BotGroup from the Site, using the Interactive Session UUID
-func GetBotGroupInteractive(site *data.Site, botGroupName string, interactiveControl data.InteractiveControl) (data.BotGroup, error) {
-	for _, botGroup := range site.BotGroups {
-		if botGroup.Name == botGroupName {
-			return botGroup, nil
-		}
-	}
-	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Ground Missing: %s", botGroupName))
-}

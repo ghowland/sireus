@@ -41,7 +41,7 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 
 // GetRenderMapFromRPC parses RPC params and passes in all the data for a given Handlebars page render, using go map.
 // This uses the Interactive Control data to modify data based on the settings.
-func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
+func GetRenderMapFromRPC(c *fiber.Ctx, siteActual *data.Site) map[string]interface{} {
 	input := util.ParseContextBody(c)
 
 	// Get our Interactive Controls, if it exists
@@ -59,11 +59,17 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	botGroupId := input["bot_group_id"]
 	botId := input["bot_id"]
 
+	// If we are using customized data, then we make a new site variable
+	site := siteActual
+	if interactiveControl.UseInteractiveSession {
+		site = siteActual //TODO: Change this to a new version of site, cloned off of this, but with our Interactive data
+	}
+
+	// Bot Groups and Bots come from the Site.  Site is either original or the Interactive data version, but treated the same
 	botGroup := data.BotGroup{}
 	var err error
 	if len(botGroupId) != 0 {
-		// Only the BotGroup needs to be extracted for the Interactive Control, the bots will come from this group
-		botGroup, err = app.GetBotGroupInteractive(site, botGroupId, interactiveControl)
+		botGroup, err = app.GetBotGroup(site, botGroupId)
 		util.Check(err)
 	}
 
@@ -77,6 +83,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	inputData["bot_group_id"] = botGroupId
 	inputData["bot_id"] = botId
 
+	// The site will remain the same, because it also has all our queries and lock timers and everything else.
 	renderMap := BuildRenderMap(site, botGroup, bot, inputData, interactiveControl)
 
 	return renderMap
