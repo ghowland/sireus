@@ -1,6 +1,9 @@
 package data
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type (
 	// Bots the core structure for this system.  They are ephemeral and build from the Bot Group data, and store
@@ -25,6 +28,7 @@ type (
 		IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
 		InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
 		IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
+		AccessLock           sync.RWMutex             // Lock for accessing maps.  Keeping the locks local means less contention
 	}
 )
 

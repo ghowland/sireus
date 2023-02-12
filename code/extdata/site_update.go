@@ -34,9 +34,6 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, &data.SireusData.Site, index)
 	}
-
-	//// Assign the site back into the server data.  This allows atomic updates
-	//data.SireusData.Site = site
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
@@ -65,6 +62,9 @@ func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site,
 // Sort all the Variables by name and Actions by Final Score
 func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
 	for botIndex, bot := range session.BotGroups[botGroupIndex].Bots {
+		// Cant use defer, because we are processing many in 1 action
+		bot.AccessLock.Lock()
+
 		// Sort VariableValues
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
 		session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
@@ -72,6 +72,9 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Sit
 		// Sort ActionData
 		sortedActions := app.SortMapStringActionDataByFinalScore(bot.ActionData, false)
 		session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
+
+		// Cant use defer, because we are processing many in 1 action
+		bot.AccessLock.Unlock()
 
 		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
 		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
@@ -166,8 +169,6 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
-	// Clear all the Bot VariableValues
-
 	// Create a list of names
 	var queryVariableNames []string
 	for _, variable := range botGroup.Variables {
@@ -215,6 +216,9 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *da
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{} {
 	evalMap := make(map[string]interface{})
 
+	bot.AccessLock.Lock()
+	defer bot.AccessLock.Unlock()
+
 	// Build a map from bots variables
 	for variableName, value := range bot.VariableValues {
 		// Only add variables that are Query Variables, because they are known before synthetic evaluation
@@ -229,6 +233,9 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 // Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate()
 func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 	evalMap := make(map[string]interface{})
+
+	bot.AccessLock.Lock()
+	defer bot.AccessLock.Unlock()
 
 	// Build a map bot variables
 	for variableName, value := range bot.VariableValues {

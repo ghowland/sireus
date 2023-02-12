@@ -32,6 +32,7 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	util.CheckPanic(err)
 
 	// Initialize data that isn't auto-initialized or loaded from JSON
+	site.ProductionControl = GetProductionInteractiveControl()
 	site.InteractiveSessionCache.Sessions = make(map[data.SessionUUID]data.InteractiveSession)
 	site.QueryResultCache = data.QueryResultPool{
 		PoolItems:  make(map[string]data.QueryResultPoolItem),
@@ -48,6 +49,9 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 }
 
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession {
+	site.InteractiveSessionCache.AccessLock.Lock()
+	defer site.InteractiveSessionCache.AccessLock.Unlock()
+
 	session, ok := site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID]
 	if !ok {
 		session = data.InteractiveSession{
@@ -62,6 +66,21 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 	}
 
 	return session
+}
+
+// GetProductionInteractiveControl returns a SessionUUID==0 data set for production data.
+// TODO(ghowland): These should be altered by AppConfig
+func GetProductionInteractiveControl() data.InteractiveControl {
+	interactiveControl := data.InteractiveControl{
+		SessionUUID:            0,
+		UseInteractiveSession:  false,
+		UseInteractiveOverride: false,
+		QueryStartTime:         float64(time.Now().UnixMilli()),
+		QueryDuration:          60 * 1000,
+		QueryScrubTime:         float64(time.Now().UnixMilli()),
+	}
+
+	return interactiveControl
 }
 
 // Returns a QueryServer, scope is per Site

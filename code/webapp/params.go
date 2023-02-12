@@ -5,41 +5,25 @@ import (
 	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/extdata"
+	"github.com/ghowland/sireus/code/server"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"log"
 	"strings"
 	"time"
 )
-
-// GetProductionInteractiveControl returns a SessionUUID==0 data set for production data.
-//TODO(ghowland): These should be altered by AppConfig
-func GetProductionInteractiveControl() data.InteractiveControl {
-	interactiveControl := data.InteractiveControl{
-		SessionUUID:            0,
-		UseInteractiveSession:  false,
-		UseInteractiveOverride: false,
-		QueryStartTime:         float64(time.Now().UnixMilli()),
-		QueryDuration:          60 * 1000,
-		QueryScrubTime:         float64(time.Now().UnixMilli()),
-	}
-
-	return interactiveControl
-}
 
 // GetRenderMapFromParams parses GET params passes in all the data for a given Handlebars page render, using Fiber
 func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 	botGroupId := c.Query("bot_group_id")
 	botId := c.Query("bot_id")
 
-	//TODO(ghowland): The first load COULD be from an interactive session?  Or never?  I dont mind fixing the Interactive Session on the RPC call always.  Not a big deal to update after a page load...  Finalize this and remove the content if this is the way...
-	interactiveControl := GetProductionInteractiveControl()
-
 	botGroup := data.BotGroup{}
 	var err error
 	if botGroupId != "" {
-		botGroup, err = app.GetBotGroup(interactiveControl, site, botGroupId)
+		//TODO(ghowland): The first load COULD be from an interactive session?  Or never?  I dont mind fixing the Interactive Session on the RPC call always.  Not a big deal to update after a page load...  Finalize this and remove the content if this is the way...
+		botGroup, err = app.GetBotGroup(site.ProductionControl, site, botGroupId)
 		util.Check(err)
 	}
 
@@ -69,14 +53,26 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	if ok {
 		json.Unmarshal([]byte(interactiveControlJSON), &interactiveControl)
 	}
-	log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
+	//log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
 
+	// Make a new Session ID, if we don't already have one
 	if interactiveControl.SessionUUID == 0 {
 		interactiveControl.SessionUUID = data.SessionUUID(uuid.New().ID())
 	}
 
 	botGroupId := input["bot_group_id"]
 	botId := input["bot_id"]
+
+	// Get our interactive session
+	session := app.GetInteractiveSession(interactiveControl, site)
+
+	// Run all the queries that have passed their interval, or haven't been set yet
+	//NOTE(ghowland): This RPC version is either production or not
+	server.RunAllSiteQueries(&session, &data.SireusData.Site)
+
+	// Update everything from the queries.  This will need time to warm up, but just let it fail in the beginning
+	//NOTE(ghowland): This RPC version is either production or not
+	extdata.UpdateSiteBotGroups(&session)
 
 	// Bot Groups and Bots come from the Site.  Site is either original or the Interactive data version, but treated the same
 	botGroup := data.BotGroup{}

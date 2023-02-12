@@ -1,6 +1,9 @@
 package data
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 type (
 	// Our session UUID.  UUID==0 is production data queried now.  UUID!=0 is interactive session with modified query and result data.
@@ -10,7 +13,8 @@ type (
 type (
 	// Pool to keep our all InteractiveSession data.  This is used for normal production data too, with the UUID==0
 	InteractiveSessionPool struct {
-		Sessions map[SessionUUID]InteractiveSession // All our current InteractiveSession data, key on UUID, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+		Sessions   map[SessionUUID]InteractiveSession // All our current InteractiveSession data, key on UUID, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+		AccessLock sync.RWMutex                       // Lock for safe goroutine access to Sesssions map
 	}
 )
 

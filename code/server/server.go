@@ -6,7 +6,6 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/extdata"
 	"github.com/ghowland/sireus/code/util"
-	"github.com/ghowland/sireus/code/webapp"
 	"log"
 	"os"
 	"os/signal"
@@ -63,8 +62,7 @@ func GetServerBackgroundContext() context.Context {
 func RunForever() {
 	log.Printf("Server: Run Forever: Starting (%v)", data.SireusData.IsQuitting)
 
-	productionControl := webapp.GetProductionInteractiveControl()
-	productionSession := app.GetInteractiveSession(productionControl, &data.SireusData.Site)
+	productionSession := app.GetInteractiveSession(data.SireusData.Site.ProductionControl, &data.SireusData.Site)
 
 	// Run until we are quitting
 	for !data.SireusData.IsQuitting {
