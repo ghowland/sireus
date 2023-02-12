@@ -13,7 +13,7 @@ import (
 )
 
 // Update all the BotGroups in this Site
-func UpdateSiteBotGroups(interactiveUUID int64) {
+func UpdateSiteBotGroups(interactiveUUID data.SessionUUID) {
 	site := &data.SireusData.Site
 
 	if interactiveUUID != 0 {
@@ -49,7 +49,7 @@ func UpdateSiteBotGroups(interactiveUUID int64) {
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
-func CreateFormattedVariables(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func CreateFormattedVariables(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -72,7 +72,7 @@ func CreateFormattedVariables(interactiveUUID int64, site *data.Site, botGroupIn
 }
 
 // Sort all the Variables by name and Actions by Final Score
-func SortAllVariablesAndActions(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func SortAllVariablesAndActions(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	for botIndex, bot := range site.BotGroups[botGroupIndex].Bots {
 		// Sort VariableValues
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
@@ -88,7 +88,7 @@ func SortAllVariablesAndActions(interactiveUUID int64, site *data.Site, botGroup
 }
 
 // For this BotGroup, update all the BotActionData with new ActionConsideration scores
-func UpdateBotActionConsiderations(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func UpdateBotActionConsiderations(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	for botIndex, bot := range botGroup.Bots {
@@ -179,7 +179,7 @@ func ClearAllBotVariables(site *data.Site, botGroupIndex int) {
 }
 
 // Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
-func UpdateBotsWithSyntheticVariables(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func UpdateBotsWithSyntheticVariables(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Clear all the Bot VariableValues
@@ -255,7 +255,7 @@ func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{} {
 }
 
 // Runs Queries against Prometheus for a BotGroup
-func UpdateBotGroupFromPrometheus(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func UpdateBotGroupFromPrometheus(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	query, err := app.GetQuery(site.BotGroups[botGroupIndex], site.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
@@ -295,7 +295,7 @@ func InitializeStates(site *data.Site, botGroupIndex int) {
 }
 
 // Update all the Bot VariableValues from our Queries
-func UpdateBotsFromQueries(interactiveUUID int64, site *data.Site, botGroupIndex int) {
+func UpdateBotsFromQueries(interactiveUUID data.SessionUUID, site *data.Site, botGroupIndex int) {
 	botGroup := site.BotGroups[botGroupIndex]
 
 	// Loop over all Bot Group Queries

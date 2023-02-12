@@ -130,7 +130,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
 
 // Gets a BotGroup from the Site, using the InteractiveControl
 func GetBotGroupInteractive(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error) {
-	
+
 	for _, botGroup := range site.BotGroups {
 		if botGroup.Name == botGroupName {
 			return botGroup, nil

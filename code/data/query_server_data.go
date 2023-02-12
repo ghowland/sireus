@@ -57,7 +57,7 @@ type (
 	QueryResultPoolItem struct {
 		QueryServer     string      // Server to make the query, from Site.QueryServers
 		Query           string      // Share Query results by only testing the Query and QueryServer for matching stored queries.  All BotGroups will share results, and the shorter BotQuery.Interval will set the query pace
-		InteractiveUUID int64       // This is 0 for normal server operation, but when a user wants to look at alternative time queries, this is set to their InteractiveUUID
+		InteractiveUUID SessionUUID // This is 0 for normal server operation, but when a user wants to look at alternative time queries, this is set to their InteractiveUUID
 		TimeRequested   time.Time   // Time the BotQuery was requested
 		TimeReceived    time.Time   // Time the Response was received
 		Result          QueryResult // Response from the QueryServer

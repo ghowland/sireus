@@ -54,7 +54,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	log.Printf("RPC Args: Interactive: %s", util.PrintJson(interactiveControl))
 
 	if interactiveControl.SessionUUID == 0 {
-		interactiveControl.SessionUUID = uuid.New().ID()
+		interactiveControl.SessionUUID = data.SessionUUID(uuid.New().ID())
 	}
 
 	botGroupId := input["bot_group_id"]

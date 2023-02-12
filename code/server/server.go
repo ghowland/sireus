@@ -86,7 +86,7 @@ func RunForever() {
 // Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval.
 // Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale
 // Actions are not available.
-func RunAllSiteQueries(interactiveUUID int64, site *data.Site) {
+func RunAllSiteQueries(interactiveUUID data.SessionUUID, site *data.Site) {
 	for _, botGroup := range site.BotGroups {
 		for _, query := range botGroup.Queries {
 			// If this is already locked, then skip until the lock duration passes.  This will clear it when appropriate
@@ -104,7 +104,7 @@ func RunAllSiteQueries(interactiveUUID int64, site *data.Site) {
 }
 
 // Query in the background with a goroutine
-func BackgroundQuery(interactiveUUID int64, site *data.Site, query data.BotQuery) {
+func BackgroundQuery(interactiveUUID data.SessionUUID, site *data.Site, query data.BotQuery) {
 	queryKey := extdata.GetQueryKey(interactiveUUID, query)
 
 	// Set the lock, and defer to clear it when done

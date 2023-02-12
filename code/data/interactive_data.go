@@ -3,19 +3,24 @@ package data
 import "time"
 
 type (
-	// Pool to keep our all InteractiveSession data
+	// Our session UUID.  UUID==0 is production data queried now.  UUID!=0 is interactive session with modified query and result data.
+	SessionUUID int64
+)
+
+type (
+	// Pool to keep our all InteractiveSession data.  This is used for normal production data too, with the UUID==0
 	InteractiveSessionPool struct {
-		Sessions []InteractiveSession // All our current InteractiveSession data, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+		Sessions map[SessionUUID]InteractiveSession // All our current InteractiveSession data, key on UUID, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
 	}
 )
 
 type (
 	// An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
 	InteractiveSession struct {
-		UUID          int64     `json:"uuid"`           // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
-		QueryTime     time.Time `json:"query_time"`     // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
-		Override      Override  `json:"overrides"`      // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
-		TimeRequested time.Time `json:"time_requested"` // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
+		UUID          SessionUUID `json:"uuid"`           // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
+		QueryTime     time.Time   `json:"query_time"`     // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
+		Override      Override    `json:"overrides"`      // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
+		TimeRequested time.Time   `json:"time_requested"` // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
 	}
 )
 
@@ -61,12 +66,12 @@ type (
 type (
 	// InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 	InteractiveControl struct {
-		SessionUUID            uint32  `json:"sessionUUID"`            // Interactive Session UUID
-		UseInteractiveSession  bool    `json:"useInteractiveSession"`  // If true, we will use all the Interactive session data.  If false, this will use normal production data.
-		UseInteractiveOverride bool    `json:"useInteractiveOverride"` // If true, we will use the state and variable overrides.  If false, we can still use Query Time for interactive session, but will not use override states and vars
-		PlayForward            bool    `json:"playForward"`            // Should we move the Scrubber forward as we return data?
-		QueryStartTime         float64 `json:"queryStartTime"`         // When should the Interactive query start?
-		QueryDuration          float64 `json:"queryDuration"`          // Duration from the Query Start, creates the Query End
-		QueryScrubTime         float64 `json:"queryScrubTime"`         // This is where the Scrubbed currently is, so use this data from the metrics data
+		SessionUUID            SessionUUID `json:"sessionUUID"`            // Interactive Session UUID
+		UseInteractiveSession  bool        `json:"useInteractiveSession"`  // If true, we will use all the Interactive session data.  If false, this will use normal production data.
+		UseInteractiveOverride bool        `json:"useInteractiveOverride"` // If true, we will use the state and variable overrides.  If false, we can still use Query Time for interactive session, but will not use override states and vars
+		PlayForward            bool        `json:"playForward"`            // Should we move the Scrubber forward as we return data?
+		QueryStartTime         float64     `json:"queryStartTime"`         // When should the Interactive query start?
+		QueryDuration          float64     `json:"queryDuration"`          // Duration from the Query Start, creates the Query End
+		QueryScrubTime         float64     `json:"queryScrubTime"`         // This is where the Scrubbed currently is, so use this data from the metrics data
 	}
 )
