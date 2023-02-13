@@ -6,7 +6,7 @@
         useInteractiveOverride: true,
         playFromQueryTime: false,
         queryStartTime: undefined,
-        queryDuration: 60,
+        queryDuration: 900,
         queryScrubTime: undefined,
     };
 </script>
@@ -218,7 +218,7 @@
 
         // Set the duration.  Should this happen somewhere else?
         interactiveControl['queryStartTime'] = startMillis;
-        interactiveControl['queryDuration'] = durationMillis;
+        interactiveControl['queryDuration'] = durationMillis * 1000000;
 
         interactiveControl['useInteractiveSession'] = $("#interUseInteractive").is(':checked');
         interactiveControl['useInteractiveOverride'] = $("#interUseOverride").is(':checked');

@@ -63,6 +63,12 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 			BotGroups:      site.LoadedBotGroups,
 		}
 		site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
+	} else {
+		// Update the existing values
+		session.TimeRequested = time.Now()
+		session.QueryStartTime = time.UnixMilli(int64(interactiveControl.QueryStartTime))
+		session.QueryDuration = data.Duration(interactiveControl.QueryDuration)
+		session.QueryScrubTime = time.UnixMilli(int64(interactiveControl.QueryScrubTime))
 	}
 
 	return session

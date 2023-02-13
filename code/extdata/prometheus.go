@@ -12,12 +12,14 @@ import (
 )
 
 // Query the Prometheus metric server
-func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse {
+func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse {
 	queryStartTime := time.Now()
 
 	start := timeStart.UTC().Format(time.RFC3339)
 
-	end := timeStart.UTC().Add(time.Second * time.Duration(duration)).Format(time.RFC3339)
+	durationSeconds := duration.Seconds()
+
+	end := timeStart.UTC().Add(time.Second * time.Duration(durationSeconds)).Format(time.RFC3339)
 
 	requestUrl := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
 

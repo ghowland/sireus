@@ -68,6 +68,10 @@ func RunForever() {
 	for !data.SireusData.IsQuitting {
 		// Run all queries that need running
 
+		// Update the query times to get values now
+		productionSession.QueryStartTime = time.Now().Add(time.Duration(-60))
+		productionSession.QueryDuration = data.Duration(60 * time.Second)
+
 		// Run all the queries that have passed their interval, or haven't been set yet
 		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
 		RunAllSiteQueries(&productionSession, &data.SireusData.Site)
@@ -117,8 +121,9 @@ func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query da
 	queryServer, err := app.GetQueryServer(*site, query.QueryServer)
 	util.Check(err)
 
-	startTime := time.Now().Add(time.Duration(-60))
-	promData := extdata.QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, startTime, 60)
+	startTime := time.Now()
+
+	promData := extdata.QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, session.QueryStartTime, time.Duration(session.QueryDuration))
 
 	// Create the Query Result from
 	newResult := data.QueryResult{

@@ -71,6 +71,8 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	// Get our interactive session
 	session := app.GetInteractiveSession(interactiveControl, site)
 
+	//log.Printf("RPC Session: Start: %v  Dur: %v  Format: %s", session.QueryStartTime, session.QueryDuration, time.Duration(session.QueryDuration).String())
+
 	// Run all the queries that have passed their interval, or haven't been set yet
 	//NOTE(ghowland): This RPC version is either production or not
 	server.RunAllSiteQueries(&session, &data.SireusData.Site)

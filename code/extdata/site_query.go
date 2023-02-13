@@ -18,6 +18,8 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 		TimeReceived:    time.Now(),
 		Result:          queryResult,
 		IsValid:         true, //TODO(ghowland): Check instead of force set.  If it's not valid, we need a way to tell them about the problem, and show them for the BotGroup and Bots so they arent confused as to why it's not working.  Can tell them why it's malformed and show them the result so they can troubleshoot it.
+		QueryStartTime:  session.QueryStartTime,
+		QueryDuration:   session.QueryDuration,
 	}
 
 	// Save this result to the cache

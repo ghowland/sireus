@@ -62,6 +62,8 @@ type (
 		TimeReceived    time.Time   // Time the Response was received
 		Result          QueryResult // Response from the QueryServer
 		IsValid         bool        // Is the response valid?  If false, it can't be used
+		QueryStartTime  time.Time   // When is the first timestamp this query should get metrics from.  Most important for Interactive sessions
+		QueryDuration   Duration    // Added to QueryStartTime, this will determine when the last metric will be from.  Most important for Interactive sessions
 	}
 )
 

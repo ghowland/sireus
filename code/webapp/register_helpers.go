@@ -153,7 +153,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 	})
 
 	raymond.RegisterHelper("format_duration", func(d data.Duration) raymond.SafeString {
-		return raymond.SafeString(time.Duration(d * 1000000).String())
+		return raymond.SafeString(time.Duration(d).String())
 	})
 
 	// Variables
