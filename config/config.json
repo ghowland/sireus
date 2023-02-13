@@ -11,6 +11,10 @@
 
   "interactive_duration_minutes_default": 15,
 
+  "prometheus_export_port": 8611,
+
+  "enable_demo": true,
+
   "reload_templates_always": true,
   "log_template_parsing": false
 }
