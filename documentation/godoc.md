@@ -22,7 +22,8 @@ import "github.com/ghowland/sireus/code/app"
 - [func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)](<#func-averageandfixup>)
 - [func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)](<#func-calculatescore>)
 - [func FormatBotVariable(format data.BotVariableFormat, value float64) string](<#func-formatbotvariable>)
-- [func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string](<#func-getapiplotdata>)
+- [func GetAPIPlotData(c *fiber.Ctx) string](<#func-getapiplotdata>)
+- [func GetAPIPlotMetrics(c *fiber.Ctx) string](<#func-getapiplotmetrics>)
 - [func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)](<#func-getaction>)
 - [func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)](<#func-getactionconsideration>)
 - [func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)](<#func-getbot>)
@@ -32,7 +33,9 @@ import "github.com/ghowland/sireus/code/app"
 - [func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession](<#func-getinteractivesession>)
 - [func GetProductionInteractiveControl() data.InteractiveControl](<#func-getproductioninteractivecontrol>)
 - [func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)](<#func-getquery>)
+- [func GetQueryResultByQueryKey(site *data.Site, queryKey string) (data.QueryResultPoolItem, bool)](<#func-getqueryresultbyquerykey>)
 - [func GetQueryServer(site data.Site, name string) (data.QueryServer, error)](<#func-getqueryserver>)
+- [func GetRawMetricsJSON(c *fiber.Ctx) string](<#func-getrawmetricsjson>)
 - [func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)](<#func-getvariable>)
 - [func LoadBotGroupConfig(path string) data.BotGroup](<#func-loadbotgroupconfig>)
 - [func LoadConfig(path string) data.AppConfig](<#func-loadconfig>)
@@ -42,7 +45,7 @@ import "github.com/ghowland/sireus/code/app"
   - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
 
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L138>)
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L155>)
 
 ```go
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
@@ -77,12 +80,18 @@ Bot.VariableValues are all floats, but we want them to have human readable strin
 ## func [GetAPIPlotData](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L12>)
 
 ```go
-func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string
+func GetAPIPlotData(c *fiber.Ctx) string
 ```
 
 Returns JSON data needed to create a Plotly graph for our Curves
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L108>)
+## func [GetAPIPlotMetrics](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L59>)
+
+```go
+func GetAPIPlotMetrics(c *fiber.Ctx) string
+```
+
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L125>)
 
 ```go
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
@@ -90,7 +99,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
 
 Get an Action from a BotGroup, by name
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L128>)
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L145>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
@@ -98,7 +107,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 
 Get an ActionConsideration from an Action, by name
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L149>)
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L166>)
 
 ```go
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
@@ -106,7 +115,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
 
 Get a Bot from the BotGroup
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L159>)
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L176>)
 
 ```go
 func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)
@@ -136,7 +145,7 @@ Get the Y value, at an X position, in the curve
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession
 ```
 
-## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L73>)
+## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L90>)
 
 ```go
 func GetProductionInteractiveControl() data.InteractiveControl
@@ -144,7 +153,7 @@ func GetProductionInteractiveControl() data.InteractiveControl
 
 GetProductionInteractiveControl returns a SessionUUID==0 data set for production data. TODO\(ghowland\): These should be altered by AppConfig
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L98>)
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L115>)
 
 ```go
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
@@ -152,7 +161,13 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
 
 Gets a query, scope per BotGroup
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L87>)
+## func [GetQueryResultByQueryKey](<https://github.com/ghowland/sireus/blob/main/code/app/query.go#L5>)
+
+```go
+func GetQueryResultByQueryKey(site *data.Site, queryKey string) (data.QueryResultPoolItem, bool)
+```
+
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L104>)
 
 ```go
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
@@ -160,7 +175,13 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
 
 Returns a QueryServer, scope is per Site
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L118>)
+## func [GetRawMetricsJSON](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L48>)
+
+```go
+func GetRawMetricsJSON(c *fiber.Ctx) string
+```
+
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L135>)
 
 ```go
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
@@ -387,7 +408,7 @@ type ActionConsideration struct {
 }
 ```
 
-## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L17>)
+## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L19>)
 
 Web App server configuration
 
@@ -402,7 +423,9 @@ type AppConfig struct {
     QueryFastDuration                 Duration `json:"query_fast_duration"`                  // Duration QueryFastInterval is maintained after the last user interaction
     InteractiveSessionTimeout         Duration `json:"interactive_session_timeout"`          // Duration an InteractiveSession is kept until it is assumed finished, and can be purged
     InteractiveDurationMinutesDefault int      `json:"interactive_duration_minutes_default"` // How many minutes we default to starting the interactive query to.  15 minutes is reasonable
-    ReloadTemplatesAlways             bool     `json:"reload_templates_always"`              // For development, if true this will always reload Handlebars files.  Only need to reestart the server to rebuild code.
+    PrometheusExportPort              int      `json:"prometheus_export_port"`               // Port used to listen for the Prometheus Exporter data we will put back into Prometheus.  For the main application, and the demo, if it is enabled
+    EnableDemo                        bool     `json:"enable_demo"`                          // If true, the demo will be enabled and will export additional metrics to Prometheus to make learning Sireus easier.  The demo shares the PrometheusExportPort for simplicity
+    ReloadTemplatesAlways             bool     `json:"reload_templates_always"`              // For development, if true this will always reload Handlebars files.  Only need to restart the server to rebuild code.
     LogTemplateParsing                bool     `json:"log_template_parsing"`                 // For web development debugging, if true this will print out all the templates that are parsed.  It's not generally useful, but if you are having a problem with Handlebars template imports or related it can help
 }
 ```
@@ -690,7 +713,7 @@ func (d *Duration) UnmarshalJSON(b []byte) error
 
 Unmarshal JSON for our time.Duration wrapper
 
-## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L76-L84>)
+## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L78-L86>)
 
 InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 
@@ -706,19 +729,21 @@ type InteractiveControl struct {
 }
 ```
 
-## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L23-L31>)
+## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L23-L33>)
 
 An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
 
 ```go
 type InteractiveSession struct {
-    UUID           SessionUUID `json:"uuid"`             // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
-    TimeRequested  time.Time   `json:"time_requested"`   // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
-    QueryStartTime time.Time   `json:"query_start_time"` // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
-    QueryDuration  Duration    `json:"query_duration"`   // Duration to query past QueryStartTime
-    QueryScrubTime time.Time   `json:"query_scrub_time"` // Time our Scrubber is currently on.  Somewhere between QueryStartTime and QueryStartTime + QueryDuration
-    Override       Override    `json:"overrides"`        // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
-    BotGroups      []BotGroup  // These are the BotGroups we create and cache for this Session
+    UUID                     SessionUUID `json:"uuid"`             // This is the unique identifier for this InteractiveSession, and cannot be 0.  0 is used by the normal server processes for performing queries.
+    TimeRequested            time.Time   `json:"time_requested"`   // This is the last time we received a request from this InteractiveSession.  When it passes the AppConfig.InteractiveSessionTimeout duration it will be removed
+    QueryStartTime           time.Time   `json:"query_start_time"` // Time to make all our queries, so that we can interactively look into past data and reply how actions would be scored with the current config (base and OverrideData)
+    QueryDuration            Duration    `json:"query_duration"`   // Duration to query past QueryStartTime
+    QueryScrubTime           time.Time   `json:"query_scrub_time"` // Time our Scrubber is currently on.  Somewhere between QueryStartTime and QueryStartTime + QueryDuration
+    Override                 Override    `json:"overrides"`        // This is a collection of data we get from the Web Client that overrides internal or queried data.  Over
+    BotGroups                []BotGroup  // These are the BotGroups we create and cache for this Session
+    IgnoreCacheQueryMismatch bool        // For Interactive sessions using the QueryStartTime and QueryDuration, this is true
+    IgnoreCacheOverInterval  bool        // For Production sessions, this is true
 }
 ```
 
@@ -733,7 +758,7 @@ type InteractiveSessionPool struct {
 }
 ```
 
-## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L36-L40>)
+## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L38-L42>)
 
 This tracks all the override changes relating to BotGroups or Bots for an InteractiveSession
 
@@ -745,7 +770,7 @@ type Override struct {
 }
 ```
 
-## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L54-L62>)
+## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L56-L64>)
 
 Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores.  For simplicity, when making an ActionCconsideration override, all values are always updated.  No reason to have sparse changes here
 
@@ -761,7 +786,7 @@ type OverrideActionConsideration struct {
 }
 ```
 
-## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L67-L71>)
+## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L69-L73>)
 
 Overrides to a Bot for an InteractiveSession
 
@@ -773,7 +798,7 @@ type OverrideBot struct {
 }
 ```
 
-## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L45-L49>)
+## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L47-L51>)
 
 Overrides to a BotGroup for an InteractiveSession
 
@@ -858,7 +883,7 @@ func (p PairFloat64List) Less(i, j int) bool
 func (p PairFloat64List) Swap(i, j int)
 ```
 
-## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/data/prometheus_data.go#L23-L28>)
+## type [PrometheusResponse](<https://github.com/ghowland/sireus/blob/main/code/data/prometheus_data.go#L23-L31>)
 
 Response from Prometheus.  I made a short\-hand version of this instead of using the one from Prometheus for convenience.
 
@@ -866,8 +891,11 @@ Response from Prometheus.  I made a short\-hand version of this instead of using
 type PrometheusResponse struct {
     Status       string                 `json:"status"`
     Data         PrometheusResponseData `json:"data"`
+    RequestURL   string                 // Keep this, we can always verify exactly what was requested
     RequestTime  time.Time              // When the Request was made
     ResponseTime time.Time              // When the Response was received
+    IsError      bool                   // If there was an error
+    ErrorMessage string                 // Error message
 }
 ```
 
@@ -893,7 +921,7 @@ type PrometheusResponseDataResult struct {
 }
 ```
 
-## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L70-L75>)
+## type [QueryResult](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L72-L77>)
 
 A single Query result
 
@@ -919,7 +947,7 @@ type QueryResultPool struct {
 }
 ```
 
-## type [QueryResultPoolItem](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L57-L65>)
+## type [QueryResultPoolItem](<https://github.com/ghowland/sireus/blob/main/code/data/query_server_data.go#L57-L67>)
 
 An entry in QueryResultPool with a single BotQuery result for a BotGroup.  These can be normal queries \(InteractiveUUID==0\) that take current monitoring results, or from an InteractiveSession where the InteractiveSession.QueryTime is in the past
 
@@ -932,6 +960,8 @@ type QueryResultPoolItem struct {
     TimeReceived    time.Time   // Time the Response was received
     Result          QueryResult // Response from the QueryServer
     IsValid         bool        // Is the response valid?  If false, it can't be used
+    QueryStartTime  time.Time   // When is the first timestamp this query should get metrics from.  Most important for Interactive sessions
+    QueryDuration   Duration    // Added to QueryStartTime, this will determine when the last metric will be from.  Most important for Interactive sessions
 }
 ```
 
@@ -1018,6 +1048,44 @@ type Site struct {
 }
 ```
 
+# demo
+
+```go
+import "github.com/ghowland/sireus/code/demo"
+```
+
+## Index
+
+- [func RunDemoForever()](<#func-rundemoforever>)
+
+
+## func [RunDemoForever](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_control.go#L37>)
+
+```go
+func RunDemoForever()
+```
+
+If AppConfig.EnableDemo is true, this will be run in the background forever producing Prometheus data to server demonstration and educational purposes
+
+# exporter
+
+```go
+import "github.com/ghowland/sireus/code/exporter"
+```
+
+## Index
+
+- [func RunExporterListener()](<#func-runexporterlistener>)
+
+
+## func [RunExporterListener](<https://github.com/ghowland/sireus/blob/main/code/exporter/prometheus_export.go#L11>)
+
+```go
+func RunExporterListener()
+```
+
+Runs the Prometheus Exporter listener in the background
+
 # extdata
 
 ```go
@@ -1030,14 +1098,14 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
-- [func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error)](<#func-getcachedqueryresult>)
+- [func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery) (data.QueryResult, error)](<#func-getcachedqueryresult>)
 - [func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string](<#func-getquerykey>)
 - [func InitializeStates(session *data.InteractiveSession, botGroupIndex int)](<#func-initializestates>)
 - [func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data.BotQuery) bool](<#func-isquerylocked>)
 - [func QueryCacheSet(session *data.InteractiveSession, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem)](<#func-querycacheset>)
 - [func QueryLockClear(site *data.Site, queryKey string)](<#func-querylockclear>)
 - [func QueryLockSet(site *data.Site, queryKey string)](<#func-querylockset>)
-- [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse](<#func-queryprometheus>)
+- [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse](<#func-queryprometheus>)
 - [func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-sortallvariablesandactions>)
 - [func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult)](<#func-storequeryresult>)
 - [func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotactionconsiderations>)
@@ -1055,7 +1123,7 @@ func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site,
 
 Create formatted variables for all our Bots.  This adds human\-readable strings to all the sorted Pair Lists
 
-## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L42>)
+## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L64>)
 
 ```go
 func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot
@@ -1079,15 +1147,15 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 
 Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetCachedQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L29>)
+## func [GetCachedQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L33>)
 
 ```go
-func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error)
+func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery) (data.QueryResult, error)
 ```
 
 GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which is used by the background query system to test missing or expired query results as equivalent.
 
-## func [GetQueryKey](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L87>)
+## func [GetQueryKey](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L91>)
 
 ```go
 func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
@@ -1103,7 +1171,7 @@ func InitializeStates(session *data.InteractiveSession, botGroupIndex int)
 
 Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
 
-## func [IsQueryLocked](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L94>)
+## func [IsQueryLocked](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L98>)
 
 ```go
 func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data.BotQuery) bool
@@ -1111,13 +1179,13 @@ func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data
 
 IsQueryLocked returned whether this Query currently being requested.  Don't want to request more than once at a time
 
-## func [QueryCacheSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L57>)
+## func [QueryCacheSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L61>)
 
 ```go
 func QueryCacheSet(session *data.InteractiveSession, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem)
 ```
 
-## func [QueryLockClear](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L68>)
+## func [QueryLockClear](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L72>)
 
 ```go
 func QueryLockClear(site *data.Site, queryKey string)
@@ -1125,7 +1193,7 @@ func QueryLockClear(site *data.Site, queryKey string)
 
 QueryLockClear will clear the Query Lock, so we can make this Query again after the Interval
 
-## func [QueryLockSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L78>)
+## func [QueryLockSet](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L82>)
 
 ```go
 func QueryLockSet(site *data.Site, queryKey string)
@@ -1133,10 +1201,10 @@ func QueryLockSet(site *data.Site, queryKey string)
 
 QueryLockSet will set the Query Lock for a QueryKey, so we won't request this Query again until it finishes or the AppConfig.QueryLockTimeout expires
 
-## func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L15>)
+## func [QueryPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L16>)
 
 ```go
-func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration int) data.PrometheusResponse
+func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse
 ```
 
 Query the Prometheus metric server
@@ -1149,7 +1217,7 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Sit
 
 Sort all the Variables by name and Actions by Final Score
 
-## func [StoreQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L11>)
+## func [StoreQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L13>)
 
 ```go
 func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult)
@@ -1241,7 +1309,7 @@ import "github.com/ghowland/sireus/code/server"
 - [func RunForever()](<#func-runforever>)
 
 
-## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L109>)
+## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L113>)
 
 ```go
 func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query data.BotQuery)
@@ -1271,7 +1339,7 @@ func LoadConfig()
 
 Load and reload config.  Will set ServerLock so this is safe to do
 
-## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L91>)
+## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L95>)
 
 ```go
 func RunAllSiteQueries(session *data.InteractiveSession, site *data.Site)
@@ -1305,6 +1373,7 @@ import "github.com/ghowland/sireus/code/util"
 - [func FileExists(filename string) bool](<#func-fileexists>)
 - [func FileLoad(path string) (string, error)](<#func-fileload>)
 - [func FormatTimeLong(t time.Time) string](<#func-formattimelong>)
+- [func GetTimeNow() time.Time](<#func-gettimenow>)
 - [func HandlebarFormatData(format string, mapData map[string]interface{}) string](<#func-handlebarformatdata>)
 - [func HandlebarFormatText(format string, mapData map[string]string) string](<#func-handlebarformattext>)
 - [func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template)](<#func-handlebarsregisterpartials>)
@@ -1391,6 +1460,12 @@ func FileLoad(path string) (string, error)
 
 ```go
 func FormatTimeLong(t time.Time) string
+```
+
+## func [GetTimeNow](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L197>)
+
+```go
+func GetTimeNow() time.Time
 ```
 
 ## func [HandlebarFormatData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L92>)
@@ -1486,13 +1561,13 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
 
 
-## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L155>)
+## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L157>)
 
 ```go
 func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}
 ```
 
-## func [BuildRenderMapFiber](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L106>)
+## func [BuildRenderMapFiber](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L108>)
 
 ```go
 func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map
@@ -1514,7 +1589,7 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App
 
 Create the Fiber web app, from the Handlebars engine
 
-## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L139>)
+## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L141>)
 
 ```go
 func FormatInteractiveStartTime() string
@@ -1544,7 +1619,7 @@ func RegisterHandlebarsHelpers()
 
 Main function to register all the different Handlebars helper functions, for text processing
 
-## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L124>)
+## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L132>)
 
 ```go
 func RegisterHandlebarsHelpers_FormatData()
@@ -1552,7 +1627,7 @@ func RegisterHandlebarsHelpers_FormatData()
 
 Format data, for Go and our internal data types
 
-## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L106>)
+## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L114>)
 
 ```go
 func RegisterHandlebarsHelpers_GetAppData()
@@ -1560,7 +1635,7 @@ func RegisterHandlebarsHelpers_GetAppData()
 
 Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
 
-## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L167>)
+## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L187>)
 
 ```go
 func RegisterHandlebarsHelpers_IfArrayLength()
@@ -1568,7 +1643,7 @@ func RegisterHandlebarsHelpers_IfArrayLength()
 
 Testing Length of Arrays for the different structs
 
-## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L54>)
+## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L62>)
 
 ```go
 func RegisterHandlebarsHelpers_IfTests()
