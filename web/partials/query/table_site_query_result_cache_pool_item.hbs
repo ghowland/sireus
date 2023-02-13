@@ -4,9 +4,9 @@
         <thead>
         <tr>
             <th><span class="has-tooltip-arrow" data-tooltip="Interactive Session UUID">Session</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Query Server">Server</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Query">Query</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Time Requested">Requested</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Server, click to see query in server">Server</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query, click for graph">Query</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Time Requested, click for metrics JSON">Requested</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Time Received">Received</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Is Valid Response?">Valid</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Query Start Time">Start</span></th>
@@ -17,9 +17,9 @@
             <tfoot>
             <tr>
                 <th><span class="has-tooltip-arrow" data-tooltip="Interactive Session UUID">Session</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Query Server">Server</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Query">Query</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Time Requested">Requested</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Server, click to see query in server">Server</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query, click for graph">Query</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Time Requested, click for metrics JSON">Requested</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Time Received">Received</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Is Valid Response?">Valid</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Query Start Time">Start</span></th>
@@ -40,7 +40,7 @@
                     {{/with_query_server}}
                 </th>
                 <th><a href="#" onclick="GetPlotMetricData('{{poolItem.InteractiveUUID}}.{{poolItem.QueryServer}}.{{poolItem.Query}}')">{{poolItem.Query}}</a></th>
-                <th>{{format_time_since_precise poolItem.TimeRequested}}</th>
+                <th><a href="/raw/metrics?query_key={{poolItem.InteractiveUUID}}.{{poolItem.QueryServer}}.{{poolItem.Query}}">{{format_time_since_precise poolItem.TimeRequested}}</a></th>
                 <th>{{format_time_since_precise poolItem.TimeReceived}}</th>
                 <th>{{poolItem.IsValid}}</th>
                 <th>{{format_time poolItem.QueryStartTime}}</th>

@@ -135,26 +135,26 @@
 
     function GetStartInputMillis(datePickerElementId) {
         var fullString = $('#'+datePickerElementId).val();
-        fullSplitArray = fullString.replace(',', '').split(" ")
+        fullSplitArray = fullString.replace(',', '').split(" ");
 
-        fullDate = fullSplitArray[0]
-        fullTime = fullSplitArray[1]
-        fullAMPM = fullSplitArray[2]
+        fullDate = fullSplitArray[0];
+        fullTime = fullSplitArray[1];
+        fullAMPM = fullSplitArray[2];
 
         // alert('Full Date: ' + fullDate + '  Full Time: ' + fullTime + '  AMPM: ' + fullAMPM)
 
-        dateArray = fullDate.split("/")
-        timeArray = fullTime.split(":")
+        dateArray = fullDate.split("/");
+        timeArray = fullTime.split(":");
 
         // alert('Date: ' + dateArray + '  Time: ' + timeArray + '  AMPM: ' + fullAMPM)
         // alert('D0: ' + dateArray[0] + '  D1: ' + dateArray[1] + '  D2: ' + dateArray[2])
 
         var day = parseInt(dateArray[1]);
-        var month = parseInt(dateArray[0]);
+        var month = parseInt(dateArray[0]) - 1; // Months are 0-11
         var year = parseInt(dateArray[2]);
 
-        hours = parseInt(timeArray[0])
-        minutes = parseInt(timeArray[1])
+        hours = parseInt(timeArray[0]);
+        minutes = parseInt(timeArray[1]);
 
         var test = 'Day: ' + day + '  Month: ' + month + '  Year: ' + year + '  Hours: ' + hours + '  Minutes: ' + minutes;
 
@@ -163,15 +163,16 @@
         }
 
         var d = new Date();
-        d.setUTCDate(day)
-        d.setUTCMonth(month)
-        d.setUTCFullYear(year)
-        d.setUTCHours(hours)
-        d.setUTCMinutes(minutes)
-        d.setUTCSeconds(0)
-        d.setUTCMilliseconds(0)
+        d.toLocaleTimeString('UTC');
+        d.setUTCDate(day);
+        d.setUTCMonth(month);
+        d.setUTCFullYear(year);
+        d.setUTCHours(hours);
+        d.setUTCMinutes(minutes);
+        d.setUTCSeconds(0);
+        d.setUTCMilliseconds(0);
 
-        var millis = d.getTime()
+        var millis = d.getTime();
 
         // alert("Get Start: " + millis + ' -- ' + test + ' -- ' + d.toUTCString())
 

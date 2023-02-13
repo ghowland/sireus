@@ -13,7 +13,7 @@ import (
 
 // Query the Prometheus metric server
 func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse {
-	queryStartTime := time.Now()
+	queryStartTime := util.GetTimeNow()
 
 	start := timeStart.UTC().Format(time.RFC3339)
 
@@ -35,7 +35,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 	// Set the time, so we know when we got it
 	jsonResponse.RequestTime = queryStartTime
-	jsonResponse.ResponseTime = time.Now()
+	jsonResponse.ResponseTime = util.GetTimeNow()
 
 	return jsonResponse
 }

@@ -69,7 +69,7 @@ func RunForever() {
 		// Run all queries that need running
 
 		// Update the query times to get values now
-		productionSession.QueryStartTime = time.Now().Add(time.Duration(-60))
+		productionSession.QueryStartTime = util.GetTimeNow().Add(time.Duration(-60))
 		productionSession.QueryDuration = data.Duration(60 * time.Second)
 
 		// Run all the queries that have passed their interval, or haven't been set yet
@@ -121,7 +121,7 @@ func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query da
 	queryServer, err := app.GetQueryServer(*site, query.QueryServer)
 	util.Check(err)
 
-	startTime := time.Now()
+	startTime := util.GetTimeNow()
 
 	promData := extdata.QueryPrometheus(queryServer.Host, queryServer.Port, query.QueryType, query.Query, session.QueryStartTime, time.Duration(session.QueryDuration))
 

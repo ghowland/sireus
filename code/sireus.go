@@ -24,6 +24,7 @@ func main() {
 	engine := webapp.CreateHandlebarsEngine(data.SireusData.AppConfig)
 	web := webapp.CreateWebApp(engine)
 
+	// API Calls
 	web.Post("/api/plot", func(c *fiber.Ctx) error {
 		return c.SendString(app.GetAPIPlotData(c))
 	})
@@ -47,6 +48,12 @@ func main() {
 		}
 	})
 
+	// Raw Data Page - Not an API call
+	web.Get("/raw/metrics", func(c *fiber.Ctx) error {
+		return c.SendString(app.GetRawMetricsJSON(c))
+	})
+
+	// Web Pages
 	web.Get("/", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
 		return c.Render("overwatch", renderMap, "layouts/main_common")

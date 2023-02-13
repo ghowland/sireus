@@ -64,12 +64,12 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 	}
 
 	// Always update these values
-	session.TimeRequested = time.Now()
+	session.TimeRequested = util.GetTimeNow()
 	session.QueryStartTime = time.UnixMilli(int64(interactiveControl.QueryStartTime))
 	session.QueryDuration = data.Duration(interactiveControl.QueryDuration)
 	session.QueryScrubTime = time.UnixMilli(int64(interactiveControl.QueryScrubTime))
 
-	// If this is a Production session, we invalidate cache on interval and dont worry about query mismatch
+	// If this is a Production session, we invalidate cache on interval and don't worry about query mismatch
 	if interactiveControl.SessionUUID == 0 {
 		session.IgnoreCacheQueryMismatch = false
 		session.IgnoreCacheOverInterval = true
@@ -92,9 +92,9 @@ func GetProductionInteractiveControl() data.InteractiveControl {
 		SessionUUID:            0,
 		UseInteractiveSession:  false,
 		UseInteractiveOverride: false,
-		QueryStartTime:         float64(time.Now().UnixMilli()),
+		QueryStartTime:         float64(util.GetTimeNow().UnixMilli()),
 		QueryDuration:          60 * 1000000000,
-		QueryScrubTime:         float64(time.Now().UnixMilli()),
+		QueryScrubTime:         float64(util.GetTimeNow().UnixMilli()),
 	}
 
 	return interactiveControl

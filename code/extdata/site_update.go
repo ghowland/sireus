@@ -149,7 +149,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 			if finalScore >= action.WeightThreshold && allActionStatesAreActive {
 				if !actionData.IsAvailable {
 					actionData.IsAvailable = true
-					actionData.AvailableStartTime = time.Now()
+					actionData.AvailableStartTime = util.GetTimeNow()
 				}
 			} else {
 				if !allActionStatesAreActive {

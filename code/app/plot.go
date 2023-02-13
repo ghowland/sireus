@@ -46,6 +46,17 @@ func GetAPIPlotData(c *fiber.Ctx) string {
 	return jsonString
 }
 
+func GetRawMetricsJSON(c *fiber.Ctx) string {
+	queryKey := c.Query("query_key")
+
+	queryResult, ok := GetQueryResultByQueryKey(&data.SireusData.Site, queryKey)
+	if !ok {
+		return "{}"
+	}
+
+	return util.PrintJson(queryResult)
+}
+
 func GetAPIPlotMetrics(c *fiber.Ctx) string {
 	input := util.ParseContextBody(c)
 	log.Println("Get API Plot Metrics: ", util.PrintJson(input))

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/util"
 	"time"
 )
 
@@ -16,7 +17,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 		Query:           query.Query,
 		InteractiveUUID: session.UUID,
 		TimeRequested:   startTime,
-		TimeReceived:    time.Now(),
+		TimeReceived:    util.GetTimeNow(),
 		Result:          queryResult,
 		IsValid:         true, //TODO(ghowland): Check instead of force set.  If it's not valid, we need a way to tell them about the problem, and show them for the BotGroup and Bots so they arent confused as to why it's not working.  Can tell them why it's malformed and show them the result so they can troubleshoot it.
 		QueryStartTime:  session.QueryStartTime,
@@ -42,7 +43,7 @@ func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, que
 	}
 
 	// Test if it is older than the Interval refresh, this
-	since := time.Now().Sub(result.TimeReceived)
+	since := util.GetTimeNow().Sub(result.TimeReceived)
 
 	// If we don't want to return values if they are over the Interval, then mark them
 	if since.Seconds() > time.Duration(query.Interval).Seconds() {
@@ -83,7 +84,7 @@ func QueryLockSet(site *data.Site, queryKey string) {
 	site.QueryResultCache.QueryLocksSyncLock.Lock()
 	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
 
-	site.QueryResultCache.QueryLocks[queryKey] = time.Now()
+	site.QueryResultCache.QueryLocks[queryKey] = util.GetTimeNow()
 }
 
 // GetQueryKey returns "(QueryServer).(Query)", so it can be shared by any BotGroup
@@ -106,7 +107,7 @@ func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data
 		return false
 	}
 
-	since := time.Now().Sub(queryLockTime)
+	since := util.GetTimeNow().Sub(queryLockTime)
 	if since.Seconds() < time.Duration(data.SireusData.AppConfig.QueryLockTimeout).Seconds() {
 		return true
 	}

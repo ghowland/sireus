@@ -193,3 +193,7 @@ func FormatTimeLong(t time.Time) string {
 
 	return output
 }
+
+func GetTimeNow() time.Time {
+	return time.Now().UTC()
+}

@@ -109,7 +109,7 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
-	renderTimeStr := util.FormatTimeLong(time.Now())
+	renderTimeStr := util.FormatTimeLong(util.GetTimeNow())
 
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
 
@@ -141,7 +141,7 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 func FormatInteractiveStartTime() string {
 	// 15 minutes ago
 	//TODO(ghowland): Remove hard-code, put into AppConfig, also make default Duration in the webapp
-	var t = time.Now().Add(time.Duration(-data.SireusData.AppConfig.InteractiveDurationMinutesDefault*60) * time.Second).UTC()
+	var t = util.GetTimeNow().Add(time.Duration(-data.SireusData.AppConfig.InteractiveDurationMinutesDefault*60) * time.Second)
 
 	ampm := "AM"
 	hour := t.Hour()
@@ -158,7 +158,7 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
-	renderTimeStr := util.FormatTimeLong(time.Now())
+	renderTimeStr := util.FormatTimeLong(util.GetTimeNow())
 
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
 
