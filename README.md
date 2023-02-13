@@ -41,7 +41,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
  - [Blog](https://blog.sireus.cloud/)
  - [How to Start Configuring Sireus in 10 Steps](https://github.com/ghowland/sireus/blob/main/documentation/how_to_start.md)
- - [Best Practices](https://github.com/ghowland/sireus/blob/main/documentation/how_to_start.md)
+ - [Best Practices](https://github.com/ghowland/sireus/blob/main/documentation/best_practices.md)
  - [Discord](https://discord.gg/VTVXrXJWxk)
  - [Data Structure and Internal Function Documentation](https://github.com/ghowland/sireus/blob/main/documentation/godoc.md)
  - [Developer Chat on Zulip - Invite only for now](https://sireus.zulipchat.com/) - If you want to join the development process, please start by [creating Issues.](https://github.com/ghowland/sireus/issues)  Sireus is currently in the Design RFC phase.
