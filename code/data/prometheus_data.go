@@ -26,5 +26,7 @@ type (
 		RequestURL   string                 // Keep this, we can always verify exactly what was requested
 		RequestTime  time.Time              // When the Request was made
 		ResponseTime time.Time              // When the Response was received
+		IsError      bool                   // If there was an error
+		ErrorMessage string                 // Error message
 	}
 )

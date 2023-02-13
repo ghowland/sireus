@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -23,20 +24,38 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 	requestUrl := fmt.Sprintf("http://%s:%d/api/v1/%s?query=%s&start=%s&end=%s&step=15s", host, port, queryType.String(), url.QueryEscape(query), start, end)
 
-	resp, err := http.Get(requestUrl)
-	util.Check(err)
-
-	body, err := io.ReadAll(resp.Body)
-	util.Check(err)
-
 	var jsonResponse data.PrometheusResponse
-	err = json.Unmarshal(body, &jsonResponse)
-	util.Check(err)
 
 	// Set the time, so we know when we got it
 	jsonResponse.RequestURL = requestUrl
 	jsonResponse.RequestTime = queryStartTime
 	jsonResponse.ResponseTime = util.GetTimeNow()
+
+	resp, err := http.Get(requestUrl)
+	if util.CheckNoLog(err) {
+		jsonResponse.IsError = true
+		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't fetch Prometheus URL: %v   URL: %s", err, requestUrl)
+		log.Printf(jsonResponse.ErrorMessage)
+		return jsonResponse
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	util.Check(err)
+	if util.CheckNoLog(err) {
+		jsonResponse.IsError = true
+		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't read Prometheus body: %v   URL: %s", err, requestUrl)
+		log.Printf(jsonResponse.ErrorMessage)
+		return jsonResponse
+	}
+
+	err = json.Unmarshal(body, &jsonResponse)
+	util.Check(err)
+	if util.CheckNoLog(err) {
+		jsonResponse.IsError = true
+		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't unmarshall JSON: %v   URL: %s", err, requestUrl)
+		log.Printf(jsonResponse.ErrorMessage)
+		return jsonResponse
+	}
 
 	return jsonResponse
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/demo"
+	"github.com/ghowland/sireus/code/exporter"
 	"github.com/ghowland/sireus/code/server"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/ghowland/sireus/code/webapp"
@@ -18,8 +20,16 @@ func main() {
 	// Configure the Global Server Singleton, where all the information will go
 	server.Configure()
 
+	// Run the Prometheus Exporter listener in the background
+	go exporter.RunExporterListener()
+
 	// Run the server in the background until we end the server
 	go server.RunForever()
+
+	// If we want to run the demo, run in the background
+	if data.SireusData.AppConfig.EnableDemo {
+		go demo.RunDemoForever()
+	}
 
 	engine := webapp.CreateHandlebarsEngine(data.SireusData.AppConfig)
 	web := webapp.CreateWebApp(engine)
