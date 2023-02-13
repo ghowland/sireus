@@ -39,7 +39,7 @@
                     <a href="{{format_query_server_web this poolItem.Query}}">{{poolItem.QueryServer}}</a>
                     {{/with_query_server}}
                 </th>
-                <th>{{poolItem.Query}}</th>
+                <th><a href="#" onclick="GetPlotMetricData('{{poolItem.InteractiveUUID}}.{{poolItem.QueryServer}}.{{poolItem.Query}}')">{{poolItem.Query}}</a></th>
                 <th>{{format_time_since_precise poolItem.TimeRequested}}</th>
                 <th>{{format_time_since_precise poolItem.TimeReceived}}</th>
                 <th>{{poolItem.IsValid}}</th>

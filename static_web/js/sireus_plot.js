@@ -5,6 +5,11 @@ function GetPlot(name, xPos)
     RPC('/api/plot', {'name': name, 'x': xPos}, SetupPlot);
 }
 
+function GetPlotMetricData(queryKey)
+{
+    RPC('/api/plot_metrics', {'query_key': queryKey}, SetupPlot);
+}
+
 function SetupPlot(data)
 {
     // alert('running Setup Plot: ' + JSON.stringify(data));

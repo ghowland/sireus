@@ -3,6 +3,7 @@ package extdata
 import (
 	"errors"
 	"fmt"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"time"
 )
@@ -31,11 +32,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery) (data.QueryResult, error) {
 	queryKey := GetQueryKey(session, query)
 
-	// Block until we can lock, for goroutine safety
-	site.QueryResultCache.QueryPoolSyncLock.Lock()
-	defer site.QueryResultCache.QueryPoolSyncLock.Unlock()
-
-	result, ok := site.QueryResultCache.PoolItems[queryKey]
+	result, ok := app.GetQueryResultByQueryKey(site, queryKey)
 	if !ok {
 		return data.QueryResult{}, errors.New(fmt.Sprintf("Could not find Query Result: Server: %s  Name: %s", query.QueryServer, query.Name))
 	}

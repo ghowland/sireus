@@ -5,6 +5,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
+	"log"
 	"strconv"
 )
 
@@ -36,6 +37,44 @@ func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string {
 		mapData["plot_selected_x"] = xPos
 		mapData["plot_selected_y"] = GetCurveValue(curveData, float64(xPos))
 	}
+
+	jsonOutput, _ := json.Marshal(mapData)
+	jsonString := string(jsonOutput)
+
+	//log.Println("Get API Plot Result: ", json_string)
+
+	return jsonString
+}
+
+func GetAPIPlotMetrics(c *fiber.Ctx) string {
+	input := util.ParseContextBody(c)
+	log.Println("Get API Plot Metrics: ", util.PrintJson(input))
+
+	queryKey := input["query_key"]
+
+	queryResult, ok := GetQueryResultByQueryKey(&data.SireusData.Site, queryKey)
+	if !ok {
+		return "{}"
+	}
+
+	xArray := []float64{0, 0}
+	yArray := []float64{0, 1}
+
+	//queryResult.Result.PrometheusResponse.Data.Result[0].Values
+
+	mapData := map[string]interface{}{
+		"title":  queryResult.Query,
+		"plot_x": xArray,
+		"plot_y": yArray,
+	}
+
+	//xPos, err := strconv.ParseFloat(input["x"], 32)
+	//util.Check(err)
+	//
+	//if xPos >= 0 {
+	//	mapData["plot_selected_x"] = xPos
+	//	mapData["plot_selected_y"] = GetCurveValue(curveData, float64(xPos))
+	//}
 
 	jsonOutput, _ := json.Marshal(mapData)
 	jsonString := string(jsonOutput)

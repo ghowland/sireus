@@ -28,6 +28,10 @@ func main() {
 		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
 	})
 
+	web.Post("/api/plot_metrics", func(c *fiber.Ctx) error {
+		return c.SendString(app.GetAPIPlotMetrics(c))
+	})
+
 	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
 		formatString, err := util.FileLoad("web/bot.hbs")
