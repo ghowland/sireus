@@ -71,6 +71,16 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 		session.QueryScrubTime = time.UnixMilli(int64(interactiveControl.QueryScrubTime))
 	}
 
+	// This is a Production session,
+	if interactiveControl.SessionUUID == 0 {
+		session.IgnoreCacheQueryMismatch = false
+		session.IgnoreCacheOverInterval = true
+	} else {
+		// Else, this is an Interactive session, so we don't ignore old queries.  We just want them to match time
+		session.IgnoreCacheOverInterval = false
+		session.IgnoreCacheQueryMismatch = true
+	}
+
 	return session
 }
 
@@ -82,7 +92,7 @@ func GetProductionInteractiveControl() data.InteractiveControl {
 		UseInteractiveSession:  false,
 		UseInteractiveOverride: false,
 		QueryStartTime:         float64(time.Now().UnixMilli()),
-		QueryDuration:          60 * 1000,
+		QueryDuration:          60 * 1000000000,
 		QueryScrubTime:         float64(time.Now().UnixMilli()),
 	}
 

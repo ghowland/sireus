@@ -262,7 +262,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 	query, err := app.GetQuery(session.BotGroups[botGroupIndex], session.BotGroups[botGroupIndex].BotExtractor.QueryName)
 	util.Check(err)
 
-	queryResult, err := GetCachedQueryResult(session, site, query, false)
+	queryResult, err := GetCachedQueryResult(session, site, query)
 
 	extractedBots := ExtractBotsFromPromData(queryResult.PrometheusResponse, "name")
 
@@ -304,7 +304,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 	// Loop over all Bot Group Queries
 	for _, query := range botGroup.Queries {
 		// Get the cached query result, even if it is expired
-		queryResult, err := GetCachedQueryResult(session, site, query, false)
+		queryResult, err := GetCachedQueryResult(session, site, query)
 		if util.CheckNoLog(err) {
 			continue // Couldn't get this query, skip
 		}

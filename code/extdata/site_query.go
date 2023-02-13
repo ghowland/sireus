@@ -28,7 +28,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 // GetCachedQueryResult returns a cached query result.  Web App requests should set errorOverInterval=false, which
 // is used by the background query system to test missing or expired query results as equivalent.
-func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error) {
+func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery) (data.QueryResult, error) {
 	queryKey := GetQueryKey(session, query)
 
 	// Block until we can lock, for goroutine safety
@@ -40,12 +40,16 @@ func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, que
 		return data.QueryResult{}, errors.New(fmt.Sprintf("Could not find Query Result: Server: %s  Name: %s", query.QueryServer, query.Name))
 	}
 
+	if session.IgnoreCacheQueryMismatch && (result.QueryStartTime != session.QueryStartTime || result.QueryDuration != session.QueryDuration) {
+		return data.QueryResult{}, errors.New(fmt.Sprintf("Does not match start and duration: Start: %v  Duration: %s", session.QueryStartTime, session.QueryDuration))
+	}
+
 	// Test if it is older than the Interval refresh, this
 	since := time.Now().Sub(result.TimeReceived)
 
 	// If we don't want to return values if they are over the Interval, then mark them
 	if since.Seconds() > time.Duration(query.Interval).Seconds() {
-		if errorOverInterval {
+		if session.IgnoreCacheOverInterval {
 			return data.QueryResult{}, errors.New(fmt.Sprintf("Query Result found, but over interval: Server: %s  Name: %s", query.QueryServer, query.Name))
 		} else {
 			//TODO(ghowland): For specific BotGroup queries, we have an additional check for Staleness, it doesnt use Interval above...  Deal with that later.

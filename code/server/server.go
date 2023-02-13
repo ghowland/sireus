@@ -101,7 +101,7 @@ func RunAllSiteQueries(session *data.InteractiveSession, site *data.Site) {
 			}
 
 			// If we don't have this query for any reason (first time, or is over the BotQuery.Interval
-			_, err := extdata.GetCachedQueryResult(session, site, query, true)
+			_, err := extdata.GetCachedQueryResult(session, site, query)
 			if util.CheckNoLog(err) {
 				go BackgroundQuery(session, site, query)
 			}
