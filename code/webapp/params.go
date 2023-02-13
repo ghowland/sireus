@@ -47,6 +47,9 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	input := util.ParseContextBody(c)
 
+	botGroupId := input["bot_group_id"]
+	botId := input["bot_id"]
+
 	// Get our Interactive Controls, if it exists
 	var interactiveControl data.InteractiveControl
 	interactiveControlJSON, ok := input["interactive_control"]
@@ -60,8 +63,10 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 		interactiveControl.SessionUUID = data.SessionUUID(uuid.New().ID())
 	}
 
-	botGroupId := input["bot_group_id"]
-	botId := input["bot_id"]
+	// Do we use the production data, or the Interactive Session's special data?
+	if !interactiveControl.UseInteractiveSession {
+		interactiveControl = app.GetProductionInteractiveControl()
+	}
 
 	// Get our interactive session
 	session := app.GetInteractiveSession(interactiveControl, site)
@@ -153,9 +158,6 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 	//TODO(ghowland): This will be updated to when we want it to be
 	renderTimeStr := util.FormatTimeLong(time.Now())
 
-	queryTime := time.UnixMilli(int64(interactiveControl.QueryScrubTime))
-	queryTimeStr := util.FormatTimeLong(queryTime)
-
 	inputDataStr := strings.Replace(util.PrintJsonData(inputData), "\"", "\\\"", -1)
 
 	interactiveControlStr := strings.Replace(util.PrintJsonData(interactiveControl), "\"", "\\\"", -1)
@@ -177,9 +179,16 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 		"bot":                 bot,
 		"bot_id":              bot.Name,
 		"render_time":         renderTimeStr,
-		"query_time":          queryTimeStr,
 		"input_data":          inputDataStr,
 		"interactive_control": interactiveControlStr,
+	}
+
+	// Do we have an interactive session?  Add "query_time" to show we are doing something special
+	if interactiveControl.SessionUUID != 0 {
+		queryTime := time.UnixMilli(int64(interactiveControl.QueryScrubTime))
+		queryTimeStr := util.FormatTimeLong(queryTime)
+
+		renderMap["query_time"] = queryTimeStr
 	}
 
 	return renderMap

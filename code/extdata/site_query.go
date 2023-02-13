@@ -92,6 +92,10 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string {
 
 // IsQueryLocked returned whether this Query currently being requested.  Don't want to request more than once at a time
 func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data.BotQuery) bool {
+	// Block until we can lock, for goroutine safety
+	site.QueryResultCache.QueryLocksSyncLock.Lock()
+	defer site.QueryResultCache.QueryLocksSyncLock.Unlock()
+
 	queryKey := GetQueryKey(session, query)
 
 	queryLockTime, ok := site.QueryResultCache.QueryLocks[queryKey]
