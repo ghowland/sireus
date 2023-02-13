@@ -34,7 +34,11 @@
 
             <tr>
                 <th>{{poolItem.InteractiveUUID}}</th>
-                <th>{{poolItem.QueryServer}}</th>
+                <th>
+                    {{#with_query_server poolItem.QueryServer site}}
+                    <a href="{{format_query_server_web this poolItem.Query}}">{{poolItem.QueryServer}}</a>
+                    {{/with_query_server}}
+                </th>
                 <th>{{poolItem.Query}}</th>
                 <th>{{format_time_since_precise poolItem.TimeRequested}}</th>
                 <th>{{format_time_since_precise poolItem.TimeReceived}}</th>

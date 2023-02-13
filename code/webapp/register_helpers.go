@@ -48,6 +48,14 @@ func RegisterHandlebarsHelpers_WithData() {
 		util.Check(err)
 		return raymond.SafeString(options.FnWith(botAction))
 	})
+
+	// With Query Server by Name from Site
+	raymond.RegisterHelper("with_query_server", func(queryServerName string, site data.Site, options *raymond.Options) raymond.SafeString {
+		queryServer, err := app.GetQueryServer(site, queryServerName)
+		util.Check(err)
+
+		return raymond.SafeString(options.FnWith(queryServer))
+	})
 }
 
 // Expanded test logic
@@ -128,6 +136,14 @@ func RegisterHandlebarsHelpers_FormatData() {
 		util.Check(err)
 		mapData := map[string]string{
 			"query": item.Query,
+		}
+		return util.HandlebarFormatText(queryServer.WebUrlFormat, mapData)
+	})
+
+	// Queries
+	raymond.RegisterHelper("format_query_server_web", func(queryServer data.QueryServer, query string) string {
+		mapData := map[string]string{
+			"query": query,
 		}
 		return util.HandlebarFormatText(queryServer.WebUrlFormat, mapData)
 	})
