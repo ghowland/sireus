@@ -30,6 +30,7 @@ import "github.com/ghowland/sireus/code/app"
 - [func GetCurveDataX(curveData CurveData) []float64](<#func-getcurvedatax>)
 - [func GetCurveValue(curveData CurveData, x float64) float64](<#func-getcurvevalue>)
 - [func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession](<#func-getinteractivesession>)
+- [func GetProductionInteractiveControl() data.InteractiveControl](<#func-getproductioninteractivecontrol>)
 - [func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)](<#func-getquery>)
 - [func GetQueryServer(site data.Site, name string) (data.QueryServer, error)](<#func-getqueryserver>)
 - [func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)](<#func-getvariable>)
@@ -41,7 +42,7 @@ import "github.com/ghowland/sireus/code/app"
   - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
 
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L119>)
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L138>)
 
 ```go
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
@@ -81,7 +82,7 @@ func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string
 
 Returns JSON data needed to create a Plotly graph for our Curves
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L89>)
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L108>)
 
 ```go
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
@@ -89,7 +90,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
 
 Get an Action from a BotGroup, by name
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L109>)
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L128>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
@@ -97,7 +98,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 
 Get an ActionConsideration from an Action, by name
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L130>)
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L149>)
 
 ```go
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
@@ -105,7 +106,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
 
 Get a Bot from the BotGroup
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L140>)
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L159>)
 
 ```go
 func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)
@@ -129,13 +130,21 @@ func GetCurveValue(curveData CurveData, x float64) float64
 
 Get the Y value, at an X position, in the curve
 
-## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L50>)
+## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L51>)
 
 ```go
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession
 ```
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L79>)
+## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L73>)
+
+```go
+func GetProductionInteractiveControl() data.InteractiveControl
+```
+
+GetProductionInteractiveControl returns a SessionUUID==0 data set for production data. TODO\(ghowland\): These should be altered by AppConfig
+
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L98>)
 
 ```go
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
@@ -143,7 +152,7 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
 
 Gets a query, scope per BotGroup
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L68>)
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L87>)
 
 ```go
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
@@ -151,7 +160,7 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
 
 Returns a QueryServer, scope is per Site
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L99>)
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L118>)
 
 ```go
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
@@ -398,7 +407,7 @@ type AppConfig struct {
 }
 ```
 
-## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L15-L28>)
+## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L18-L32>)
 
 Bots the core structure for this system.  They are ephemeral and build from the Bot Group data, and store minimal data.  Bots are expected to be added or removed at any time, and there is a Timeout for Stale, Invalid, and Removed bots.
 
@@ -420,10 +429,11 @@ type Bot struct {
     IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
     InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
     IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
+    AccessLock           sync.RWMutex             // Lock for accessing maps.  Keeping the locks local means less contention
 }
 ```
 
-## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L34-L42>)
+## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L38-L46>)
 
 This stores the Final Scores and related data for all Actions, so they can be compared to determin if any Action should be executed
 
@@ -680,7 +690,7 @@ func (d *Duration) UnmarshalJSON(b []byte) error
 
 Unmarshal JSON for our time.Duration wrapper
 
-## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L72-L80>)
+## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L76-L84>)
 
 InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 
@@ -696,7 +706,7 @@ type InteractiveControl struct {
 }
 ```
 
-## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L19-L27>)
+## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L23-L31>)
 
 An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
 
@@ -712,17 +722,18 @@ type InteractiveSession struct {
 }
 ```
 
-## type [InteractiveSessionPool](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L12-L14>)
+## type [InteractiveSessionPool](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L15-L18>)
 
 Pool to keep our all InteractiveSession data.  This is used for normal production data too, with the UUID==0
 
 ```go
 type InteractiveSessionPool struct {
-    Sessions map[SessionUUID]InteractiveSession // All our current InteractiveSession data, key on UUID, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+    Sessions   map[SessionUUID]InteractiveSession // All our current InteractiveSession data, key on UUID, for tracking users testing scoring or config changes through the web app.  Will store an addition set of BotQuery items per BotGroup overridden
+    AccessLock sync.RWMutex                       // Lock for safe goroutine access to Sesssions map
 }
 ```
 
-## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L32-L36>)
+## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L36-L40>)
 
 This tracks all the override changes relating to BotGroups or Bots for an InteractiveSession
 
@@ -734,7 +745,7 @@ type Override struct {
 }
 ```
 
-## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L50-L58>)
+## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L54-L62>)
 
 Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores.  For simplicity, when making an ActionCconsideration override, all values are always updated.  No reason to have sparse changes here
 
@@ -750,7 +761,7 @@ type OverrideActionConsideration struct {
 }
 ```
 
-## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L63-L67>)
+## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L67-L71>)
 
 Overrides to a Bot for an InteractiveSession
 
@@ -762,7 +773,7 @@ type OverrideBot struct {
 }
 ```
 
-## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L41-L45>)
+## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L45-L49>)
 
 Overrides to a BotGroup for an InteractiveSession
 
@@ -967,7 +978,7 @@ func (qst QueryServerType) String() string
 
 Format the QueryServerType for human readability
 
-## type [SessionUUID](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L7>)
+## type [SessionUUID](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L10>)
 
 Our session UUID.  UUID==0 is production data queried now.  UUID\!=0 is interactive session with modified query and result data.
 
@@ -989,7 +1000,7 @@ type SireusServerData struct {
 }
 ```
 
-## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L6-L15>)
+## type [Site](<https://github.com/ghowland/sireus/blob/main/code/data/site_data.go#L6-L16>)
 
 Top Level of the data structure.  Site silos all BotGroups and QueryServers, so that we can have multiple Sites which are using different data sets, and should not share any data with each other.
 
@@ -1003,6 +1014,7 @@ type Site struct {
     QueryResultCache        QueryResultPool        // Per Site, we cache all the BotQuery results here.  Per normal server operation, and per InteractiveSession
     InteractiveSessionCache InteractiveSessionPool // Per Site, we track web app InteractiveSession data to allow users to make changes and see how they alter the Action scoring.  Sites silo everything, so it would be an anti-feature to allow InteractiveSession data to cross Site boundarie
     LoadedBotGroups         []BotGroup             // These are just JSON loaded values to be cloned for the InteractiveSesssion.BotGroups, which contain Bots which perform the Action scoring in the active States
+    ProductionControl       InteractiveControl     // This is the config loaded production (UUID=0) version of InteractiveControl.  Storing it here means it doesn't have to keep being generated when needed.
 }
 ```
 
@@ -1016,7 +1028,7 @@ import "github.com/ghowland/sireus/code/extdata"
 
 - [func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-createformattedvariables>)
 - [func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
-- [func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
+- [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
 - [func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, errorOverInterval bool) (data.QueryResult, error)](<#func-getcachedqueryresult>)
 - [func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string](<#func-getquerykey>)
@@ -1035,7 +1047,7 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
 
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L43>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L40>)
 
 ```go
 func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1051,21 +1063,21 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L230>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L249>)
 
 ```go
-func GetBotEvalMapAllVariables(bot data.Bot) map[string]interface{}
+func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
 ```
 
-Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\)
+Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L215>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L233>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
 ```
 
-GetBotEvalMapOnlyQueries returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate\(\)
+Returns the map for doing the Evaluate against a Query to create our Scores.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
 ## func [GetCachedQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L29>)
 
@@ -1083,7 +1095,7 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L270>)
+## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L289>)
 
 ```go
 func InitializeStates(session *data.InteractiveSession, botGroupIndex int)
@@ -1129,7 +1141,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L66>)
+## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L63>)
 
 ```go
 func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1145,7 +1157,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L82>)
+## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L87>)
 
 ```go
 func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1153,7 +1165,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 
 For this BotGroup, update all the BotActionData with new ActionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L242>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L261>)
 
 ```go
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1161,7 +1173,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L282>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L301>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1169,7 +1181,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L166>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L178>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1229,7 +1241,7 @@ import "github.com/ghowland/sireus/code/server"
 - [func RunForever()](<#func-runforever>)
 
 
-## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L111>)
+## func [BackgroundQuery](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L109>)
 
 ```go
 func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query data.BotQuery)
@@ -1237,13 +1249,13 @@ func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query da
 
 Query in the background with a goroutine
 
-## func [Configure](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L19>)
+## func [Configure](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L18>)
 
 ```go
 func Configure()
 ```
 
-## func [GetServerBackgroundContext](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L39>)
+## func [GetServerBackgroundContext](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L38>)
 
 ```go
 func GetServerBackgroundContext() context.Context
@@ -1251,7 +1263,7 @@ func GetServerBackgroundContext() context.Context
 
 Get the global Server context, so that we can cancel everything in progress
 
-## func [LoadConfig](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L29>)
+## func [LoadConfig](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L28>)
 
 ```go
 func LoadConfig()
@@ -1259,7 +1271,7 @@ func LoadConfig()
 
 Load and reload config.  Will set ServerLock so this is safe to do
 
-## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L93>)
+## func [RunAllSiteQueries](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L91>)
 
 ```go
 func RunAllSiteQueries(session *data.InteractiveSession, site *data.Site)
@@ -1267,7 +1279,7 @@ func RunAllSiteQueries(session *data.InteractiveSession, site *data.Site)
 
 Requests all the Queries in all the BotGroups, if they are missing or past their freshness Interval. Requests are not cleared, so the data will stay available for the Web App, but after the BotGroup.BotTimeoutStale Actions are not available.
 
-## func [RunForever](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L63>)
+## func [RunForever](<https://github.com/ghowland/sireus/blob/main/code/server/server.go#L62>)
 
 ```go
 func RunForever()
@@ -1464,7 +1476,6 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine](<#func-createhandlebarsengine>)
 - [func CreateWebApp(engine *handlebars.Engine) *fiber.App](<#func-createwebapp>)
 - [func FormatInteractiveStartTime() string](<#func-formatinteractivestarttime>)
-- [func GetProductionInteractiveControl() data.InteractiveControl](<#func-getproductioninteractivecontrol>)
 - [func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map](<#func-getrendermapfromparams>)
 - [func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{}](<#func-getrendermapfromrpc>)
 - [func RegisterHandlebarsHelpers()](<#func-registerhandlebarshelpers>)
@@ -1475,13 +1486,13 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
 
 
-## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L154>)
+## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L155>)
 
 ```go
 func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}
 ```
 
-## func [BuildRenderMapFiber](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L105>)
+## func [BuildRenderMapFiber](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L106>)
 
 ```go
 func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map
@@ -1503,21 +1514,13 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App
 
 Create the Fiber web app, from the Handlebars engine
 
-## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L138>)
+## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L139>)
 
 ```go
 func FormatInteractiveStartTime() string
 ```
 
-## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L18>)
-
-```go
-func GetProductionInteractiveControl() data.InteractiveControl
-```
-
-GetProductionInteractiveControl returns a SessionUUID==0 data set for production data. TODO\(ghowland\): These should be altered by AppConfig
-
-## func [GetRenderMapFromParams](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L32>)
+## func [GetRenderMapFromParams](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L18>)
 
 ```go
 func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map
@@ -1525,7 +1528,7 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map
 
 GetRenderMapFromParams parses GET params passes in all the data for a given Handlebars page render, using Fiber
 
-## func [GetRenderMapFromRPC](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L63>)
+## func [GetRenderMapFromRPC](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L47>)
 
 ```go
 func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{}
