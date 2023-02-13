@@ -35,12 +35,12 @@
 
 </section>
 <script>
-    var inputData = JSON.parse("{{{ input_data }}}");
-
-    // Get the Session UUID from the server, it sets this, and this is how we ensure we keep getting the same Interactive data
-    var interactiveControlData = JSON.parse("{{{ interactive_control }}}");
-    interactiveControl['sessionUUID'] = interactiveControlData['sessionUUID']
-
-    inputData['interactive_control'] = JSON.stringify(interactiveControl);
-    setTimeout(function() { RPC('/api/web/bot', inputData) }, 1500)
+    // Configure the Reload Bot RPC, using our input data we go from our response.  Also reuses SessionUUID from local storage, if available
+    $(function() {
+        var inputData = JSON.parse("{{{ input_data }}}");
+        var interactiveControlData = JSON.parse("{{{ interactive_control }}}");
+        ProcessInteractiveControlData(interactiveControlData)
+        inputData['interactive_control'] = JSON.stringify(interactiveControl);
+        setTimeout(function() { RPC('/api/web/bot', inputData) }, 1500)
+    });
 </script>

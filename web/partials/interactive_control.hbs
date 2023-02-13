@@ -1,3 +1,15 @@
+<script>
+    // Global interactive control data, gets passed to RPC, and updated each time
+    var interactiveControl = {
+        sessionUUID: undefined,
+        useInteractiveSession: true,
+        useInteractiveOverride: true,
+        playFromQueryTime: false,
+        queryStartTime: undefined,
+        queryDuration: 60,
+        queryScrubTime: undefined,
+    };
+</script>
 <div id="interactive_control" class="is-hidden">
     <div class="content">
         <div class="box has-background-info has-text-white" id="interactive_control_border">
@@ -93,17 +105,6 @@
     </div>
 </div>
 <script>
-    // Global interactive control data, gets passed to RPC, and updated each time
-    var interactiveControl = {
-        useInteractiveSession: true,
-        useInteractiveOverride: true,
-        playFromQueryTime: false,
-        queryStartTime: undefined,
-        queryDuration: 60,
-        queryScrubTime: undefined,
-    };
-
-
     function UpdateInteractiveBackgroundColor() {
         if (interactiveControl['useInteractiveSession']) {
             $('#interactive_control_border').addClass('has-background-info');
@@ -233,5 +234,8 @@
         $('#'+outputElementId).html(output);
     }
 
-    SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber');
+    // Do the initial time control setup, so we can see everything and the vars are populated
+    $(function() {
+        SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber');
+    });
 </script>

@@ -1,4 +1,5 @@
 <script>
+    // Configure any .dropdown select elements
     $(function () {
         // We can tell the DOM loaded and Query has initialized
         $('html').addClass ( 'dom-loaded' );
@@ -23,6 +24,7 @@
 </script>
 
 <script>
+    // Configure Draggable items
     const position = { x: 0, y: 0 }
 
     interact('.draggon').draggable({onmove: dragMoveListener, ignoreFrom: '.no-draggon'})
@@ -42,4 +44,37 @@
         target.setAttribute('data-y', y);
     }
 
+</script>
+
+<script>
+    function objToString (obj) {
+        let str = '';
+        for (const [p, val] of Object.entries(obj)) {
+            str += `${p}::${val}\n`;
+        }
+        return str;
+    }
+
+
+    // Saves or Loads the Session UUID from local storage
+    function ProcessInteractiveControlData(interactiveControlData) {
+        // Get the Session UUID from the server, it sets this, and this is how we ensure we keep getting the same Interactive data
+        interactiveControl['sessionUUID'] = interactiveControlData['sessionUUID']
+
+        // if we didn't get a sessionUUID, so see if we already have one and use that instead
+        if (interactiveControl['sessionUUID'] === 0 || interactiveControl['sessionUUID'] === undefined) {
+            var interactiveControlJSON = localStorage.getItem('interactiveControl');
+            try {
+                var interactiveControlLocal = JSON.parse(interactiveControlJSON)
+                if (interactiveControlLocal['sessionUUID'] !== undefined) {
+                    interactiveControl['sessionUUID'] = interactiveControlLocal['sessionUUID']
+                }
+            } catch(e) {
+                alert("Couldn't parse Local Storage JSON, next page refresh should fix it: " + e);
+            }
+        }
+
+        // Always save it.  So we can use it everywhere.
+        localStorage.setItem('interactiveControl', JSON.stringify(interactiveControl));
+    }
 </script>
