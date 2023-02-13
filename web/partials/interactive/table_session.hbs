@@ -1,0 +1,41 @@
+
+<div class="block">
+    <table class="table">
+        <thead>
+        <tr>
+            <th><span class="has-tooltip-arrow" data-tooltip="Interactive Sesssion UUID">UUID</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Last Time Requested">Last</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Start Time">Start</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Duration After Start">Duration</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Query Scrubbed Time">Scrubbed</span></th>
+        </tr>
+        </thead>
+        {{#if_lock_timer_length LockTimers 10}}
+            <tfoot>
+            <tr>
+                <th><span class="has-tooltip-arrow" data-tooltip="Interactive Sesssion UUID">UUID</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Last Time Requested">Last</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Start Time">Start</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Duration After Start">Duration</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Query Scrubbed Time">Scrubbed</span></th>
+            </tr>
+            </tfoot>
+        {{/if_lock_timer_length}}
+        <tbody>
+        </tbody>
+
+        {{#each site.InteractiveSessionCache.Sessions as |session sessionUUID|}} <!-- Query:Start -->
+
+            <tr>
+                <th>{{session.UUID}}</th>
+                <th>{{format_time session.TimeRequested}}</th>
+                <th>{{format_time session.QueryStartTime}}</th>
+                <th>{{format_duration session.QueryDuration}}</th>
+                <th>{{format_time session.QueryScrubTime}}</th>
+            </tr>
+
+
+        {{/each}} <!-- Query:End -->
+
+    </table>
+</div>
