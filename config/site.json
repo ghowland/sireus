@@ -1,8 +1,10 @@
 {
   "name": "Sireus Prototype",
-  "info": "A demonstration of how to use, while in development.",
+  "info": "A demonstration of how to use: Edge -> App -> Database",
   "bot_group_paths": [
-    "config/bot_groups/web_app.json"
+    "config/bot_groups/demo_edge.json",
+    "config/bot_groups/demo_app.json",
+    "config/bot_groups/demo_database.json"
   ],
   "query_servers": [
     {

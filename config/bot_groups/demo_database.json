@@ -1,6 +1,6 @@
 {
-  "name": "Web App",
-  "info": "Example Web Application",
+  "name": "Database",
+  "info": "Example Database",
   "states": [
     {
       "name": "Operation",

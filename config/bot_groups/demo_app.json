@@ -1,0 +1,443 @@
+{
+  "name": "App",
+  "info": "Example Application",
+  "states": [
+    {
+      "name": "Operation",
+      "info": "Basic operational states, to group Actions",
+      "labels": ["Normal", "Problem", "Correction", "Resolved", "Escalating", "EscalatingWait"]
+    },
+    {
+      "name": "Traffic",
+      "info": "What does our traffic situation look like?",
+      "labels": ["Normal", "High", "Low", "None"]
+    },
+    {
+      "name": "Attack Risk",
+      "info": "What is the likelihood we are under attack now?",
+      "labels": ["None", "Low", "High", "Critical"]
+    }
+  ],
+  "lock_timers": [
+    {
+      "type": 1,
+      "name": "Single Bot Lock",
+      "info": "Per bot lock, so that each bot can operate independently.  Use for Node or Agent level control."
+    },
+    {
+      "type": 0,
+      "name": "Full Bot Group Lock",
+      "info": "Lock for controlling the entire Bot Group.  Use for Service or Platform level control."
+    }
+  ],
+  "bot_timeout_stale": 60,
+  "bot_timeout_remove": 120,
+  "bot_remove_store_duration": "24h",
+  "refuse_bot_resumption": false,
+  "action_threshold": 0.5,
+  "journal_rollup_states": ["Operation.Problem", "Operation.Resolved", "Operation.EscalatingWait"],
+  "journal_rollup_duration": "30m",
+  "bot_extractor": {
+    "query_name": "Window Services",
+    "key": "node"
+  },
+  "queries": [
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Window Services",
+      "info": "Using Windows Services to test things out",
+      "query": "windows_service_state",
+      "interval": "7s"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Service Status",
+      "info": "Getting information from a different query",
+      "query": "windows_service_status",
+      "interval": "7s"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Disk Free Bytes",
+      "info": "Getting free bytes on the disks",
+      "query": "windows_logical_disk_free_bytes",
+      "interval": "7s"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Disk Total Bytes",
+      "info": "Getting free bytes on the disks",
+      "query": "windows_logical_disk_size_bytes",
+      "interval": "7s"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "CPU Usage",
+      "info": "Getting the CPU usage for the system",
+      "query": "100 - (avg by (instance) (irate(windows_cpu_time_total{mode=\"idle\"}[1m])) * 100)",
+      "interval": "7s"
+    },
+    {
+      "query_server": "prometheus_primary",
+      "query_type": 0,
+      "name": "Network Usage",
+      "info": "Getting the Network usage for the system",
+      "query": "irate(windows_net_bytes_total[30s])",
+      "interval": "7s"
+    }
+  ],
+  "variables": [
+    {
+      "type": 0,
+      "name": "service_running",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "running",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "service_stopped",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "stopped",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "service_unknown",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "unknown",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "service_paused",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Window Services",
+      "query_key": "state",
+      "query_key_value": "paused",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_ok",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "ok",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_service",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "service",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 0,
+      "name": "status_error",
+      "format": 1,
+      "bot_key": "name",
+      "query_name": "Service Status",
+      "query_key": "status",
+      "query_key_value": "error",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+        "type": 1,
+      "name": "disk_free_space_C",
+      "format": 2,
+      "bot_key": "",
+      "query_name": "Disk Free Bytes",
+      "query_key": "volume",
+      "query_key_value": "C:",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_free_space_D",
+      "format": 2,
+      "bot_key": "",
+      "query_name": "Disk Free Bytes",
+      "query_key": "volume",
+      "query_key_value": "D:",
+      "evaluate": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_total_space_C",
+      "format": 2,
+      "bot_key": "",
+      "query_name": "Disk Total Bytes",
+      "query_key": "volume",
+      "query_key_value": "C:",
+      "evaluate": "",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_total_space_D",
+      "format": 2,
+      "bot_key": "",
+      "query_name": "Disk Total Bytes",
+      "query_key": "volume",
+      "query_key_value": "D:",
+      "evaluate": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "cpu_usage",
+      "format": 2,
+      "bot_key": "6",
+      "query_name": "CPU Usage",
+      "query_key": "",
+      "query_key_value": "",
+      "evaluate": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "network_usage_{{nic}}",
+      "format": 3,
+      "bot_key": "",
+      "query_name": "Network Usage",
+      "query_key": "",
+      "query_key_value": "",
+      "evaluate": "",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": false
+    },
+    {
+      "type": 1,
+      "name": "disk_used_percent_C",
+      "format": 6,
+      "bot_key": "",
+      "query_name": "",
+      "query_key": "",
+      "query_key_value": "",
+      "evaluate": "disk_free_space_C / disk_total_space_C",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": true
+    },
+    {
+      "type": 1,
+      "name": "disk_used_percent_D",
+      "format": 6,
+      "bot_key": "",
+      "query_name": "",
+      "query_key": "",
+      "query_key_value": "",
+      "evaluate": "disk_free_space_D / disk_total_space_D",
+      "bool_range_start": 0,
+      "bool_range_end": 0,
+      "bool_invert": false,
+      "export": true
+    }
+  ],
+  "actions": [
+    {
+      "is_launched": true,
+      "name": "Service Stopped, Has Storage",
+      "info": "Try to fix this thing by doing something",
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Normal"
+      ],
+      "considerations": [
+        {
+          "name": "Stopped Properly",
+          "weight": 7.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 100,
+          "evaluate": "service_stopped * status_ok"
+        },
+        {
+          "name": "More than 10% Disk",
+          "weight": 2.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 1,
+          "evaluate": "disk_used_percent_D - 0.1"
+        }
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo Hello, World",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ],
+        "journal_template": "The state for Action Z occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
+      }
+    },
+    {
+      "name": "Service Stopped, Out of Space",
+      "info": "Try to fix this thing by doing something",
+      "is_launched": true,
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0,
+      "weight_threshold": 0.5,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Normal"
+      ],
+      "considerations": [
+        {
+          "name": "Stopped Properly",
+          "weight": 7.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 100,
+          "evaluate": "service_stopped * status_ok"
+        },
+        {
+          "name": "Less than 10% Disk",
+          "weight": 2.0,
+          "curve": "inc_linear",
+          "range_start": 0.1,
+          "range_end": 1,
+          "evaluate": "disk_used_percent_D - 0.1"
+        }
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo This fixes everything",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ]
+      },
+      "journal_template": "The state for Action Y occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
+    },
+    {
+      "name": "Found Service Stopped",
+      "info": "The problem has been detected.",
+      "is_launched": true,
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0,
+      "weight_threshold": 0.5,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Problem"
+      ],
+      "considerations": [
+        {
+          "name": "Stopped Properly",
+          "weight": 7.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 100,
+          "evaluate": "service_stopped * status_ok"
+        },
+        {
+          "name": "Less than 10% Disk",
+          "weight": 2.0,
+          "curve": "inc_linear",
+          "range_start": 0.1,
+          "range_end": 1,
+          "evaluate": "disk_used_percent_D - 0.1"
+        }
+      ],
+      "command": {
+        "type": 0,
+        "content": "echo This fixes everything",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "30s",
+        "host_exec_key": "laptop.ghowland",
+        "set_bot_states": [
+          "Operation.Problem"
+        ]
+      },
+      "journal_template": "The state for Action Y occurred because between Service Stopped ({{service_stopped}}) and the Status OK ({{status_ok}}), things turned out this way."
+    }
+  ]
+}
