@@ -68,8 +68,20 @@ func GetAPIPlotMetrics(c *fiber.Ctx) string {
 		return "{}"
 	}
 
-	xArray := []float64{0, 0}
-	yArray := []float64{0, 1}
+	xArray := []float64{}
+	yArray := []float64{}
+
+	// Loop over all the values
+	for x := 0; x < len(queryResult.Result.PrometheusResponse.Data.Result[0].Values); x++ {
+		//axis := queryResult.Result.PrometheusResponse.Data.Result[0].Values[x][0]
+		value := queryResult.Result.PrometheusResponse.Data.Result[0].Values[x][1]
+
+		//xArray = append(xArray, axis.(float64))
+		xArray = append(xArray, float64(x))
+		yFloat, err := strconv.ParseFloat(value.(string), 64)
+		util.Check(err)
+		yArray = append(yArray, yFloat)
+	}
 
 	//queryResult.Result.PrometheusResponse.Data.Result[0].Values
 
