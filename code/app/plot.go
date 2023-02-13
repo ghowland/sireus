@@ -10,7 +10,7 @@ import (
 )
 
 // Returns JSON data needed to create a Plotly graph for our Curves
-func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string {
+func GetAPIPlotData(c *fiber.Ctx) string {
 	input := util.ParseContextBody(c)
 	//log.Println("Get API Plot Data: ", input)
 
@@ -22,7 +22,7 @@ func GetAPIPlotData(appConfig data.AppConfig, c *fiber.Ctx) string {
 		return string(failureJson)
 	}
 
-	curveData := LoadCurveData(appConfig, input["name"])
+	curveData := LoadCurveData(data.SireusData.AppConfig, input["name"])
 
 	mapData := map[string]interface{}{
 		"title":  curveData.Name,

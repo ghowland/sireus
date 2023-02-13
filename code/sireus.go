@@ -25,7 +25,7 @@ func main() {
 	web := webapp.CreateWebApp(engine)
 
 	web.Post("/api/plot", func(c *fiber.Ctx) error {
-		return c.SendString(app.GetAPIPlotData(data.SireusData.AppConfig, c))
+		return c.SendString(app.GetAPIPlotData(c))
 	})
 
 	web.Post("/api/plot_metrics", func(c *fiber.Ctx) error {
