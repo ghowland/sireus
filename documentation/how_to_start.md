@@ -1,6 +1,6 @@
-# How to Start Configuring Sireus
+# How to Start Configuring Sireus in 10 Steps
 
-## Determine Your Bot Groups
+## 1. Determine Your Bot Groups
 
 Map your Bot Groups to your services.  Anything you monitor already as a kind of specific target, like machines, pods, routers, software instances will all make good Bot Groups.  
 
@@ -10,13 +10,13 @@ You can also use something like AWS or Google Cloud as the Bot Group, and differ
 
 Usually there are many Bots in a Bot Group, but sometimes you may be dealing with a service that is dealt with as a whole.  In this case you could just have 1 Bot in the Bot Group deal with the entire service's state.  This might be useful for vendors who have an API end point that you only interface with as a single entity.
 
-## For Every Bot Group, Pick a Bot Key to Extract Bots
+## 2. For Every Bot Group, Pick a Bot Key to Extract Bots
 
 Bots are made from a single Bot Group query, using a "Bot Key", which is just a Metric Name (ex: "host") which will allow the ephemeral creation of any number of Bots in that Bot Group.
 
 Ensure all your desired metrics have this Boy Key value to match with the node.  The Metric Name can change per query, so if it is non-uniform that is OK, as long as the Metric Name values are uniform to match with the bot.  Ex: "host=instance1059"
 
-## For Each Bot Group, Create a Troubleshooting State Pipeline
+## 3. For Each Bot Group, Create a Troubleshooting State Pipeline
 
 For example, create a state named "Operation" and give it the following pipeline:
 
@@ -38,7 +38,7 @@ Here we run the entire pipeline directly, not solving the issue, alerting on-cal
 
 In the EscalateWait it makes sense to have a "timeout" style action, where if too long has passed (maybe 5-10 minutes), the state pipeline will reset, and go back to Normal.  This allows continued state tracking and potential problem solving.   Maybe the problem resolved itself, or maybe it will work the second time or you get different actions triggering because of the way you set up your action evaluation rules.
 
-## Create Additional State Pipelines to Describe your Bots
+## 4. Create Additional State Pipelines to Describe your Bots
 
 Image a web server with the following state pipeline for "Traffic":
 
@@ -62,19 +62,19 @@ These each have a different pattern to them, don't they?  And different causes m
 
 This transition is allowed because "None" comes last.  So dont make a flow like: "Normal -> None -> Low -> High", because the only way to get from High to None is to go back to Normal.  This is a key design feature, and not a flaw.  It will encourage certain thinking about how the states change to get to a resolution, and then re-test from scratch again.
 
-## Add More Queries to your Bot Group
+## 5. Add More Queries to your Bot Group
 
 Every Bot in a Bot Group gets all their data from Queries in the Bot Group.  So add all the queries you need.  It's best to use queries you already use in other systems, like Graphana, because you are familiar with them, and can just paste them into Sireus.  It's better to experiment with queries in dedicated query inspection software then once you have them worked out, bring them here as Sireus is not meant to be good at query editing or viewing.
 
 Only bring queries in when you have variables you want to extract from the queries.  You can extract more than 1 variable per query, using the metrics matching, but remember to keep the Bot Key in one of the Metric Names so that you can match the query to all the Bots in the Bot Group.
 
-## Add an Action to Cover Every Troubelshooting State
+## 6. Add an Action to Cover Every Troubelshooting State
 
 Actions are only evalauted if all their Required States are currently active.  So you need to have at least 1 Action for every state in your troubleshooting pipeline, which will move the pipeline forward.
 
 You will usually want more than 1 action, so that you can differentiate different kinds of situations inside that state.
 
-## Add an Action to Cover Non-Troubleshooting State
+## 7. Add an Action to Cover Non-Troubleshooting State
 
 For all the non-troubleshooting state pipelines, like the "Traffic" example above, you also want Actions to adjust their states.  Always remember you will either need to advance the state, or reset the state.  You can also auto-advance the state, where you don't need to specify the state name, it will just go to the next state.  
 
@@ -84,7 +84,7 @@ Auto-advancing state pipelines is useful for a state like, "Corrections":
 
 Here we can track how many corrections we have performed so far, defaulting to "Zero", and then auto-advance it into the "Corrections.Escalate" state, because we tried 2 things before.
 
-## Make Boolean Action Considerations for all your Actions
+## 8. Make Boolean Action Considerations for all your Actions
 
 All Actions could have at least 1 Action Consideration that can be 0 or not-0.  If it's not 0, it will get a score, and as long as that score is above the minimum threshold, it will fire, allowing you to enter different states.
 
@@ -98,7 +98,7 @@ If the service is up (service_up=1) and there is no traffic (service_has_traffic
 
 In this case, if you want the action to fire, then use the "DecBoolean" instead of "IncBoolean".  "DecBoolean" will be active on 0 value.  "IncBoolean" will be active on 1 value.  So you can flip the values using the Inc (Increasing) or Dec (Decreasing) curves.
 
-## Start with No Commands, Only Exporting Metrics
+## 9. Start with No Commands, Only Exporting Metrics
 
 In the beginning, it is best to just export your states and action scores to your metric system, so you can see how your configuration works over time.  Don't rush to set up a command to run until you have validated how your actions trigger with your current setup.
 
@@ -106,7 +106,7 @@ Use the interactive mode to go back in time and look at different data sets, to 
 
 If you can match up your scoring with past data accurately, you give yourself the best opportunity to match future data as well.
 
-## Once Confidence in Action Score Exists, Add Commands
+## 10. Once Confidence in Action Score Exists, Add Commands
 
 Start with adding alerting and escalation commands, because these bring a human to check on things.  This is the safest first change.  At worst, you increase your noise, and then can tune your action scores.
 
@@ -114,4 +114,3 @@ Next move to idempotent potential fixes, which should not break anything.
 
 Finally, once you have good confidence add targeted fixes, which can try to fix specific problems.
 
- 
