@@ -34,6 +34,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 	util.Check(err)
 
 	// Set the time, so we know when we got it
+	jsonResponse.RequestURL = requestUrl
 	jsonResponse.RequestTime = queryStartTime
 	jsonResponse.ResponseTime = util.GetTimeNow()
 

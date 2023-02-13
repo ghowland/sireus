@@ -5,7 +5,6 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
-	"log"
 	"strconv"
 )
 
@@ -59,7 +58,7 @@ func GetRawMetricsJSON(c *fiber.Ctx) string {
 
 func GetAPIPlotMetrics(c *fiber.Ctx) string {
 	input := util.ParseContextBody(c)
-	log.Println("Get API Plot Metrics: ", util.PrintJson(input))
+	//log.Println("Get API Plot Metrics: ", util.PrintJson(input))
 
 	queryKey := input["query_key"]
 
