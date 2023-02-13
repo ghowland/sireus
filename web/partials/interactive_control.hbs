@@ -2,7 +2,7 @@
     // Global interactive control data, gets passed to RPC, and updated each time
     var interactiveControl = {
         sessionUUID: undefined,
-        useInteractiveSession: true,
+        useInteractiveSession: false,
         useInteractiveOverride: true,
         playFromQueryTime: false,
         queryStartTime: undefined,
@@ -34,7 +34,7 @@
                     </div>
                     <div class="column">
                         <div class="field">
-                            <input id="interUseInteractive" type="checkbox" name="interUseInteractive" class="switch is-outlined is-info" checked="checked" onchange="ToggleCheckboxData(this, 'useInteractiveSession'); UpdateInteractiveBackgroundColor();">
+                            <input id="interUseInteractive" type="checkbox" name="interUseInteractive" class="switch is-outlined is-info" onchange="ToggleCheckboxData(this, 'useInteractiveSession'); UpdateInteractiveBackgroundColor();">
                             <label for="interUseInteractive">Use Interactive Session</label>
                         </div>
                         <div class="field">
@@ -107,9 +107,11 @@
 <script>
     function UpdateInteractiveBackgroundColor() {
         if (interactiveControl['useInteractiveSession']) {
+            $('#body_container').addClass('has-background-warning');
             $('#interactive_control_border').addClass('has-background-info');
             $('#interactive_control_border').removeClass('has-background-grey-light');
         } else {
+            $('#body_container').removeClass('has-background-warning');
             $('#interactive_control_border').removeClass('has-background-info');
             $('#interactive_control_border').addClass('has-background-grey-light');
         }
@@ -236,6 +238,7 @@
 
     // Do the initial time control setup, so we can see everything and the vars are populated
     $(function() {
+        UpdateInteractiveBackgroundColor();
         SetTimeControl('time_control_slider_scrubber', 'queryScrubTime', 'time_control_scrubber');
     });
 </script>
