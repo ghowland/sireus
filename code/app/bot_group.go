@@ -52,26 +52,24 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 	site.InteractiveSessionCache.AccessLock.Lock()
 	defer site.InteractiveSessionCache.AccessLock.Unlock()
 
+	// Get an existing session for this UUID
 	session, ok := site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID]
 	if !ok {
+		// Couldn't find it, so create one
 		session = data.InteractiveSession{
-			UUID:           interactiveControl.SessionUUID,
-			TimeRequested:  time.Now(),
-			QueryStartTime: time.UnixMilli(int64(interactiveControl.QueryStartTime)),
-			QueryDuration:  data.Duration(interactiveControl.QueryDuration),
-			QueryScrubTime: time.UnixMilli(int64(interactiveControl.QueryScrubTime)),
-			BotGroups:      site.LoadedBotGroups,
+			UUID:      interactiveControl.SessionUUID,
+			BotGroups: site.LoadedBotGroups,
 		}
 		site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
-	} else {
-		// Update the existing values
-		session.TimeRequested = time.Now()
-		session.QueryStartTime = time.UnixMilli(int64(interactiveControl.QueryStartTime))
-		session.QueryDuration = data.Duration(interactiveControl.QueryDuration)
-		session.QueryScrubTime = time.UnixMilli(int64(interactiveControl.QueryScrubTime))
 	}
 
-	// This is a Production session,
+	// Always update these values
+	session.TimeRequested = time.Now()
+	session.QueryStartTime = time.UnixMilli(int64(interactiveControl.QueryStartTime))
+	session.QueryDuration = data.Duration(interactiveControl.QueryDuration)
+	session.QueryScrubTime = time.UnixMilli(int64(interactiveControl.QueryScrubTime))
+
+	// If this is a Production session, we invalidate cache on interval and dont worry about query mismatch
 	if interactiveControl.SessionUUID == 0 {
 		session.IgnoreCacheQueryMismatch = false
 		session.IgnoreCacheOverInterval = true
@@ -80,6 +78,9 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 		session.IgnoreCacheOverInterval = false
 		session.IgnoreCacheQueryMismatch = true
 	}
+
+	// We modified the session, put it back into the session map
+	site.InteractiveSessionCache.Sessions[interactiveControl.SessionUUID] = session
 
 	return session
 }
