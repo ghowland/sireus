@@ -290,6 +290,9 @@ func InitializeStates(session *data.InteractiveSession, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
+		// Clear the current states, or they grow out of control
+		session.BotGroups[botGroupIndex].Bots[botIndex].StateValues = []string{}
+
 		for _, state := range botGroup.States {
 			key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
 			session.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(session.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
