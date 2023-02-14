@@ -1,8 +1,10 @@
 package demo
 
 import (
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
+	"time"
 )
 
 type (
@@ -50,6 +52,9 @@ var (
 
 	// Current Queue Length, this gets exported to Prometheus as databaseWaiting
 	DatabaseRequestQueueLength int = 0
+
+	// Last time the demo database was changed by API
+	DatabaseChangeLastTime time.Time
 
 	// Current Database State
 	CurrentDatabaseState DatabaseState
@@ -122,8 +127,25 @@ func AddDatabaseRequests(requests int) {
 	DatabaseRequestQueueLength += requests
 }
 
+// Fix the Degraded Storage
 func FixStorageDegraded() {
 	if CurrentDatabaseState == DatabaseStorageDegraded {
 		CurrentDatabaseState = DatabaseNormal
 	}
+}
+
+// Break: Set Degraded Storage state
+func BreakStorageDegraded() string {
+	output := "Ignored, incorrect state"
+
+	// Test if we are getting requests too fast, or we can process them now
+	durationSinceLastChange := time.Now().Sub(DatabaseChangeLastTime) - time.Duration(15)
+	if durationSinceLastChange < 0 {
+		output = fmt.Sprintf("Wait: Too many requests: %0.1f", durationSinceLastChange.Seconds())
+	} else if CurrentDatabaseState == DatabaseNormal {
+		CurrentDatabaseState = DatabaseStorageDegraded
+		output = "Success: Degraded Demo Database Storage"
+	}
+
+	return output
 }

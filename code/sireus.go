@@ -27,13 +27,13 @@ func main() {
 	// Run the server in the background until we end the server
 	go server.RunForever()
 
-	// If we want to run the demo, run in the background
-	if data.SireusData.AppConfig.EnableDemo {
-		go demo.RunDemoForever()
-	}
-
 	engine := webapp.CreateHandlebarsEngine(data.SireusData.AppConfig)
 	web := webapp.CreateWebApp(engine)
+
+	// If we want to run the demo, run in the background
+	if data.SireusData.AppConfig.EnableDemo {
+		go demo.RunDemoForever(web)
+	}
 
 	// API Calls
 	web.Post("/api/plot", func(c *fiber.Ctx) error {

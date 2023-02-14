@@ -1,9 +1,11 @@
 package demo
 
 import (
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"math/rand"
+	"time"
 )
 
 type (
@@ -19,6 +21,7 @@ const (
 )
 
 var (
+	// Demo only data, simulation of Internet requests.  Wouldn't normally be in edge data, but putting it here for demo
 	edgeRequests = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "demo_edge_requests",
 		Help: "The total number of requests sent on the Internet to this service.  This is demo info, not simulation.",
@@ -27,7 +30,7 @@ var (
 		},
 	})
 
-	// Circuit 1: SFO-LAS-27
+	// Circuit 1: SFO-LAS-27: Octets In
 	edgeDataIn1 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "demo_edge_if_in_octets",
 		Help: "The total number of bytes received",
@@ -36,6 +39,7 @@ var (
 		},
 	})
 
+	// Circuit 1: SFO-LAS-27: Octets Out
 	edgeDataOut1 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "demo_edge_if_out_octets",
 		Help: "The total number of bytes sent",
@@ -44,6 +48,7 @@ var (
 		},
 	})
 
+	// Circuit 1: SFO-LAS-27: Link State
 	edgeLinkState1 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "demo_edge_if_link_state",
 		Help: "The link state of this connection",
@@ -52,7 +57,7 @@ var (
 		},
 	})
 
-	// Circuit 2: SFO-LAS-27
+	// Circuit 2: SFO-LAS-27: Octets In
 	edgeDataIn2 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "demo_edge_if_in_octets",
 		Help: "The total number of bytes received",
@@ -61,6 +66,7 @@ var (
 		},
 	})
 
+	// Circuit 2: SFO-LAS-27: Octets Out
 	edgeDataOut2 = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "demo_edge_if_out_octets",
 		Help: "The total number of bytes sent",
@@ -69,6 +75,7 @@ var (
 		},
 	})
 
+	// Circuit 2: SFO-LAS-27: Link State
 	edgeLinkState2 = promauto.NewGauge(prometheus.GaugeOpts{
 		Name: "demo_edge_if_link_state",
 		Help: "The link state of this connection",
@@ -79,13 +86,21 @@ var (
 )
 
 var (
+	// Current state of the Demo Edge
 	CurrentEdgeState EdgeState
 
-	NormalRequestBaseIn  int = 100
+	// Octets per request In, base for randomization
+	NormalRequestBaseIn int = 100
+	// Octets per request Out, base for randomization
 	NormalRequestBaseOut int = 100 * 7
 
-	NormalRequestRandomIn  int = 250
+	// Octets per request In, random range
+	NormalRequestRandomIn int = 250
+	// Octets per request Out, random range
 	NormalRequestRandomOut int = 250 * 5
+
+	// Last time the demo edge was changed by API
+	EdgeChangeLastTime time.Time
 
 	// Demo Control: How many requests per second are coming into the system?
 	CurrentRequestsPerSecond float64 = 800
@@ -175,4 +190,42 @@ func FixCircuit2() {
 	} else if CurrentEdgeState == EdgeDownCircuitAll {
 		CurrentEdgeState = EdgeDownCircuit1
 	}
+}
+
+// Break Circuit 1, setting it to the down state
+func BreakCircuit1() string {
+	output := "Ignored, incorrect state"
+
+	// Test if we are getting requests too fast, or we can process them now
+	durationSinceLastChange := time.Now().Sub(EdgeChangeLastTime) - time.Duration(15)
+	if durationSinceLastChange < 0 {
+		output = fmt.Sprintf("Wait: Too many requests: %0.1f", durationSinceLastChange.Seconds())
+	} else if CurrentEdgeState == EdgeDownCircuit2 {
+		CurrentEdgeState = EdgeDownCircuitAll
+		output = "Circuit 1 has gone down"
+	} else if CurrentEdgeState != EdgeDownCircuitAll {
+		CurrentEdgeState = EdgeDownCircuit1
+		output = "Circuit 1 has gone down"
+	}
+
+	return output
+}
+
+// Break Circuit 2, setting it to the down state
+func BreakCircuit2() string {
+	output := "Ignored, incorrect state"
+
+	// Test if we are getting requests too fast, or we can process them now
+	durationSinceLastChange := time.Now().Sub(EdgeChangeLastTime) - time.Duration(15)
+	if durationSinceLastChange < 0 {
+		output = fmt.Sprintf("Wait: Too many requests: %0.1f", durationSinceLastChange.Seconds())
+	} else if CurrentEdgeState == EdgeDownCircuit1 {
+		CurrentEdgeState = EdgeDownCircuitAll
+		output = "Circuit 2 has gone down"
+	} else if CurrentEdgeState != EdgeDownCircuitAll {
+		CurrentEdgeState = EdgeDownCircuit2
+		output = "Circuit 2 has gone down"
+	}
+
+	return output
 }

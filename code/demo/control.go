@@ -2,14 +2,18 @@ package demo
 
 import (
 	"github.com/ghowland/sireus/code/data"
+	"github.com/gofiber/fiber/v2"
 	"math/rand"
 	"time"
 )
 
 // If AppConfig.EnableDemo is true, this will be run in the background forever producing Prometheus data to server demonstration and educational purposes
-func RunDemoForever() {
+func RunDemoForever(webPrimary *fiber.App) {
 	// Start the Demo API HTTP listener
 	go RunDemoAPIServer()
+
+	// Add our API paths to the Web Primary, so we can control the demo inside the normal web app
+	ConfigureDemoWebPrimary(webPrimary)
 
 	// Set up the random number generator with a new seed
 	rand.Seed(time.Now().UnixNano())
@@ -32,4 +36,19 @@ func RunDemoForever() {
 		time.Sleep(200 * time.Millisecond)
 		lastRunTime = currentRunTime
 	}
+}
+
+func ConfigureDemoWebPrimary(webPrimary *fiber.App) {
+	// Add our API paths to the Web Primary, so we can control the demo inside the normal web app
+	webPrimary.Post("/demo/edge/break/circuit1", func(c *fiber.Ctx) error {
+		return c.SendString("{\"__toast\": " + BreakCircuit1())
+	})
+
+	webPrimary.Post("/demo/edge/break/circuit2", func(c *fiber.Ctx) error {
+		return c.SendString("{\"__toast\": " + BreakCircuit2())
+	})
+
+	webPrimary.Post("/demo/database/break/storage_degraded", func(c *fiber.Ctx) error {
+		return c.SendString("{\"__toast\": " + BreakStorageDegraded())
+	})
 }
