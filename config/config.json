@@ -1,5 +1,7 @@
 {
+  "web_http_port": 3000,
   "web_path": "./web",
+
   "site_config_path": "config/site.json",
   "curve_path_format": "config/curves/%s.json",
 
@@ -14,6 +16,7 @@
   "prometheus_export_port": 8611,
 
   "enable_demo": true,
+  "demo_api_port": 8709,
 
   "reload_templates_always": true,
   "log_template_parsing": false

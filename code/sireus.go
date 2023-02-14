@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/demo"
@@ -99,5 +100,5 @@ func main() {
 		Root: http.Dir("./static_web"),
 	}))
 
-	_ = web.Listen(":3000")
+	_ = web.Listen(fmt.Sprintf(":%d", data.SireusData.AppConfig.WebHttpPort))
 }

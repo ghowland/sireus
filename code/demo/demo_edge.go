@@ -160,7 +160,7 @@ func ReceiveSuccessFromApp(requests int) {
 }
 
 // Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
-func EscalateCircuit1() {
+func FixCircuit1() {
 	if CurrentEdgeState == EdgeDownCircuit1 {
 		CurrentEdgeState = EdgeNormal
 	} else if CurrentEdgeState == EdgeDownCircuitAll {
@@ -169,7 +169,7 @@ func EscalateCircuit1() {
 }
 
 // Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
-func EscalateCircuit2() {
+func FixCircuit2() {
 	if CurrentEdgeState == EdgeDownCircuit2 {
 		CurrentEdgeState = EdgeNormal
 	} else if CurrentEdgeState == EdgeDownCircuitAll {

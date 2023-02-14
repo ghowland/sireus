@@ -121,3 +121,9 @@ func UpdateDatabase(seconds float64) {
 func AddDatabaseRequests(requests int) {
 	DatabaseRequestQueueLength += requests
 }
+
+func FixStorageDegraded() {
+	if CurrentDatabaseState == DatabaseStorageDegraded {
+		CurrentDatabaseState = DatabaseNormal
+	}
+}

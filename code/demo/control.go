@@ -8,8 +8,13 @@ import (
 
 // If AppConfig.EnableDemo is true, this will be run in the background forever producing Prometheus data to server demonstration and educational purposes
 func RunDemoForever() {
+	// Start the Demo API HTTP listener
+	go RunDemoAPIServer()
+
+	// Set up the random number generator with a new seed
 	rand.Seed(time.Now().UnixNano())
 
+	// Prep testing time per run, so our results are time-based
 	lastRunTime := time.Now()
 
 	// Run until we are quitting
