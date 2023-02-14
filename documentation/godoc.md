@@ -408,12 +408,13 @@ type ActionConsideration struct {
 }
 ```
 
-## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L19>)
+## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L21>)
 
 Web App server configuration
 
 ```go
 type AppConfig struct {
+    WebHttpPort                       int      `json:"web_http_port"`                        // HTTP port to listen for this server.  TODO(ghowland): Built-in HTTPS
     WebPath                           string   `json:"web_path"`                             // Path to the Handlebars template content.  Holds *.hbs files
     SiteConfigPath                    string   `json:"site_config_path"`                     // Path to the config.yaml file that contains a Site.  For now only 1, but later will make this dynamic
     CurvePathFormat                   string   `json:"curve_path_format"`                    // String to format for each of the Curve JSON files, that contain the points we use to calculate from a curve
@@ -425,6 +426,7 @@ type AppConfig struct {
     InteractiveDurationMinutesDefault int      `json:"interactive_duration_minutes_default"` // How many minutes we default to starting the interactive query to.  15 minutes is reasonable
     PrometheusExportPort              int      `json:"prometheus_export_port"`               // Port used to listen for the Prometheus Exporter data we will put back into Prometheus.  For the main application, and the demo, if it is enabled
     EnableDemo                        bool     `json:"enable_demo"`                          // If true, the demo will be enabled and will export additional metrics to Prometheus to make learning Sireus easier.  The demo shares the PrometheusExportPort for simplicity
+    DemoApiPort                       int      `json:"demo_api_port"`                        // Port to run the Demo API server on, to simulate a real API server for modifying demo state
     ReloadTemplatesAlways             bool     `json:"reload_templates_always"`              // For development, if true this will always reload Handlebars files.  Only need to restart the server to rebuild code.
     LogTemplateParsing                bool     `json:"log_template_parsing"`                 // For web development debugging, if true this will print out all the templates that are parsed.  It's not generally useful, but if you are having a problem with Handlebars template imports or related it can help
 }
@@ -1056,16 +1058,264 @@ import "github.com/ghowland/sireus/code/demo"
 
 ## Index
 
-- [func RunDemoForever()](<#func-rundemoforever>)
+- [Variables](<#variables>)
+- [func AddDatabaseRequests(requests int)](<#func-adddatabaserequests>)
+- [func BreakCircuit1() string](<#func-breakcircuit1>)
+- [func BreakCircuit2() string](<#func-breakcircuit2>)
+- [func BreakStorageDegraded() string](<#func-breakstoragedegraded>)
+- [func ConfigureDemoWebPrimary(webPrimary *fiber.App)](<#func-configuredemowebprimary>)
+- [func FixCircuit1()](<#func-fixcircuit1>)
+- [func FixCircuit2()](<#func-fixcircuit2>)
+- [func FixStorageDegraded()](<#func-fixstoragedegraded>)
+- [func PerSecond(original int, seconds float64) int](<#func-persecond>)
+- [func ReceiveRequestsFromEdge(requests int)](<#func-receiverequestsfromedge>)
+- [func ReceiveSuccessFromApp(requests int)](<#func-receivesuccessfromapp>)
+- [func ReceiveSuccessFromDatabase(requests int)](<#func-receivesuccessfromdatabase>)
+- [func ReceiveTimeoutsFromDatabase(requests int)](<#func-receivetimeoutsfromdatabase>)
+- [func RunDemoAPIServer()](<#func-rundemoapiserver>)
+- [func RunDemoForever(webPrimary *fiber.App)](<#func-rundemoforever>)
+- [func UpdateApp(seconds float64)](<#func-updateapp>)
+- [func UpdateDatabase(seconds float64)](<#func-updatedatabase>)
+- [func UpdateEdge(seconds float64)](<#func-updateedge>)
+- [type AppState](<#type-appstate>)
+- [type DatabaseState](<#type-databasestate>)
+- [type EdgeState](<#type-edgestate>)
 
 
-## func [RunDemoForever](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_control.go#L37>)
+## Variables
 
 ```go
-func RunDemoForever()
+var (
+    // Simulating request processing: Normal Speed
+    NormalRequestProcessSpeed int = 1000
+
+    // Simulating request processing: Degraded Speed
+    DegradedRequestProcessSpeed int = 250
+
+    // Simulating request processing: Timeout over N requests in the queue, anything over this will be timed out to balance the system
+    TimeoutWaitLimit int = 2000
+
+    // Current Queue Length, this gets exported to Prometheus as databaseWaiting
+    DatabaseRequestQueueLength int = 0
+
+    // Last time the demo database was changed by API
+    DatabaseChangeLastTime time.Time
+
+    // Current Database State
+    CurrentDatabaseState DatabaseState
+)
+```
+
+```go
+var (
+    // Current state of the Demo Edge
+    CurrentEdgeState EdgeState
+
+    // Octets per request In, base for randomization
+    NormalRequestBaseIn int = 10000
+    // Octets per request Out, base for randomization
+    NormalRequestBaseOut int = 10000 * 7
+
+    // Octets per request In, random range
+    NormalRequestRandomIn int = 25000
+    // Octets per request Out, random range
+    NormalRequestRandomOut int = 25000 * 5
+
+    // Last time the demo edge was changed by API
+    EdgeChangeLastTime time.Time
+
+    // Demo Control: How many requests per second are coming into the system?
+    CurrentRequestsPerSecond float64 = 800
+)
+```
+
+```go
+var (
+    AppRequestQueueLength int = 0
+)
+```
+
+## func [AddDatabaseRequests](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L126>)
+
+```go
+func AddDatabaseRequests(requests int)
+```
+
+Receive demo requests from the App server
+
+## func [BreakCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L196>)
+
+```go
+func BreakCircuit1() string
+```
+
+Break Circuit 1, setting it to the down state
+
+## func [BreakCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L215>)
+
+```go
+func BreakCircuit2() string
+```
+
+Break Circuit 2, setting it to the down state
+
+## func [BreakStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L138>)
+
+```go
+func BreakStorageDegraded() string
+```
+
+Break: Set Degraded Storage state
+
+## func [ConfigureDemoWebPrimary](<https://github.com/ghowland/sireus/blob/main/code/demo/control.go#L41>)
+
+```go
+func ConfigureDemoWebPrimary(webPrimary *fiber.App)
+```
+
+## func [FixCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L178>)
+
+```go
+func FixCircuit1()
+```
+
+Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
+
+## func [FixCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L187>)
+
+```go
+func FixCircuit2()
+```
+
+Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
+
+## func [FixStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L131>)
+
+```go
+func FixStorageDegraded()
+```
+
+Fix the Degraded Storage
+
+## func [PerSecond](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L63>)
+
+```go
+func PerSecond(original int, seconds float64) int
+```
+
+## func [ReceiveRequestsFromEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L77>)
+
+```go
+func ReceiveRequestsFromEdge(requests int)
+```
+
+Receive requests from the edge.
+
+## func [ReceiveSuccessFromApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L157>)
+
+```go
+func ReceiveSuccessFromApp(requests int)
+```
+
+## func [ReceiveSuccessFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L62>)
+
+```go
+func ReceiveSuccessFromDatabase(requests int)
+```
+
+Receive request successes from the database.  This might feel backwards, but its a demo simulation
+
+## func [ReceiveTimeoutsFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L50>)
+
+```go
+func ReceiveTimeoutsFromDatabase(requests int)
+```
+
+Receive request timeouts from the database.  This might feel backwards, but its a demo simulation
+
+## func [RunDemoAPIServer](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L9>)
+
+```go
+func RunDemoAPIServer()
+```
+
+## func [RunDemoForever](<https://github.com/ghowland/sireus/blob/main/code/demo/control.go#L11>)
+
+```go
+func RunDemoForever(webPrimary *fiber.App)
 ```
 
 If AppConfig.EnableDemo is true, this will be run in the background forever producing Prometheus data to server demonstration and educational purposes
+
+## func [UpdateApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L45>)
+
+```go
+func UpdateApp(seconds float64)
+```
+
+Update the Demo App
+
+## func [UpdateDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L70>)
+
+```go
+func UpdateDatabase(seconds float64)
+```
+
+Update the Demo Database
+
+## func [UpdateEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L110>)
+
+```go
+func UpdateEdge(seconds float64)
+```
+
+Update the Demo Edge
+
+## type [AppState](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L10>)
+
+What is the state of the Demo App?
+
+```go
+type AppState int64
+```
+
+```go
+const (
+    AppNormal AppState = iota // Demo App is normal
+)
+```
+
+## type [DatabaseState](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L12>)
+
+What is the state of the Demo Database?
+
+```go
+type DatabaseState int64
+```
+
+```go
+const (
+    DatabaseNormal          DatabaseState = iota // Demo Database is normal
+    DatabaseStorageDegraded                      // Demo Database has degraded storage
+)
+```
+
+## type [EdgeState](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L13>)
+
+What is the state of the Demo Edge?
+
+```go
+type EdgeState int64
+```
+
+```go
+const (
+    EdgeNormal         EdgeState = iota // Demo Edge is normal
+    EdgeDownCircuit1                    // Demo Edge Circuit 1 is down
+    EdgeDownCircuit2                    // Demo Edge Circuit 2 is down
+    EdgeDownCircuitAll                  // Demo Edge All Circuits are down
+)
+```
 
 # exporter
 
@@ -1163,7 +1413,7 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L289>)
+## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L293>)
 
 ```go
 func InitializeStates(session *data.InteractiveSession, botGroupIndex int)
@@ -1241,7 +1491,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L301>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L308>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
