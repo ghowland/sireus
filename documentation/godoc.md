@@ -18,6 +18,7 @@ import "github.com/ghowland/sireus/code/app"
 
 ## Index
 
+- [Variables](<#variables>)
 - [func AreAllActionStatesActive(action data.Action, bot data.Bot) bool](<#func-areallactionstatesactive>)
 - [func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)](<#func-averageandfixup>)
 - [func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)](<#func-calculatescore>)
@@ -42,8 +43,17 @@ import "github.com/ghowland/sireus/code/app"
 - [func LoadSiteConfig(appConfig data.AppConfig) data.Site](<#func-loadsiteconfig>)
 - [func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList](<#func-sortmapstringactiondatabyfinalscore>)
 - [type CurveData](<#type-curvedata>)
-  - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
+  - [func GetCurve(name string) (CurveData, error)](<#func-getcurve>)
+  - [func LoadCurveData(name string) (CurveData, error)](<#func-loadcurvedata>)
 
+
+## Variables
+
+```go
+var (
+    Curves []CurveData
+)
+```
 
 ## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L156>)
 
@@ -53,7 +63,7 @@ func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
 
 For a given Action, does this Bot have all the RequiredStates active?
 
-## func [AverageAndFixup](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L61>)
+## func [AverageAndFixup](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L62>)
 
 ```go
 func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)
@@ -67,7 +77,7 @@ This is the heuristic we use to get a good "modified average" of the Considerati
 func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)
 ```
 
-Calculate the Utility Score for a given Action using a Bot's BotActionData
+Calculate the Utility Score for a given Action using a Bots BotActionData
 
 ## func [FormatBotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/format_human.go#L12>)
 
@@ -85,7 +95,7 @@ func GetAPIPlotData(c *fiber.Ctx) string
 
 Returns JSON data needed to create a Plotly graph for our Curves
 
-## func [GetAPIPlotMetrics](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L59>)
+## func [GetAPIPlotMetrics](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L62>)
 
 ```go
 func GetAPIPlotMetrics(c *fiber.Ctx) string
@@ -123,7 +133,7 @@ func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, bo
 
 Gets a BotGroup from the Site, using the InteractiveControl
 
-## func [GetCurveDataX](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L36>)
+## func [GetCurveDataX](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L58>)
 
 ```go
 func GetCurveDataX(curveData CurveData) []float64
@@ -131,7 +141,7 @@ func GetCurveDataX(curveData CurveData) []float64
 
 Get all X axis values, which is just the step from 0\-1 at 0.1 intervals
 
-## func [GetCurveValue](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L47>)
+## func [GetCurveValue](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L69>)
 
 ```go
 func GetCurveValue(curveData CurveData, x float64) float64
@@ -177,7 +187,7 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
 
 Returns a QueryServer, scope is per Site
 
-## func [GetRawMetricsJSON](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L48>)
+## func [GetRawMetricsJSON](<https://github.com/ghowland/sireus/blob/main/code/app/plot.go#L51>)
 
 ```go
 func GetRawMetricsJSON(c *fiber.Ctx) string
@@ -223,7 +233,7 @@ func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, so
 
 Go doesnt handle map sorting easily, so this is the fix\-up
 
-## type [CurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L13-L16>)
+## type [CurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L14-L17>)
 
 Points to create a curve.  Standard is 0\-1 at 0.1 steps, so 1000 points
 
@@ -234,10 +244,16 @@ type CurveData struct {
 }
 ```
 
-### func [LoadCurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L20>)
+### func [GetCurve](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L24>)
 
 ```go
-func LoadCurveData(appConfig data.AppConfig, name string) CurveData
+func GetCurve(name string) (CurveData, error)
+```
+
+### func [LoadCurveData](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L40>)
+
+```go
+func LoadCurveData(name string) (CurveData, error)
 ```
 
 Load the Curve data off the disk
@@ -460,19 +476,21 @@ type Bot struct {
 }
 ```
 
-## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L38-L46>)
+## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L38-L48>)
 
 This stores the Final Scores and related data for all Actions, so they can be compared to determin if any Action should be executed
 
 ```go
 type BotActionData struct {
-    FinalScore                   float64            // Final Score is the total result of calculations to Score this action for execution
-    IsAvailable                  bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
-    AvailableStartTime           time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
-    LastExecutedActionTime       time.Time          // Last time we executed this Action.  Stateful.
-    Details                      []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
-    ConsiderationFinalScores     map[string]float64 // Considerations Final Results for this Bot
-    ConsiderationEvaluatedScores map[string]float64 // Considerations Evaluated score, but not weighted results for this Bot
+    FinalScore                float64            // Final Score is the total result of calculations to Score this action for execution
+    IsAvailable               bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
+    AvailableStartTime        time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
+    LastExecutedActionTime    time.Time          // Last time we executed this Action.  Stateful.
+    Details                   []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
+    ConsiderationRawScores    map[string]float64 // Considerations Raw score, before it is applied to the Range and Curve, to help users understand what is happening
+    ConsiderationRangedScores map[string]float64 // Considerations Ranged score, taking the Raw score and applying to the range, before applying the Curve
+    ConsiderationCurvedScores map[string]float64 // Considerations Evaluated score, taking the Ranged score and applying the curve, but not weighted results for this Bot
+    ConsiderationFinalScores  map[string]float64 // Considerations Final Results for this Bot
 }
 ```
 
@@ -1367,7 +1385,7 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
 
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L40>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L41>)
 
 ```go
 func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1383,7 +1401,7 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L249>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L268>)
 
 ```go
 func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
@@ -1391,7 +1409,7 @@ func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
 
 Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L233>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L252>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
@@ -1415,7 +1433,7 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L293>)
+## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L312>)
 
 ```go
 func InitializeStates(session *data.InteractiveSession, botGroupIndex int)
@@ -1461,7 +1479,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L63>)
+## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L64>)
 
 ```go
 func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1477,7 +1495,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L87>)
+## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L88>)
 
 ```go
 func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1485,7 +1503,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 
 For this BotGroup, update all the BotActionData with new ActionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L261>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L280>)
 
 ```go
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1493,7 +1511,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L308>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L327>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1501,7 +1519,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L178>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L197>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1509,7 +1527,7 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *da
 
 Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
 
-## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L16>)
+## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L17>)
 
 ```go
 func UpdateSiteBotGroups(session *data.InteractiveSession)
@@ -1871,7 +1889,7 @@ func RegisterHandlebarsHelpers()
 
 Main function to register all the different Handlebars helper functions, for text processing
 
-## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L132>)
+## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L142>)
 
 ```go
 func RegisterHandlebarsHelpers_FormatData()
@@ -1887,7 +1905,7 @@ func RegisterHandlebarsHelpers_GetAppData()
 
 Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
 
-## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L187>)
+## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L197>)
 
 ```go
 func RegisterHandlebarsHelpers_IfArrayLength()
