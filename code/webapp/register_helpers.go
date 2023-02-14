@@ -24,6 +24,9 @@ func RegisterHandlebarsHelpers() {
 	// Get AppData values
 	RegisterHandlebarsHelpers_GetAppData()
 
+	// Get Go data values
+	RegisterHandlebarsHelpers_GetGoData()
+
 	// Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
 	RegisterHandlebarsHelpers_WithData()
 
@@ -107,6 +110,23 @@ func RegisterHandlebarsHelpers_IfTests() {
 		} else {
 			return raymond.SafeString("")
 		}
+	})
+}
+
+// Get Go data values.  Slices, maps, etc
+func RegisterHandlebarsHelpers_GetGoData() {
+	// Consideration Scores: Final
+	raymond.RegisterHelper("get_string_slice_index", func(stringArray []string, index int) raymond.SafeString {
+		value := fmt.Sprintf("MISSING:%d", index)
+		// If it's negative, fix it to be positive
+		if index < 0 {
+			index = len(stringArray) + index
+		}
+		// Test if it's a valid index, otherwise we return the missing pre-set string
+		if index > 0 && index < len(stringArray) {
+			value = stringArray[index]
+		}
+		return raymond.SafeString(value)
 	})
 }
 

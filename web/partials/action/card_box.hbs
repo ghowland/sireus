@@ -4,7 +4,7 @@
             <!-- Action Final Score -->
             <span style="padding-right: 0.75em;">
             {{#with_bot_action bot action}}
-                <span class="tag {{#if this.IsAvailable}}is-primary{{else}}is-danger{{/if}}">
+                <span class="tag {{#if this.IsAvailable}}is-primary{{else}}is-danger{{/if}} has-tooltip-arrow" data-tooltip="{{get_string_slice_index this.Details -1}}">
                 Score: {{format_float64 "%.2f" this.FinalScore}}
                 </span>
             {{/with_bot_action}}

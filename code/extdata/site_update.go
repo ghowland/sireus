@@ -180,7 +180,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
-			details = append(details, fmt.Sprintf("All Considerations Score: %0.2f * Action Weight: %0.2f = Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
+			details = append(details, fmt.Sprintf("All Consider Scores: %0.2f * Action Weight: %0.2f = Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
@@ -197,11 +197,11 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 			} else {
 				if !allActionStatesAreActive {
 					actionData.FinalScore = 0
-					details = append(details, fmt.Sprintf("Not all states required are active, setting Final Score to 0.  Required: %s", util.PrintStringArrayCSV(action.RequiredStates)))
+					details = append(details, fmt.Sprintf("Setting Final Score to 0.  Missing required states: %s", util.PrintStringArrayCSV(action.RequiredStates)))
 				}
 
 				if finalScore < action.WeightThreshold {
-					details = append(details, fmt.Sprintf("Final Score (%.2f) did not meet Action Weight Threshold (%.2f)", finalScore, action.WeightThreshold))
+					details = append(details, fmt.Sprintf("Final Score (%.2f) less than Action Weight Threshold (%.2f)", finalScore, action.WeightThreshold))
 				}
 
 				actionData.IsAvailable = false
