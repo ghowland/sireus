@@ -3,19 +3,19 @@ package data
 import "time"
 
 type (
-	// Action is what is considered for execution.  It will receive a Final Score from it's Weight and Consideration Final Scores
+	// Action is what is considered for execution.  It will receive a Final Score from its Weight and Consideration Final Scores
 	Action struct {
-		Name               string                `json:"name"`
-		Info               string                `json:"info"`
-		IsLaunched         bool                  `json:"is_launched"`      // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
-		IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
-		Weight             float64               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
-		WeightMin          float64               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
-		WeightThreshold    float64               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
-		RequiredLockTimers []string              `json:"required_lock_timers"`
-		RequiredStates     []string              `json:"required_states"`
-		Considerations     []ActionConsideration `json:"considerations"`
-		Command            ActionCommand         `json:"command"`
+		Name               string                `json:"name"`                 // Name of the Action
+		Info               string                `json:"info"`                 // Description
+		IsLaunched         bool                  `json:"is_launched"`          // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
+		IsDisabled         bool                  `json:"is_disabled"`          // When testing changes, disable with modifying config
+		Weight             float64               `json:"weight"`               // This is the multiplier for the Final Score, from the Consideration Final Score
+		WeightMin          float64               `json:"weight_min"`           // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
+		WeightThreshold    float64               `json:"weight_threshold"`     // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
+		RequiredLockTimers []string              `json:"required_lock_timers"` // All of these Lock Timers must be available for this Action to trigger.  Afterwards, they will all be locked for ActionCommand.LockTimerDuration automatically
+		RequiredStates     []string              `json:"required_states"`      // All of these states must be Active for this
+		Considerations     []ActionConsideration `json:"considerations"`       // These Considerations are used to create a Score for this Action, which must be the highest score, and must be higher than the MinimumThreshold, and if all other requirements are met, this Action will be executed
+		Command            ActionCommand         `json:"command"`              // This is the command that will be executed.  It could just change States, or run a Command or API call
 	}
 )
 
