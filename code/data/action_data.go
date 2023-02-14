@@ -14,6 +14,7 @@ type (
 		WeightThreshold    float64               `json:"weight_threshold"`     // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
 		RequiredLockTimers []string              `json:"required_lock_timers"` // All of these Lock Timers must be available for this Action to trigger.  Afterwards, they will all be locked for ActionCommand.LockTimerDuration automatically
 		RequiredStates     []string              `json:"required_states"`      // All of these states must be Active for this
+		RequiredAvailable  Duration              `json:"required_available"`   // If greater than 0s, this Action must have been continuously Available for this Duration for it to be executed.  Allows us to make sure it's not flapping or inconsistent for a period of time before being executed
 		Considerations     []ActionConsideration `json:"considerations"`       // These Considerations are used to create a Score for this Action, which must be the highest score, and must be higher than the MinimumThreshold, and if all other requirements are met, this Action will be executed
 		Command            ActionCommand         `json:"command"`              // This is the command that will be executed.  It could just change States, or run a Command or API call
 	}
