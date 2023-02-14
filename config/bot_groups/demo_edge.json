@@ -79,7 +79,7 @@
     {
       "type": 0,
       "name": "demo_app_requests",
-      "format": 1,
+      "format": 0,
       "bot_key": "circuit",
       "query_name": "Demo App Requests",
       "query_key": "",
@@ -93,7 +93,7 @@
     {
       "type": 0,
       "name": "octets_in",
-      "format": 1,
+      "format": 2,
       "bot_key": "circuit",
       "query_name": "Edge Octets In",
       "query_key": "",
@@ -107,9 +107,9 @@
     {
       "type": 0,
       "name": "octets_out",
-      "format": 1,
+      "format": 2,
       "bot_key": "circuit",
-      "query_name": "Edge Octets In",
+      "query_name": "Edge Octets Out",
       "query_key": "",
       "query_key_value": "",
       "evaluate": "",

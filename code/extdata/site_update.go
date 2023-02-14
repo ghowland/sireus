@@ -264,7 +264,11 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 	queryResult, err := GetCachedQueryResult(session, site, query)
 
-	extractedBots := ExtractBotsFromPromData(queryResult.PrometheusResponse, "name")
+	//log.Printf("Extractor Query: %s", util.PrintJson(queryResult))
+
+	extractedBots := ExtractBotsFromPromData(queryResult.PrometheusResponse, session.BotGroups[botGroupIndex].BotExtractor.Key)
+
+	//log.Printf("Extracted Bots: %s", util.PrintJson(extractedBots))
 
 	// Find all the new bots, and add them
 	//NOTE(ghowland): Removing bots is done by looking at bots that haven't had data updated past BotGroup.BotTimeoutRemove

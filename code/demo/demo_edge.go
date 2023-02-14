@@ -90,14 +90,14 @@ var (
 	CurrentEdgeState EdgeState
 
 	// Octets per request In, base for randomization
-	NormalRequestBaseIn int = 100
+	NormalRequestBaseIn int = 10000
 	// Octets per request Out, base for randomization
-	NormalRequestBaseOut int = 100 * 7
+	NormalRequestBaseOut int = 10000 * 7
 
 	// Octets per request In, random range
-	NormalRequestRandomIn int = 250
+	NormalRequestRandomIn int = 25000
 	// Octets per request Out, random range
-	NormalRequestRandomOut int = 250 * 5
+	NormalRequestRandomOut int = 25000 * 5
 
 	// Last time the demo edge was changed by API
 	EdgeChangeLastTime time.Time

@@ -71,7 +71,7 @@
     {
       "type": 0,
       "name": "wait_queue",
-      "format": 1,
+      "format": 0,
       "bot_key": "job",
       "query_name": "App Wait Queue",
       "query_key": "",
@@ -85,7 +85,7 @@
     {
       "type": 0,
       "name": "timeout_rate",
-      "format": 1,
+      "format": 0,
       "bot_key": "job",
       "query_name": "App Timeouts",
       "query_key": "",
@@ -99,7 +99,7 @@
     {
       "type": 0,
       "name": "processed",
-      "format": 1,
+      "format": 0,
       "bot_key": "job",
       "query_name": "App Processed",
       "query_key": "",

@@ -49,6 +49,13 @@ func UpdateApp(seconds float64) {
 // Receive request timeouts from the database.  This might feel backwards, but its a demo simulation
 func ReceiveTimeoutsFromDatabase(requests int) {
 	appTimeout.Add(float64(requests))
+
+	// Update the wait queue
+	AppRequestQueueLength -= requests
+	if AppRequestQueueLength < 0 {
+		AppRequestQueueLength = 0
+	}
+	appWaiting.Set(float64(AppRequestQueueLength))
 }
 
 // Receive request successes from the database.  This might feel backwards, but its a demo simulation
@@ -57,12 +64,19 @@ func ReceiveSuccessFromDatabase(requests int) {
 
 	// Send our successful requests back to the edge to be delivered to requester
 	ReceiveSuccessFromApp(requests)
+
+	// Update the wait queue
+	AppRequestQueueLength -= requests
+	if AppRequestQueueLength < 0 {
+		AppRequestQueueLength = 0
+	}
+	appWaiting.Set(float64(AppRequestQueueLength))
 }
 
 // Receive requests from the edge.
 func ReceiveRequestsFromEdge(requests int) {
 	AppRequestQueueLength += requests
-	appWaiting.Add(float64(requests))
+	appWaiting.Set(float64(AppRequestQueueLength))
 
 	// Send the requests to the database
 	AddDatabaseRequests(requests)
