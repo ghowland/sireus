@@ -90,6 +90,11 @@ func main() {
 		return c.Render("site_query", renderMap, "layouts/main_common")
 	})
 
+	web.Get("/demo_control", func(c *fiber.Ctx) error {
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("demo_control", renderMap, "layouts/main_common")
+	})
+
 	web.Get("/test", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
 		return c.Render("test", renderMap, "layouts/main_common")

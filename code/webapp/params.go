@@ -122,6 +122,7 @@ func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, 
 
 	renderMap := fiber.Map{
 		"title":                        "Sireus",
+		"app_config":                   data.SireusData.AppConfig,
 		"site":                         site,
 		"site_id":                      site.Name,
 		"botGroup":                     botGroup,
@@ -174,6 +175,7 @@ func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, input
 
 	renderMap := map[string]interface{}{
 		"title":               "Sireus",
+		"app_config":          data.SireusData.AppConfig,
 		"site":                site,
 		"site_id":             site.Name,
 		"botGroup":            botGroup,
