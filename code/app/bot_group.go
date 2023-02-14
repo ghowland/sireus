@@ -48,6 +48,7 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	return site
 }
 
+// Takes an InteractiveControl struct, and creates a InteractiveSession, which is used everywhere and contains live BotGroups
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession {
 	site.InteractiveSessionCache.AccessLock.Lock()
 	defer site.InteractiveSessionCache.AccessLock.Unlock()

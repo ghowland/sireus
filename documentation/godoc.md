@@ -45,7 +45,7 @@ import "github.com/ghowland/sireus/code/app"
   - [func LoadCurveData(appConfig data.AppConfig, name string) CurveData](<#func-loadcurvedata>)
 
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L155>)
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L156>)
 
 ```go
 func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
@@ -91,7 +91,7 @@ Returns JSON data needed to create a Plotly graph for our Curves
 func GetAPIPlotMetrics(c *fiber.Ctx) string
 ```
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L125>)
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L126>)
 
 ```go
 func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
@@ -99,7 +99,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
 
 Get an Action from a BotGroup, by name
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L145>)
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L146>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
@@ -107,7 +107,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 
 Get an ActionConsideration from an Action, by name
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L166>)
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L167>)
 
 ```go
 func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
@@ -115,7 +115,7 @@ func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
 
 Get a Bot from the BotGroup
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L176>)
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L177>)
 
 ```go
 func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)
@@ -139,13 +139,15 @@ func GetCurveValue(curveData CurveData, x float64) float64
 
 Get the Y value, at an X position, in the curve
 
-## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L51>)
+## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L52>)
 
 ```go
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession
 ```
 
-## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L90>)
+Takes an InteractiveControl struct, and creates a InteractiveSession, which is used everywhere and contains live BotGroups
+
+## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L91>)
 
 ```go
 func GetProductionInteractiveControl() data.InteractiveControl
@@ -153,7 +155,7 @@ func GetProductionInteractiveControl() data.InteractiveControl
 
 GetProductionInteractiveControl returns a SessionUUID==0 data set for production data. TODO\(ghowland\): These should be altered by AppConfig
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L115>)
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L116>)
 
 ```go
 func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
@@ -167,7 +169,7 @@ Gets a query, scope per BotGroup
 func GetQueryResultByQueryKey(site *data.Site, queryKey string) (data.QueryResultPoolItem, bool)
 ```
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L104>)
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L105>)
 
 ```go
 func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
@@ -181,7 +183,7 @@ Returns a QueryServer, scope is per Site
 func GetRawMetricsJSON(c *fiber.Ctx) string
 ```
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L135>)
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L136>)
 
 ```go
 func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
@@ -1811,7 +1813,7 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
 
 
-## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L157>)
+## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L158>)
 
 ```go
 func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}
@@ -1839,7 +1841,7 @@ func CreateWebApp(engine *handlebars.Engine) *fiber.App
 
 Create the Fiber web app, from the Handlebars engine
 
-## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L141>)
+## func [FormatInteractiveStartTime](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L142>)
 
 ```go
 func FormatInteractiveStartTime() string
