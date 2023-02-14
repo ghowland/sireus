@@ -156,7 +156,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
-			details = append(details, fmt.Sprintf("All Considerations Score: %0.2f * Action Weight: %0.2f == Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
+			details = append(details, fmt.Sprintf("All Considerations Score: %0.2f * Action Weight: %0.2f = Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
