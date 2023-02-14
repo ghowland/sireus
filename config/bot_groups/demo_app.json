@@ -38,57 +38,33 @@
   "journal_rollup_states": ["Operation.Problem", "Operation.Resolved", "Operation.EscalatingWait"],
   "journal_rollup_duration": "30m",
   "bot_extractor": {
-    "query_name": "Window Services",
-    "key": "node"
+    "query_name": "App Wait Queue",
+    "key": "job"
   },
   "queries": [
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Window Services",
-      "info": "Using Windows Services to test things out",
-      "query": "windows_service_state",
-      "interval": "7s"
+      "name": "App Wait Queue",
+      "info": "Current waiting requests",
+      "query": "demo_app_req_queue_wait",
+      "interval": "5s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Service Status",
-      "info": "Getting information from a different query",
-      "query": "windows_service_status",
-      "interval": "7s"
+      "name": "App Timeouts",
+      "info": "Rate of timeouts over time",
+      "query": "irate(demo_app_req_timeout[30s])",
+      "interval": "5s"
     },
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Disk Free Bytes",
-      "info": "Getting free bytes on the disks",
-      "query": "windows_logical_disk_free_bytes",
-      "interval": "7s"
-    },
-    {
-      "query_server": "prometheus_primary",
-      "query_type": 0,
-      "name": "Disk Total Bytes",
-      "info": "Getting free bytes on the disks",
-      "query": "windows_logical_disk_size_bytes",
-      "interval": "7s"
-    },
-    {
-      "query_server": "prometheus_primary",
-      "query_type": 0,
-      "name": "CPU Usage",
-      "info": "Getting the CPU usage for the system",
-      "query": "100 - (avg by (instance) (irate(windows_cpu_time_total{mode=\"idle\"}[1m])) * 100)",
-      "interval": "7s"
-    },
-    {
-      "query_server": "prometheus_primary",
-      "query_type": 0,
-      "name": "Network Usage",
-      "info": "Getting the Network usage for the system",
-      "query": "irate(windows_net_bytes_total[30s])",
-      "interval": "7s"
+      "name": "App Processed",
+      "info": "Rate of successful requests over time",
+      "query": "irate(demo_app_req_success[30s])",
+      "interval": "5s"
     }
   ],
   "variables": [
