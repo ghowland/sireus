@@ -7,6 +7,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"math"
 	"strconv"
 	"time"
@@ -98,8 +99,10 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
 			if _, ok := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
 				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = data.BotActionData{
-					ConsiderationFinalScores:     map[string]float64{},
-					ConsiderationEvaluatedScores: map[string]float64{},
+					ConsiderationFinalScores:  map[string]float64{},
+					ConsiderationCurvedScores: map[string]float64{},
+					ConsiderationRangedScores: map[string]float64{},
+					ConsiderationRawScores:    map[string]float64{},
 				}
 			}
 
@@ -108,36 +111,52 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 				expression, err := govaluate.NewEvaluableExpression(consider.Evaluate)
 				util.Check(err)
 
+				// Start assuming the data is invalid, and then mark it valid later
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationCurvedScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRangedScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRawScores[consider.Name] = math.SmallestNonzeroFloat64
+
 				resultInt, err := expression.Evaluate(evalMap)
 				if util.CheckNoLog(err) {
 					// Invalidate this consideration, evaluation failed
 					//log.Printf("ERROR: Evaluate failed on Eval Map data: %s   Map: %s", consider.Evaluate, util.PrintJson(evalMap))
-					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
-					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
-				result, err := util.ConvertInterfaceToFloat(resultInt)
+				resultRaw, err := util.ConvertInterfaceToFloat(resultInt)
 				if util.CheckNoLog(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
 					// Invalidate this consideration, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
-					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
-					session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = math.SmallestNonzeroFloat64
 					continue
 				}
 
-				//log.Printf("Set Consideration Result: %s = %v", consider.Name, result)
+				// Apply the Range and Curve to the Raw score
+				resultRanged := util.RangeMapper(resultRaw, consider.RangeStart, consider.RangeEnd)
+				curve, err := app.GetCurve(consider.CurveName)
+				if util.CheckNoLog(err) {
+					// Invalidate this consideration, result was invalid
+					log.Printf("Set Consideration Invalid, no curve: %s   Curve missing: %s", consider.Name, consider.CurveName)
+					continue
+				}
+				resultCurved := app.GetCurveValue(curve, resultRanged)
 
-				considerationScore := result * consider.Weight
+				//log.Printf("Set Consideration Result: %s = %v", consider.Name, resultCurved)
+
+				considerationScore := resultCurved * consider.Weight
 
 				// Set the value.  Only valid values will exist.
 				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name] = result
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationCurvedScores[consider.Name] = resultCurved
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRangedScores[consider.Name] = resultRanged
+				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRawScores[consider.Name] = resultRaw
 			}
 
 			// Get a Final Score for this Action
 			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
 			finalScore := calculatedScore * action.Weight
+
+			details = append(details, fmt.Sprintf("All Considerations Score: %0.2f * Action Weight: %0.2f == Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
 
 			// Copy out the ActionData struct, updated it, and assign it back into the map.
 			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]

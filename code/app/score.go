@@ -6,7 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/util"
 )
 
-// Calculate the Utility Score for a given Action using a Bot's BotActionData
+// Calculate the Utility Score for a given Action using a Bots BotActionData
 func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string) {
 	var runningScore float64 = 1
 	var considerCount int = 0
@@ -17,7 +17,8 @@ func CalculateScore(action data.Action, actionData data.BotActionData) (float64,
 		// We will use a "modified average" to create a calculated score for all the considerations, so need a count
 		considerCount++
 
-		//TODO: Process the curve
+		// Log each of these considerations into our details to help people understand the final score
+		details = append(details, fmt.Sprintf("Calculation flow for consideration \"%s\":  Raw: %.2f -> Ranged: %0.2f -> Curved: %0.2f -> Consideration Final: %.2f", considerName, actionData.ConsiderationRawScores[considerName], actionData.ConsiderationRangedScores[considerName], actionData.ConsiderationCurvedScores[considerName], considerScore))
 
 		// Any Consideration that is 0, means the entire Score is 0, and will never be executed.  It is not Invalid
 		if considerScore == 0 {
@@ -61,7 +62,7 @@ func CalculateScore(action data.Action, actionData data.BotActionData) (float64,
 func AverageAndFixup(runningScore float64, considerCount int) (float64, []string) {
 	var details []string
 
-	// No considerations is always 0.  We will be dividing by considerCount later...
+	// Zero considerations is always 0.  We will be dividing by considerCount later...
 	if considerCount == 0 {
 		details = append(details, "There are 0 consideration final scores.  Nothing to Calculate: 0")
 		return 0, details
@@ -81,7 +82,7 @@ func AverageAndFixup(runningScore float64, considerCount int) (float64, []string
 	var finalScore float64 = runningScore + (makeUpValue * runningScore)
 
 	// They can always look at the math to try to understand better
-	resultDetail := fmt.Sprintf("Unweighted Final Score:  Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  Final Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
+	resultDetail := fmt.Sprintf("Unweighted All Considerations Score:  Running Score: %.2f  Count: %d  Mod: %0.2f  Make Up: %.2f  All Considerations Score: %.2f", runningScore, considerCount, modFactor, makeUpValue, finalScore)
 	details = append(details, resultDetail)
 	//log.Print(resultDetail)
 

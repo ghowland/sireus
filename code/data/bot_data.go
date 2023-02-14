@@ -36,12 +36,14 @@ type (
 	// This stores the Final Scores and related data for all Actions, so they can be compared to determin if any
 	// Action should be executed
 	BotActionData struct {
-		FinalScore                   float64            // Final Score is the total result of calculations to Score this action for execution
-		IsAvailable                  bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
-		AvailableStartTime           time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
-		LastExecutedActionTime       time.Time          // Last time we executed this Action.  Stateful.
-		Details                      []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
-		ConsiderationFinalScores     map[string]float64 // Considerations Final Results for this Bot
-		ConsiderationEvaluatedScores map[string]float64 // Considerations Evaluated score, but not weighted results for this Bot
+		FinalScore                float64            // Final Score is the total result of calculations to Score this action for execution
+		IsAvailable               bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
+		AvailableStartTime        time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
+		LastExecutedActionTime    time.Time          // Last time we executed this Action.  Stateful.
+		Details                   []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
+		ConsiderationRawScores    map[string]float64 // Considerations Raw score, before it is applied to the Range and Curve, to help users understand what is happening
+		ConsiderationRangedScores map[string]float64 // Considerations Ranged score, taking the Raw score and applying to the range, before applying the Curve
+		ConsiderationCurvedScores map[string]float64 // Considerations Evaluated score, taking the Ranged score and applying the curve, but not weighted results for this Bot
+		ConsiderationFinalScores  map[string]float64 // Considerations Final Results for this Bot
 	}
 )

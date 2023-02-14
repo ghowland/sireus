@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
@@ -16,20 +17,41 @@ type (
 	}
 )
 
+var (
+	Curves []CurveData
+)
+
+func GetCurve(name string) (CurveData, error) {
+	for _, curve := range Curves {
+		if curve.Name == name {
+			return curve, nil
+		}
+	}
+
+	curve, err := LoadCurveData(name)
+	if util.Check(err) {
+		return CurveData{}, errors.New(fmt.Sprintf("Could not find curve: %s", name))
+	}
+
+	return curve, nil
+}
+
 // Load the Curve data off the disk
-func LoadCurveData(appConfig data.AppConfig, name string) CurveData {
-	path := fmt.Sprintf(appConfig.CurvePathFormat, name)
+func LoadCurveData(name string) (CurveData, error) {
+	path := fmt.Sprintf(data.SireusData.AppConfig.CurvePathFormat, name)
 
 	curveDataInput, err := os.ReadFile(path)
 	util.Check(err)
 
 	var curveData CurveData
 	err = json.Unmarshal(curveDataInput, &curveData)
-	util.Check(err)
+	if util.CheckNoLog(err) {
+		return CurveData{}, errors.New(fmt.Sprintf("Couldnt find curve: %s", name))
+	}
 
 	//log.Println("Load Curve Data: ", curve_data.Name)
 
-	return curveData
+	return curveData, nil
 }
 
 // Get all X axis values, which is just the step from 0-1 at 0.1 intervals

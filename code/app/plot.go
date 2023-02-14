@@ -21,7 +21,10 @@ func GetAPIPlotData(c *fiber.Ctx) string {
 		return string(failureJson)
 	}
 
-	curveData := LoadCurveData(data.SireusData.AppConfig, input["name"])
+	curveData, err := GetCurve(input["name"])
+	if util.CheckNoLog(err) {
+		return "{}"
+	}
 
 	mapData := map[string]interface{}{
 		"title":  curveData.Name,

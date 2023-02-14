@@ -117,9 +117,19 @@ func RegisterHandlebarsHelpers_GetAppData() {
 		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name]))
 	})
 
-	// Consideration Scores: Calculated (not Weighted)
-	raymond.RegisterHelper("get_bot_action_data_consideration_evaluated_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationEvaluatedScores[consider.Name]))
+	// Consideration Scores: Raw (not Ranged, Curved, Weighted)
+	raymond.RegisterHelper("get_bot_action_data_consideration_raw_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name]))
+	})
+
+	// Consideration Scores: Ranged (not Curved, Weighted)
+	raymond.RegisterHelper("get_bot_action_data_consideration_ranged_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name]))
+	})
+
+	// Consideration Scores: Curved (not Weighted)
+	raymond.RegisterHelper("get_bot_action_data_consideration_curved_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationCurvedScores[consider.Name]))
 	})
 
 	// ActionData Final Score

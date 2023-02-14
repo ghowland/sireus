@@ -7,9 +7,11 @@
             <th><span class="has-tooltip-arrow" data-tooltip="Scoring Weight">Weight</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Range Value Start">Start</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Range Value End">End</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Curve">Curve</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Evaluated Score, not weighted">Eval</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Final Score">Final</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Curve, applied after ranged between Start and End">Curve</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Raw Score, not put through range, curves or weighted">Raw</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Ranged Score, after Raw, but before curves or weighted">Ranged</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Curved Score, after Ranged, but not weighted">Curved</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Final Score, fully processed">Final</span></th>
         </tr>
         </thead>
         {{#if_consider_length Considerations 10}}
@@ -19,9 +21,11 @@
                 <th><span class="has-tooltip-arrow" data-tooltip="Scoring Weight">Weight</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Range Value Start">Start</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Range Value End">End</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Curve">Curve</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Evaluated Score, not weighted">Eval</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Final Score">Final</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Curve, applied after ranged between Start and End">Curve</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Raw Score, not put through range, curves or weighted">Raw</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Ranged Score, after Raw, but before curves or weighted">Ranged</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Curved Score, after Ranged, but not weighted">Curved</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Final Score, fully processed">Final</span></th>
             </tr>
             </tfoot>
         {{/if_consider_length}}
@@ -35,8 +39,10 @@
                 <td>{{consider.RangeStart}}</td>
                 <td>{{consider.RangeEnd}}</td>
                 <td><button class="button is-small" onclick="GetPlot('{{consider.CurveName}}')">{{consider.CurveName}}</button></td>
-                <td>{{get_bot_action_data_consideration_evaluated_score bot action consider}}</td>
-                <td>{{get_bot_action_data_consideration_final_score bot action consider}}</td>
+                <td>{{get_bot_action_data_consideration_raw_score bot action consider}}</td>
+                <td>{{get_bot_action_data_consideration_ranged_score bot action consider}}</td>
+                <td>{{get_bot_action_data_consideration_curved_score bot action consider}}</td>
+                <td><strong>{{get_bot_action_data_consideration_final_score bot action consider}}</strong></td>
             </tr>
 
         {{/each}} <!-- Action Consideration:End -->
