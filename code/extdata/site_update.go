@@ -34,6 +34,30 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, index)
+
+		//// Execute Actions
+		//ExecuteActions(session, index)
+	}
+}
+
+// Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
+func ExecuteActions(session *data.InteractiveSession, botGroupIndex int) {
+	botGroup := session.BotGroups[botGroupIndex]
+
+	for botIndex := range botGroup.Bots {
+		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
+
+		// Lock the bot, as we are accessing the Action map
+		bot.AccessLock.Lock()
+
+		//// Look to see if we have a top-scoring action, that meets all the requirements
+		//for _, actionDataPair := range bot.SortedActionData {
+		//	actionData := actionDataPair.Value
+		//	actionData.
+		//}
+
+		// Unlock this bot
+		bot.AccessLock.Unlock()
 	}
 }
 
@@ -172,7 +196,8 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				}
 			} else {
 				if !allActionStatesAreActive {
-					details = append(details, fmt.Sprintf("Not all states required are active, required: %s", util.PrintStringArrayCSV(action.RequiredStates)))
+					actionData.FinalScore = 0
+					details = append(details, fmt.Sprintf("Not all states required are active, setting Final Score to 0.  Required: %s", util.PrintStringArrayCSV(action.RequiredStates)))
 				}
 
 				if finalScore < action.WeightThreshold {
