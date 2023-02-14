@@ -1364,7 +1364,7 @@ import "github.com/ghowland/sireus/code/extdata"
 
 ## Index
 
-- [func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-createformattedvariables>)
+- [func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-createformattedvariables>)
 - [func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
@@ -1376,19 +1376,19 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func QueryLockClear(site *data.Site, queryKey string)](<#func-querylockclear>)
 - [func QueryLockSet(site *data.Site, queryKey string)](<#func-querylockset>)
 - [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse](<#func-queryprometheus>)
-- [func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-sortallvariablesandactions>)
+- [func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int)](<#func-sortallvariablesandactions>)
 - [func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult)](<#func-storequeryresult>)
-- [func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotactionconsiderations>)
+- [func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotactionconsiderations>)
 - [func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
 - [func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
-- [func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
+- [func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
 - [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
 
 
 ## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L41>)
 
 ```go
-func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
+func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)
 ```
 
 Create formatted variables for all our Bots.  This adds human\-readable strings to all the sorted Pair Lists
@@ -1482,7 +1482,7 @@ Query the Prometheus metric server
 ## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L64>)
 
 ```go
-func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
+func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int)
 ```
 
 Sort all the Variables by name and Actions by Final Score
@@ -1498,7 +1498,7 @@ StoreQueryResult will store a QueryResult in the cache
 ## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L88>)
 
 ```go
-func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
+func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int)
 ```
 
 For this BotGroup, update all the BotActionData with new ActionConsideration scores
@@ -1522,7 +1522,7 @@ Update all the Bot VariableValues from our Queries
 ## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L197>)
 
 ```go
-func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
+func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)
 ```
 
 Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other

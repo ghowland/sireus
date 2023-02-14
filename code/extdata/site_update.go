@@ -24,21 +24,21 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
-		UpdateBotsWithSyntheticVariables(session, &data.SireusData.Site, index)
+		UpdateBotsWithSyntheticVariables(session, index)
 
 		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(session, &data.SireusData.Site, index)
+		UpdateBotActionConsiderations(session, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(session, &data.SireusData.Site, index)
+		SortAllVariablesAndActions(session, index)
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
-		CreateFormattedVariables(session, &data.SireusData.Site, index)
+		CreateFormattedVariables(session, index)
 	}
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
-func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
@@ -61,7 +61,7 @@ func CreateFormattedVariables(session *data.InteractiveSession, site *data.Site,
 }
 
 // Sort all the Variables by name and Actions by Final Score
-func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int) {
 	for botIndex := range session.BotGroups[botGroupIndex].Bots {
 		// Cant use defer, because we are processing many in 1 action
 		session.BotGroups[botGroupIndex].Bots[botIndex].AccessLock.Lock()
@@ -85,7 +85,7 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, site *data.Sit
 }
 
 // For this BotGroup, update all the BotActionData with new ActionConsideration scores
-func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
@@ -194,7 +194,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, site *data.
 }
 
 // Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
-func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
+func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int) {
 	botGroup := session.BotGroups[botGroupIndex]
 
 	// Create a list of names
