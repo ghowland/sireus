@@ -79,7 +79,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 
 	// Update everything from the queries.  This will need time to warm up, but just let it fail in the beginning
 	//NOTE(ghowland): This RPC version is either production or not
-	extdata.UpdateSiteBotGroups(&session)
+	extdata.UpdateSiteBotGroups(&session, false)
 
 	// Bot Groups and Bots come from the Site.  Site is either original or the Interactive data version, but treated the same
 	botGroup := data.BotGroup{}

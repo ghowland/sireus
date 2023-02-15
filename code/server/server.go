@@ -78,7 +78,7 @@ func RunForever() {
 
 		// Update everything from the queries.  This will need time to warm up, but just let it fail in the beginning
 		//NOTE(ghowland): This RunForever version is always production, so interactiveUUID==0
-		extdata.UpdateSiteBotGroups(&productionSession)
+		extdata.UpdateSiteBotGroups(&productionSession, true)
 
 		// Pause a short time (~0.8s) to not fully spin lock the CPU ever.  This doesn't need to be more rapid
 		if !data.SireusData.IsQuitting {

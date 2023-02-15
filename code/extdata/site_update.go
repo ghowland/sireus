@@ -14,7 +14,7 @@ import (
 )
 
 // Update all the BotGroups in this Site
-func UpdateSiteBotGroups(session *data.InteractiveSession) {
+func UpdateSiteBotGroups(session *data.InteractiveSession, isProdInternal bool) {
 	for index := range session.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(session, &data.SireusData.Site, index)
@@ -36,7 +36,9 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		CreateFormattedVariables(session, index)
 
 		// Execute Actions (lock and delay testing inside)
-		ExecuteBotGroupActions(session, index)
+		if isProdInternal {
+			ExecuteBotGroupActions(session, index)
+		}
 	}
 }
 
@@ -93,6 +95,13 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 
 	log.Printf("Execute Bot Action: %d  Bot Group: %s  Bot: %s  Action: %s", session.UUID, botGroup.Name, bot.Name, action.Name)
 
+	// Create the Action Command Result which will go into the Bot Command History
+	commandResult := data.ActionCommandResult{
+		ActionName: action.Name,
+		Started:    util.GetTimeNow(),
+		Score:      actionData.FinalScore,
+	}
+
 	// Set the Lock Timers
 	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
 
@@ -114,6 +123,12 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 
 	// Execute command
 	//log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
+
+	// Mark our completion time
+	commandResult.Finished = util.GetTimeNow()
+
+	// Append the Command Result to the Bots Command History
+	bot.CommandHistory = append(bot.CommandHistory, commandResult)
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
