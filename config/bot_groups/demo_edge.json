@@ -169,6 +169,7 @@
         "set_bot_states": [
           "Operation.Problem"
         ],
+        "reset_bot_states": [],
         "journal_template": "The Link is down: ({{link_state}})"
       }
     },
@@ -207,6 +208,7 @@
         "set_bot_states": [
           "Operation.Evaluate"
         ],
+        "reset_bot_states": [],
         "journal_template": "The Link is down: ({{link_state}})"
       }
     }

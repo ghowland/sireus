@@ -72,6 +72,7 @@ type (
 		LockTimerDuration Duration          `json:"lock_timer_duration"`
 		HostExecKey       string            `json:"host_exec_key"`    // Sireus Client presents this key to get commands to run
 		SetBotStates      []string          `json:"set_bot_states"`   // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
+		ResetBotStates    []string          `json:"reset_bot_states"` // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
 		JournalTemplate   string            `json:"journal_template"` // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
 	}
 )

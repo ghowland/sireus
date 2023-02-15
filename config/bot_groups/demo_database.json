@@ -147,6 +147,7 @@
         "set_bot_states": [
           "Operation.Problem"
         ],
+        "reset_bot_states": [],
         "journal_template": "The Wait Queue has become long: ({{wait_queue}}).  Expect it to be lower than 2000."
       }
     }
