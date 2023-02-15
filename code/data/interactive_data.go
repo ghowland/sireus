@@ -30,6 +30,7 @@ type (
 		BotGroups                []BotGroup  // These are the BotGroups we create and cache for this Session
 		IgnoreCacheQueryMismatch bool        // For Interactive sessions using the QueryStartTime and QueryDuration, this is true
 		IgnoreCacheOverInterval  bool        // For Production sessions, this is true
+		LastExecuteActionTime    time.Time   // The most recent time we executed an Action.  We want to be able to delay these through configuration
 	}
 )
 

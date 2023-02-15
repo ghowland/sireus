@@ -156,6 +156,30 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 	return data.ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
 }
 
+func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error) {
+	// If we have no history, then this hasn't been run before
+	if len(bot.CommandHistory) == 0 {
+		return time.Time{}, errors.New(fmt.Sprintf("This command has never been run: %d  Bot Group: %s  Bot: %s  Action: %s", session.UUID, botGroup.Name, bot.Name, action.Name))
+	}
+
+	// Loop backwards over the command history, looking for this Action
+	for i := len(bot.CommandHistory) - 1; i >= 0; i-- {
+		commandResult := bot.CommandHistory[i]
+
+		// If this is a match, return successfully
+		if commandResult.ActionName == action.Name {
+			return commandResult.Started, nil
+		}
+
+		// If this is past our time to stop looking, then this hasn't been run in the time we care about
+		if util.GetTimeNow().Sub(commandResult.Started) > time.Duration(stopLookingAfter) {
+			return time.Time{}, errors.New(fmt.Sprintf("This command has not been run since the timeout: %d  Bot Group: %s  Bot: %s  Action: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
+		}
+	}
+
+	return time.Time{}, errors.New(fmt.Sprintf("This command has not been in the entire command history: %d  Bot Group: %s  Bot: %s  Action: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
+}
+
 // For a given Action, does this Bot have all the RequiredStates active?
 func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 	for _, state := range action.RequiredStates {

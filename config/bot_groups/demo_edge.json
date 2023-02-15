@@ -142,6 +142,7 @@
       "weight": 2.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
@@ -181,6 +182,7 @@
       "weight": 5.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
@@ -220,6 +222,7 @@
       "weight": 5.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],

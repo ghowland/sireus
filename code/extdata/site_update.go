@@ -35,7 +35,7 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, index)
 
-		// Execute Actions
+		// Execute Actions (lock and delay testing inside)
 		ExecuteBotGroupActions(session, index)
 	}
 }
@@ -78,13 +78,26 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 }
 
 func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
+	// Lock this session for execution.  We want to be able to delay them, and ensure they aren't racing, because HTTP requests trigger this
+	util.LockAcquire(fmt.Sprintf("session.%d.execute_action.%s", session.UUID, action.Name))
+	defer util.LockRelease(fmt.Sprintf("session.%d.execute_action.%s", session.UUID, action.Name))
+
+	// Get the last time this Action executed, so we can enforce a repeat execution delay
+	actionLastExecuteTime, err := app.GetActionLastExecuteTime(session, botGroup, bot, action, action.ExecuteRepeatDelay)
+
+	// Return early if we executed within the delay threshold.  In this case, err means it wasn't executed, so we will perform the execution.  err is not a failure case here
+	if !util.Check(err) && util.GetTimeNow().Sub(actionLastExecuteTime) < time.Duration(action.ExecuteRepeatDelay) {
+		log.Printf(fmt.Sprintf("Session Bot Execute Actions returning early because called too soon: %d  Last: %v  Cur: %v", session.UUID, util.GetTimeNow(), util.GetTimeNow()))
+		return
+	}
+
 	log.Printf("Execute Bot Action: %d  Bot Group: %s  Bot: %s  Action: %s", session.UUID, botGroup.Name, bot.Name, action.Name)
 
 	// Set the Lock Timers
 	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
 
 	// Update the states
-	err := app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
+	err = app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
 	if util.Check(err) {
 		log.Printf("Aborting action execution, can't set state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
 		return
