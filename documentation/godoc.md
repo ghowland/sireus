@@ -19,28 +19,38 @@ import "github.com/ghowland/sireus/code/app"
 ## Index
 
 - [Variables](<#variables>)
-- [func AreAllActionStatesActive(action data.Action, bot data.Bot) bool](<#func-areallactionstatesactive>)
+- [func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool](<#func-areallactionlocktimersavailable>)
+- [func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool](<#func-areallactionstatesactive>)
 - [func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)](<#func-averageandfixup>)
 - [func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)](<#func-calculatescore>)
 - [func FormatBotVariable(format data.BotVariableFormat, value float64) string](<#func-formatbotvariable>)
 - [func GetAPIPlotData(c *fiber.Ctx) string](<#func-getapiplotdata>)
 - [func GetAPIPlotMetrics(c *fiber.Ctx) string](<#func-getapiplotmetrics>)
-- [func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)](<#func-getaction>)
+- [func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error)](<#func-getaction>)
 - [func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)](<#func-getactionconsideration>)
-- [func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)](<#func-getbot>)
+- [func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error)](<#func-getactionlastexecutetime>)
+- [func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error)](<#func-getbot>)
+- [func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (string, int, error)](<#func-getbotcurrentstateandindex>)
+- [func GetBotForwardSequenceState(botGroup *data.BotGroup, name string) (data.BotForwardSequenceState, error)](<#func-getbotforwardsequencestate>)
 - [func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)](<#func-getbotgroup>)
 - [func GetCurveDataX(curveData CurveData) []float64](<#func-getcurvedatax>)
 - [func GetCurveValue(curveData CurveData, x float64) float64](<#func-getcurvevalue>)
 - [func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession](<#func-getinteractivesession>)
+- [func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockTimer, error)](<#func-getlocktimer>)
 - [func GetProductionInteractiveControl() data.InteractiveControl](<#func-getproductioninteractivecontrol>)
-- [func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)](<#func-getquery>)
+- [func GetQuery(botGroup *data.BotGroup, queryName string) (data.BotQuery, error)](<#func-getquery>)
 - [func GetQueryResultByQueryKey(site *data.Site, queryKey string) (data.QueryResultPoolItem, bool)](<#func-getqueryresultbyquerykey>)
-- [func GetQueryServer(site data.Site, name string) (data.QueryServer, error)](<#func-getqueryserver>)
+- [func GetQueryServer(site *data.Site, name string) (data.QueryServer, error)](<#func-getqueryserver>)
 - [func GetRawMetricsJSON(c *fiber.Ctx) string](<#func-getrawmetricsjson>)
-- [func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)](<#func-getvariable>)
+- [func GetStateIndex(botGroup *data.BotGroup, state string) (int, error)](<#func-getstateindex>)
+- [func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, error)](<#func-getvariable>)
 - [func LoadBotGroupConfig(path string) data.BotGroup](<#func-loadbotgroupconfig>)
 - [func LoadConfig(path string) data.AppConfig](<#func-loadconfig>)
 - [func LoadSiteConfig(appConfig data.AppConfig) data.Site](<#func-loadsiteconfig>)
+- [func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) error](<#func-resetbotstate>)
+- [func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration)](<#func-setallactionlocktimers>)
+- [func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error](<#func-setbotstates>)
+- [func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration)](<#func-setlocktimer>)
 - [func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList](<#func-sortmapstringactiondatabyfinalscore>)
 - [type CurveData](<#type-curvedata>)
   - [func GetCurve(name string) (CurveData, error)](<#func-getcurve>)
@@ -55,10 +65,18 @@ var (
 )
 ```
 
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L156>)
+## func [AreAllActionLockTimersAvailable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L194>)
 
 ```go
-func AreAllActionStatesActive(action data.Action, bot data.Bot) bool
+func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool
+```
+
+For a given Action, does this Bot Group have all the Lock Timers available to be locked?
+
+## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L184>)
+
+```go
+func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool
 ```
 
 For a given Action, does this Bot have all the RequiredStates active?
@@ -101,15 +119,15 @@ Returns JSON data needed to create a Plotly graph for our Curves
 func GetAPIPlotMetrics(c *fiber.Ctx) string
 ```
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L126>)
+## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L130>)
 
 ```go
-func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error)
+func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error)
 ```
 
 Get an Action from a BotGroup, by name
 
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L146>)
+## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L150>)
 
 ```go
 func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
@@ -117,15 +135,35 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 
 Get an ActionConsideration from an Action, by name
 
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L167>)
+## func [GetActionLastExecuteTime](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L159>)
 
 ```go
-func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error)
+func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error)
+```
+
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L378>)
+
+```go
+func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error)
 ```
 
 Get a Bot from the BotGroup
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L177>)
+## func [GetBotCurrentStateAndIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L319>)
+
+```go
+func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (string, int, error)
+```
+
+Returns the index of the State currently for this Bot, with the stateBase \(BotForwardSequenceState.Name\)
+
+## func [GetBotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L308>)
+
+```go
+func GetBotForwardSequenceState(botGroup *data.BotGroup, name string) (data.BotForwardSequenceState, error)
+```
+
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L388>)
 
 ```go
 func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)
@@ -149,7 +187,7 @@ func GetCurveValue(curveData CurveData, x float64) float64
 
 Get the Y value, at an X position, in the curve
 
-## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L52>)
+## func [GetInteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L56>)
 
 ```go
 func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession
@@ -157,7 +195,15 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 
 Takes an InteractiveControl struct, and creates a InteractiveSession, which is used everywhere and contains live BotGroups
 
-## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L91>)
+## func [GetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L352>)
+
+```go
+func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockTimer, error)
+```
+
+Get a BotLockTimer from the BotGroup
+
+## func [GetProductionInteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L95>)
 
 ```go
 func GetProductionInteractiveControl() data.InteractiveControl
@@ -165,10 +211,10 @@ func GetProductionInteractiveControl() data.InteractiveControl
 
 GetProductionInteractiveControl returns a SessionUUID==0 data set for production data. TODO\(ghowland\): These should be altered by AppConfig
 
-## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L116>)
+## func [GetQuery](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L120>)
 
 ```go
-func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error)
+func GetQuery(botGroup *data.BotGroup, queryName string) (data.BotQuery, error)
 ```
 
 Gets a query, scope per BotGroup
@@ -179,10 +225,10 @@ Gets a query, scope per BotGroup
 func GetQueryResultByQueryKey(site *data.Site, queryKey string) (data.QueryResultPoolItem, bool)
 ```
 
-## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L105>)
+## func [GetQueryServer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L109>)
 
 ```go
-func GetQueryServer(site data.Site, name string) (data.QueryServer, error)
+func GetQueryServer(site *data.Site, name string) (data.QueryServer, error)
 ```
 
 Returns a QueryServer, scope is per Site
@@ -193,15 +239,23 @@ Returns a QueryServer, scope is per Site
 func GetRawMetricsJSON(c *fiber.Ctx) string
 ```
 
-## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L136>)
+## func [GetStateIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L332>)
 
 ```go
-func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error)
+func GetStateIndex(botGroup *data.BotGroup, state string) (int, error)
+```
+
+Returns the index of the State inside it's BotForwardSequenceState.  Important because States can only increase or reset to 0 index.
+
+## func [GetVariable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L140>)
+
+```go
+func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, error)
 ```
 
 Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
 
-## func [LoadBotGroupConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L14>)
+## func [LoadBotGroupConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L16>)
 
 ```go
 func LoadBotGroupConfig(path string) data.BotGroup
@@ -217,13 +271,41 @@ func LoadConfig(path string) data.AppConfig
 
 Load the Server config
 
-## func [LoadSiteConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L26>)
+## func [LoadSiteConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L28>)
 
 ```go
 func LoadSiteConfig(appConfig data.AppConfig) data.Site
 ```
 
 Load our Site config for a path
+
+## func [ResetBotState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L217>)
+
+```go
+func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) error
+```
+
+## func [SetAllActionLockTimers](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L211>)
+
+```go
+func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration)
+```
+
+When executing an Action, we will set all the Lock Timers that Action required, for the duration specified in the ActionCommand
+
+## func [SetBotStates](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L241>)
+
+```go
+func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error
+```
+
+When executing an Action, we want to update the Bots States, to move it forward
+
+## func [SetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L367>)
+
+```go
+func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration)
+```
 
 ## func [SortMapStringActionDataByFinalScore](<https://github.com/ghowland/sireus/blob/main/code/app/fix_go_sort.go#L9>)
 
@@ -334,27 +416,29 @@ var (
 )
 ```
 
-## type [Action](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L7-L19>)
+## type [Action](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L7-L21>)
 
-Action is what is considered for execution.  It will receive a Final Score from it's Weight and Consideration Final Scores
+Action is what is considered for execution.  It will receive a Final Score from its Weight and Consideration Final Scores
 
 ```go
 type Action struct {
-    Name               string                `json:"name"`
-    Info               string                `json:"info"`
-    IsLaunched         bool                  `json:"is_launched"`      // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
-    IsDisabled         bool                  `json:"is_disabled"`      // When testing changes, disable with modifying config
-    Weight             float64               `json:"weight"`           // This is the multiplier for the Final Score, from the Consideration Final Score
-    WeightMin          float64               `json:"weight_min"`       // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
-    WeightThreshold    float64               `json:"weight_threshold"` // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
-    RequiredLockTimers []string              `json:"required_lock_timers"`
-    RequiredStates     []string              `json:"required_states"`
-    Considerations     []ActionConsideration `json:"considerations"`
-    Command            ActionCommand         `json:"command"`
+    Name               string                `json:"name"`                 // Name of the Action
+    Info               string                `json:"info"`                 // Description
+    IsLaunched         bool                  `json:"is_launched"`          // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
+    IsDisabled         bool                  `json:"is_disabled"`          // When testing changes, disable with modifying config
+    Weight             float64               `json:"weight"`               // This is the multiplier for the Final Score, from the Consideration Final Score
+    WeightMin          float64               `json:"weight_min"`           // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
+    WeightThreshold    float64               `json:"weight_threshold"`     // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
+    ExecuteRepeatDelay Duration              `json:"execute_repeat_delay"` // Duration until this Action can execute again.  If short, this just the problem of double execution if it is 0, which is required.  It can't be 0.  If this is long, this becomes a good way to process other actions instead of this one, because you already tried it recently.
+    RequiredLockTimers []string              `json:"required_lock_timers"` // All of these Lock Timers must be available for this Action to trigger.  Afterwards, they will all be locked for ActionCommand.LockTimerDuration automatically
+    RequiredStates     []string              `json:"required_states"`      // All of these states must be Active for this
+    RequiredAvailable  Duration              `json:"required_available"`   // If greater than 0s, this Action must have been continuously Available for this Duration for it to be executed.  Allows us to make sure it's not flapping or inconsistent for a period of time before being executed
+    Considerations     []ActionConsideration `json:"considerations"`       // These Considerations are used to create a Score for this Action, which must be the highest score, and must be higher than the MinimumThreshold, and if all other requirements are met, this Action will be executed
+    Command            ActionCommand         `json:"command"`              // This is the command that will be executed.  It could just change States, or run a Command or API call
 }
 ```
 
-## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L66-L75>)
+## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L68-L78>)
 
 When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request.
 
@@ -367,11 +451,12 @@ type ActionCommand struct {
     LockTimerDuration Duration          `json:"lock_timer_duration"`
     HostExecKey       string            `json:"host_exec_key"`    // Sireus Client presents this key to get commands to run
     SetBotStates      []string          `json:"set_bot_states"`   // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
+    ResetBotStates    []string          `json:"reset_bot_states"` // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
     JournalTemplate   string            `json:"journal_template"` // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
 }
 ```
 
-## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L80-L88>)
+## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L83-L91>)
 
 When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result.
 
@@ -387,7 +472,7 @@ type ActionCommandResult struct {
 }
 ```
 
-## type [ActionCommandType](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L37>)
+## type [ActionCommandType](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L39>)
 
 What will we do with this ActionCommand?  We will only ever do 1 thing per Action, as this is a Decision System
 
@@ -405,13 +490,13 @@ const (
 )
 ```
 
-### func \(ActionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L48>)
+### func \(ActionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L50>)
 
 ```go
 func (act ActionCommandType) String() string
 ```
 
-## type [ActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L25-L32>)
+## type [ActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L27-L34>)
 
 Considerations are units for scoring an Action.  Each creates a Score, and they are combined to created the Consideration Final Score.
 
@@ -450,7 +535,7 @@ type AppConfig struct {
 }
 ```
 
-## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L18-L32>)
+## type [Bot](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L17-L31>)
 
 Bots the core structure for this system.  They are ephemeral and build from the Bot Group data, and store minimal data.  Bots are expected to be added or removed at any time, and there is a Timeout for Stale, Invalid, and Removed bots.
 
@@ -461,6 +546,7 @@ If a Bot is missing any data for it's variables, it is considered Invalid, becau
 ```go
 type Bot struct {
     Name                 string                   // Unique identifier pulled from the BotGroup.BotExtractor
+    LockKey              string                   // Unique identifier for performing locks on this data
     VariableValues       map[string]float64       // These are the unique values for this Bot, and will be used for all ActionConsideration scoring
     SortedVariableValues PairFloat64List          // Sorted VariableValues, Handlebars helper
     StateValues          []string                 // These are the current States for this Bot.  Actions can only be available for execution, if all their Action.RequiredStates are active in the Bot
@@ -472,11 +558,10 @@ type Bot struct {
     IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
     InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
     IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
-    AccessLock           sync.RWMutex             // Lock for accessing maps.  Keeping the locks local means less contention
 }
 ```
 
-## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L38-L48>)
+## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L37-L47>)
 
 This stores the Final Scores and related data for all Actions, so they can be compared to determin if any Action should be executed
 
@@ -494,7 +579,7 @@ type BotActionData struct {
 }
 ```
 
-## type [BotExtractorQueryKey](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L41-L44>)
+## type [BotExtractorQueryKey](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L42-L45>)
 
 This is how Bots are created.  There is a BotQuery named QueryName that will use the Key to find the name of the Bots.  Using something like "instance", "node" or "service" is recommended, that will uniquely identify a Bot inside a BotGroup's configuration.
 
@@ -505,7 +590,7 @@ type BotExtractorQueryKey struct {
 }
 ```
 
-## type [BotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L58-L62>)
+## type [BotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L59-L63>)
 
 Forward Sequence State is the term I am using to describe a State Machine that only has a single forward sequence.  It can be Advanced and it can be Reset, but the state cannot go backwards.
 
@@ -523,7 +608,7 @@ type BotForwardSequenceState struct {
 }
 ```
 
-## type [BotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L10-L34>)
+## type [BotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L10-L35>)
 
 BotGroup is used to create Bots.  Bots are the core of Sireus.  BotGroups define all the information used to populate the ephemeral Bot structure.
 
@@ -551,11 +636,12 @@ type BotGroup struct {
     InvalidBots   []string
     StaleBots     []string
     RemovedBots   []string
-    FreezeActions bool // If true, no actions will be taken for this BotGroup.  Allows group level control.
+    FreezeActions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
+    LockKey       string // Formatted with: (Site.Name).(BotGroup.Name)
 }
 ```
 
-## type [BotLockTimer](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L124-L131>)
+## type [BotLockTimer](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L125-L132>)
 
 BotLockTimer is used to both block an Action from being executed, if the BotLockTimer.IsActive and has not reached the Timeout yet.  Actions can use multiple BotLockTimers which essentially act as execution "channels" where Actions execute 1 at a time.
 
@@ -572,7 +658,7 @@ type BotLockTimer struct {
 }
 ```
 
-## type [BotLockTimerType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L97>)
+## type [BotLockTimerType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L98>)
 
 Scope for locking Actions
 
@@ -587,7 +673,7 @@ const (
 )
 ```
 
-### func \(BotLockTimerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L106>)
+### func \(BotLockTimerType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L107>)
 
 ```go
 func (bltt BotLockTimerType) String() string
@@ -595,7 +681,7 @@ func (bltt BotLockTimerType) String() string
 
 Format the BotLockTimerType for human readability
 
-## type [BotQuery](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L85-L92>)
+## type [BotQuery](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L86-L93>)
 
 These queries are stored in BotGroup, but are used to populate the Bots with query Variables.
 
@@ -610,7 +696,7 @@ type BotQuery struct {
 }
 ```
 
-## type [BotQueryType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L67>)
+## type [BotQueryType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L68>)
 
 Differentiate Query Types, so we can format our requests and parse the data properly
 
@@ -624,7 +710,7 @@ const (
 )
 ```
 
-### func \(BotQueryType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L75>)
+### func \(BotQueryType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L76>)
 
 ```go
 func (bqt BotQueryType) String() string
@@ -632,7 +718,7 @@ func (bqt BotQueryType) String() string
 
 Format the BotQueryType to a string usable for building the request
 
-## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L190-L203>)
+## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L191-L204>)
 
 BotVariable is what is used for the ActionConsideration scoring process.
 
@@ -665,7 +751,7 @@ type BotVariable struct {
 }
 ```
 
-## type [BotVariableFormat](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L146>)
+## type [BotVariableFormat](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L147>)
 
 This is for formatting the data we got raw from BotVariableType.  This uses Humanize and other readability funcs
 
@@ -688,7 +774,7 @@ const (
 )
 ```
 
-## type [BotVariableType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L136>)
+## type [BotVariableType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L137>)
 
 This is the raw input data type.  It will still be turned into a float64, but it is best to know the origin type
 
@@ -703,7 +789,7 @@ const (
 )
 ```
 
-### func \(BotVariableType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L163>)
+### func \(BotVariableType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L164>)
 
 ```go
 func (bvt BotVariableType) String() string
@@ -735,7 +821,7 @@ func (d *Duration) UnmarshalJSON(b []byte) error
 
 Unmarshal JSON for our time.Duration wrapper
 
-## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L78-L86>)
+## type [InteractiveControl](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L79-L87>)
 
 InteractiveControl comes from the Web App as JSON data on each RPC call, to update what data we want returned
 
@@ -751,7 +837,7 @@ type InteractiveControl struct {
 }
 ```
 
-## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L23-L33>)
+## type [InteractiveSession](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L23-L34>)
 
 An InteractiveSession is created when a Web App user wants to look at how their Actions would score at a previous time, or if there were different Bot.VariableValues or an Action.Weight or ActionConsideration was different
 
@@ -766,6 +852,7 @@ type InteractiveSession struct {
     BotGroups                []BotGroup  // These are the BotGroups we create and cache for this Session
     IgnoreCacheQueryMismatch bool        // For Interactive sessions using the QueryStartTime and QueryDuration, this is true
     IgnoreCacheOverInterval  bool        // For Production sessions, this is true
+    LastExecuteActionTime    time.Time   // The most recent time we executed an Action.  We want to be able to delay these through configuration
 }
 ```
 
@@ -780,7 +867,7 @@ type InteractiveSessionPool struct {
 }
 ```
 
-## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L38-L42>)
+## type [Override](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L39-L43>)
 
 This tracks all the override changes relating to BotGroups or Bots for an InteractiveSession
 
@@ -792,7 +879,7 @@ type Override struct {
 }
 ```
 
-## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L56-L64>)
+## type [OverrideActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L57-L65>)
 
 Overrides for an ActionConsideration in an Action, for a BotGroup.  Changes all related Bot scores.  For simplicity, when making an ActionCconsideration override, all values are always updated.  No reason to have sparse changes here
 
@@ -808,7 +895,7 @@ type OverrideActionConsideration struct {
 }
 ```
 
-## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L69-L73>)
+## type [OverrideBot](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L70-L74>)
 
 Overrides to a Bot for an InteractiveSession
 
@@ -820,7 +907,7 @@ type OverrideBot struct {
 }
 ```
 
-## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L47-L51>)
+## type [OverrideBotGroup](<https://github.com/ghowland/sireus/blob/main/code/data/interactive_data.go#L48-L52>)
 
 Overrides to a BotGroup for an InteractiveSession
 
@@ -1365,12 +1452,14 @@ import "github.com/ghowland/sireus/code/extdata"
 ## Index
 
 - [func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-createformattedvariables>)
-- [func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot](<#func-extractbotsfrompromdata>)
+- [func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData)](<#func-executebotaction>)
+- [func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)](<#func-executebotgroupactions>)
+- [func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.BotGroup) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
 - [func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery) (data.QueryResult, error)](<#func-getcachedqueryresult>)
 - [func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string](<#func-getquerykey>)
-- [func InitializeStates(session *data.InteractiveSession, botGroupIndex int)](<#func-initializestates>)
+- [func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot)](<#func-initializebotstates>)
 - [func IsQueryLocked(session *data.InteractiveSession, site *data.Site, query data.BotQuery) bool](<#func-isquerylocked>)
 - [func QueryCacheSet(session *data.InteractiveSession, site *data.Site, query data.BotQuery, newCacheItem data.QueryResultPoolItem)](<#func-querycacheset>)
 - [func QueryLockClear(site *data.Site, queryKey string)](<#func-querylockclear>)
@@ -1382,10 +1471,10 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
 - [func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
 - [func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
-- [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
+- [func UpdateSiteBotGroups(session *data.InteractiveSession, isProdInternal bool)](<#func-updatesitebotgroups>)
 
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L41>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L135>)
 
 ```go
 func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -1393,15 +1482,29 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 
 Create formatted variables for all our Bots.  This adds human\-readable strings to all the sorted Pair Lists
 
+## func [ExecuteBotAction](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L82>)
+
+```go
+func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData)
+```
+
+## func [ExecuteBotGroupActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L46>)
+
+```go
+func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
+```
+
+Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
+
 ## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L64>)
 
 ```go
-func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot
+func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.BotGroup) []data.Bot
 ```
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L268>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L369>)
 
 ```go
 func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
@@ -1409,7 +1512,7 @@ func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
 
 Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L252>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L353>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
@@ -1433,13 +1536,13 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L312>)
+## func [InitializeBotStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L414>)
 
 ```go
-func InitializeStates(session *data.InteractiveSession, botGroupIndex int)
+func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot)
 ```
 
-Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
+Initialize all the States for this BotGroups Bots.   They should all start at the first state value, and only move forward or reset.
 
 ## func [IsQueryLocked](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L98>)
 
@@ -1479,7 +1582,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L64>)
+## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L158>)
 
 ```go
 func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int)
@@ -1495,7 +1598,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L88>)
+## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L182>)
 
 ```go
 func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int)
@@ -1503,7 +1606,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 
 For this BotGroup, update all the BotActionData with new ActionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L280>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L381>)
 
 ```go
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1511,7 +1614,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L327>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L425>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1519,7 +1622,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L197>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L298>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -1530,7 +1633,7 @@ Update bot with Synthetic Variables.  Happens after all the Query Variables are 
 ## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L17>)
 
 ```go
-func UpdateSiteBotGroups(session *data.InteractiveSession)
+func UpdateSiteBotGroups(session *data.InteractiveSession, isProdInternal bool)
 ```
 
 Update all the BotGroups in this Site
@@ -1636,7 +1739,7 @@ import "github.com/ghowland/sireus/code/util"
 - [Variables](<#variables>)
 - [func BoolToFloatString(value bool) string](<#func-booltofloatstring>)
 - [func Check(e error) bool](<#func-check>)
-- [func CheckNoLog(e error) bool](<#func-checknolog>)
+- [func CheckLog(e error) bool](<#func-checklog>)
 - [func CheckPanic(e error)](<#func-checkpanic>)
 - [func Clamp(value float64, min float64, max float64) float64](<#func-clamp>)
 - [func ConvertInterfaceToFloat(value interface{}) (float64, error)](<#func-convertinterfacetofloat>)
@@ -1647,15 +1750,25 @@ import "github.com/ghowland/sireus/code/util"
 - [func HandlebarFormatData(format string, mapData map[string]interface{}) string](<#func-handlebarformatdata>)
 - [func HandlebarFormatText(format string, mapData map[string]string) string](<#func-handlebarformattext>)
 - [func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template)](<#func-handlebarsregisterpartials>)
+- [func LockAcquire(lockKey string)](<#func-lockacquire>)
+- [func LockRelease(lockKey string)](<#func-lockrelease>)
 - [func ParseContextBody(c *fiber.Ctx) map[string]string](<#func-parsecontextbody>)
 - [func PrintJson(value interface{}) string](<#func-printjson>)
 - [func PrintJsonData(value interface{}) string](<#func-printjsondata>)
 - [func PrintStringArrayCSV(slice []string) string](<#func-printstringarraycsv>)
 - [func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64](<#func-rangemapper>)
-- [func StringInSlice(a string, list []string) bool](<#func-stringinslice>)
+- [func StringInSlice(list []string, a string) bool](<#func-stringinslice>)
+- [func StringSliceFindIndex(slice []string, find string) (int, error)](<#func-stringslicefindindex>)
+- [func StringSliceRemoveIndex(slice []string, index int) []string](<#func-stringsliceremoveindex>)
 
 
 ## Variables
+
+```go
+var (
+    AllLocks = make(map[string]*sync.RWMutex)
+)
+```
 
 ```go
 var (
@@ -1664,7 +1777,7 @@ var (
 )
 ```
 
-## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L158>)
+## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L145>)
 
 ```go
 func BoolToFloatString(value bool) string
@@ -1678,17 +1791,17 @@ Converts a boolean to a string of "0" or "1"
 func Check(e error) bool
 ```
 
-Call Check when we only want to log the error and wrap error testing, but it does not require an exceptional response
+Call Check when we want to get a boolean on the error, but dont want to log because we handle the response and it's too noisy or not useful.
 
-## func [CheckNoLog](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L28>)
+## func [CheckLog](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L26>)
 
 ```go
-func CheckNoLog(e error) bool
+func CheckLog(e error) bool
 ```
 
-Call CheckNoLog when we want to get a boolean on the error, but dont want to log because we handle the response and it's too noisy or not useful.
+Call CheckLog when we only want to log the error and wrap error testing, but it does not require an exceptional response
 
-## func [CheckPanic](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L37>)
+## func [CheckPanic](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L36>)
 
 ```go
 func CheckPanic(e error)
@@ -1696,7 +1809,7 @@ func CheckPanic(e error)
 
 Call CheckPanic for configuration errors that can't be solved.
 
-## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L142>)
+## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L129>)
 
 ```go
 func Clamp(value float64, min float64, max float64) float64
@@ -1704,7 +1817,7 @@ func Clamp(value float64, min float64, max float64) float64
 
 Clamp a value between a min and a max
 
-## func [ConvertInterfaceToFloat](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L118>)
+## func [ConvertInterfaceToFloat](<https://github.com/ghowland/sireus/blob/main/code/util/util_convert.go#L14>)
 
 ```go
 func ConvertInterfaceToFloat(value interface{}) (float64, error)
@@ -1712,7 +1825,7 @@ func ConvertInterfaceToFloat(value interface{}) (float64, error)
 
 Convert any value we can into a float64 in a predictable manner
 
-## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L45>)
+## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L44>)
 
 ```go
 func FileExists(filename string) bool
@@ -1720,25 +1833,29 @@ func FileExists(filename string) bool
 
 Does this file exist?  Wrap to make code shorter in situ
 
-## func [FileLoad](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L53>)
+## func [FileLoad](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L52>)
 
 ```go
 func FileLoad(path string) (string, error)
 ```
 
-## func [FormatTimeLong](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L189>)
+## func [FormatTimeLong](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L177>)
 
 ```go
 func FormatTimeLong(t time.Time) string
 ```
 
-## func [GetTimeNow](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L197>)
+Format the time in ISO 8601, without the millis
+
+## func [GetTimeNow](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L186>)
 
 ```go
 func GetTimeNow() time.Time
 ```
 
-## func [HandlebarFormatData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L92>)
+Returns time.Now\(\) in UTC.  Convenience wrapper, so it's never forgotten, because everything must always be in UTC
+
+## func [HandlebarFormatData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L91>)
 
 ```go
 func HandlebarFormatData(format string, mapData map[string]interface{}) string
@@ -1746,7 +1863,7 @@ func HandlebarFormatData(format string, mapData map[string]interface{}) string
 
 Format Handlebars string from data, so I don't have to remember any arguments
 
-## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L63>)
+## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L62>)
 
 ```go
 func HandlebarFormatText(format string, mapData map[string]string) string
@@ -1754,10 +1871,22 @@ func HandlebarFormatText(format string, mapData map[string]string) string
 
 Format Handlebars string from strings, so I don't have to remember any arguments
 
-## func [HandlebarsRegisterPartials](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L70>)
+## func [HandlebarsRegisterPartials](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L69>)
 
 ```go
 func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template)
+```
+
+## func [LockAcquire](<https://github.com/ghowland/sireus/blob/main/code/util/util_lock.go#L11>)
+
+```go
+func LockAcquire(lockKey string)
+```
+
+## func [LockRelease](<https://github.com/ghowland/sireus/blob/main/code/util/util_lock.go#L21>)
+
+```go
+func LockRelease(lockKey string)
 ```
 
 ## func [ParseContextBody](<https://github.com/ghowland/sireus/blob/main/code/util/util_fiber_app.go#L9>)
@@ -1768,7 +1897,7 @@ func ParseContextBody(c *fiber.Ctx) map[string]string
 
 Parse the HTTP request body.  Needed for API requests
 
-## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L167>)
+## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L154>)
 
 ```go
 func PrintJson(value interface{}) string
@@ -1776,7 +1905,7 @@ func PrintJson(value interface{}) string
 
 Print JSON, for debugging
 
-## func [PrintJsonData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L175>)
+## func [PrintJsonData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L162>)
 
 ```go
 func PrintJsonData(value interface{}) string
@@ -1784,7 +1913,7 @@ func PrintJsonData(value interface{}) string
 
 Print JSON, for transport
 
-## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L183>)
+## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L170>)
 
 ```go
 func PrintStringArrayCSV(slice []string) string
@@ -1792,7 +1921,7 @@ func PrintStringArrayCSV(slice []string) string
 
 Print a string array.  For human readability or debugging
 
-## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L147>)
+## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L134>)
 
 ```go
 func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
@@ -1800,13 +1929,29 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
 
 Returns clamped value between 0\-1, where the value falls between the range
 
-## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L103>)
+## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L102>)
 
 ```go
-func StringInSlice(a string, list []string) bool
+func StringInSlice(list []string, a string) bool
 ```
 
 Test if a string is in a slice
+
+## func [StringSliceFindIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L118>)
+
+```go
+func StringSliceFindIndex(slice []string, find string) (int, error)
+```
+
+Returns the index of a string in a slice
+
+## func [StringSliceRemoveIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L112>)
+
+```go
+func StringSliceRemoveIndex(slice []string, index int) []string
+```
+
+Remove a string at index.  Wrapper for go\-ness
 
 # webapp
 
@@ -1816,8 +1961,8 @@ import "github.com/ghowland/sireus/code/webapp"
 
 ## Index
 
-- [func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}](<#func-buildrendermap>)
-- [func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map](<#func-buildrendermapfiber>)
+- [func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}](<#func-buildrendermap>)
+- [func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}) fiber.Map](<#func-buildrendermapfiber>)
 - [func CreateHandlebarsEngine(appConfig data.AppConfig) *handlebars.Engine](<#func-createhandlebarsengine>)
 - [func CreateWebApp(engine *handlebars.Engine) *fiber.App](<#func-createwebapp>)
 - [func FormatInteractiveStartTime() string](<#func-formatinteractivestarttime>)
@@ -1826,6 +1971,7 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers()](<#func-registerhandlebarshelpers>)
 - [func RegisterHandlebarsHelpers_FormatData()](<#func-registerhandlebarshelpers_formatdata>)
 - [func RegisterHandlebarsHelpers_GetAppData()](<#func-registerhandlebarshelpers_getappdata>)
+- [func RegisterHandlebarsHelpers_GetGoData()](<#func-registerhandlebarshelpers_getgodata>)
 - [func RegisterHandlebarsHelpers_IfArrayLength()](<#func-registerhandlebarshelpers_ifarraylength>)
 - [func RegisterHandlebarsHelpers_IfTests()](<#func-registerhandlebarshelpers_iftests>)
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
@@ -1834,13 +1980,13 @@ import "github.com/ghowland/sireus/code/webapp"
 ## func [BuildRenderMap](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L158>)
 
 ```go
-func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}
+func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{}
 ```
 
 ## func [BuildRenderMapFiber](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L108>)
 
 ```go
-func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map
+func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}) fiber.Map
 ```
 
 ## func [CreateHandlebarsEngine](<https://github.com/ghowland/sireus/blob/main/code/webapp/app.go#L10>)
@@ -1889,7 +2035,7 @@ func RegisterHandlebarsHelpers()
 
 Main function to register all the different Handlebars helper functions, for text processing
 
-## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L142>)
+## func [RegisterHandlebarsHelpers\_FormatData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L177>)
 
 ```go
 func RegisterHandlebarsHelpers_FormatData()
@@ -1897,7 +2043,7 @@ func RegisterHandlebarsHelpers_FormatData()
 
 Format data, for Go and our internal data types
 
-## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L114>)
+## func [RegisterHandlebarsHelpers\_GetAppData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L134>)
 
 ```go
 func RegisterHandlebarsHelpers_GetAppData()
@@ -1905,7 +2051,15 @@ func RegisterHandlebarsHelpers_GetAppData()
 
 Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
 
-## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L197>)
+## func [RegisterHandlebarsHelpers\_GetGoData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L117>)
+
+```go
+func RegisterHandlebarsHelpers_GetGoData()
+```
+
+Get Go data values.  Slices, maps, etc
+
+## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L232>)
 
 ```go
 func RegisterHandlebarsHelpers_IfArrayLength()
@@ -1913,7 +2067,7 @@ func RegisterHandlebarsHelpers_IfArrayLength()
 
 Testing Length of Arrays for the different structs
 
-## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L62>)
+## func [RegisterHandlebarsHelpers\_IfTests](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L65>)
 
 ```go
 func RegisterHandlebarsHelpers_IfTests()
@@ -1921,7 +2075,7 @@ func RegisterHandlebarsHelpers_IfTests()
 
 Expanded test logic
 
-## func [RegisterHandlebarsHelpers\_WithData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L35>)
+## func [RegisterHandlebarsHelpers\_WithData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L38>)
 
 ```go
 func RegisterHandlebarsHelpers_WithData()
