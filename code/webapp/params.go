@@ -24,13 +24,13 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 	if botGroupId != "" {
 		//TODO(ghowland): The first load COULD be from an interactive session?  Or never?  I dont mind fixing the Interactive Session on the RPC call always.  Not a big deal to update after a page load...  Finalize this and remove the content if this is the way...
 		botGroup, err = app.GetBotGroup(site.ProductionControl, site, botGroupId)
-		util.Check(err)
+		util.CheckLog(err)
 	}
 
 	bot := data.Bot{}
 	if botId != "" && botGroup.Name != "" {
 		bot, err = app.GetBot(&botGroup, botId)
-		util.Check(err)
+		util.CheckLog(err)
 	}
 
 	inputData := make(map[string]interface{})
@@ -86,13 +86,13 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	var err error
 	if len(botGroupId) != 0 {
 		botGroup, err = app.GetBotGroup(interactiveControl, site, botGroupId)
-		util.Check(err)
+		util.CheckLog(err)
 	}
 
 	bot := data.Bot{}
 	if len(botId) != 0 && len(botGroup.Name) != 0 {
 		bot, err = app.GetBot(&botGroup, botId)
-		util.Check(err)
+		util.CheckLog(err)
 	}
 
 	inputData := make(map[string]interface{})

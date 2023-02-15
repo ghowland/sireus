@@ -32,7 +32,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 	jsonResponse.ResponseTime = util.GetTimeNow()
 
 	resp, err := http.Get(requestUrl)
-	if util.CheckNoLog(err) {
+	if util.Check(err) {
 		jsonResponse.IsError = true
 		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't fetch Prometheus URL: %v   URL: %s", err, requestUrl)
 		log.Printf(jsonResponse.ErrorMessage)
@@ -40,8 +40,8 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 	}
 
 	body, err := io.ReadAll(resp.Body)
-	util.Check(err)
-	if util.CheckNoLog(err) {
+	util.CheckLog(err)
+	if util.Check(err) {
 		jsonResponse.IsError = true
 		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't read Prometheus body: %v   URL: %s", err, requestUrl)
 		log.Printf(jsonResponse.ErrorMessage)
@@ -49,8 +49,8 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 	}
 
 	err = json.Unmarshal(body, &jsonResponse)
-	util.Check(err)
-	if util.CheckNoLog(err) {
+	util.CheckLog(err)
+	if util.Check(err) {
 		jsonResponse.IsError = true
 		jsonResponse.ErrorMessage = fmt.Sprintf("Couldn't unmarshall JSON: %v   URL: %s", err, requestUrl)
 		log.Printf(jsonResponse.ErrorMessage)

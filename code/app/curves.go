@@ -29,7 +29,7 @@ func GetCurve(name string) (CurveData, error) {
 	}
 
 	curve, err := LoadCurveData(name)
-	if util.Check(err) {
+	if util.CheckLog(err) {
 		return CurveData{}, errors.New(fmt.Sprintf("Could not find curve: %s", name))
 	}
 
@@ -41,11 +41,11 @@ func LoadCurveData(name string) (CurveData, error) {
 	path := fmt.Sprintf(data.SireusData.AppConfig.CurvePathFormat, name)
 
 	curveDataInput, err := os.ReadFile(path)
-	util.Check(err)
+	util.CheckLog(err)
 
 	var curveData CurveData
 	err = json.Unmarshal(curveDataInput, &curveData)
-	if util.CheckNoLog(err) {
+	if util.Check(err) {
 		return CurveData{}, errors.New(fmt.Sprintf("Couldnt find curve: %s", name))
 	}
 

@@ -13,20 +13,19 @@ import (
 	"time"
 )
 
-// Call Check when we only want to log the error and wrap error testing, but it does not require an exceptional response
+// Call Check when we want to get a boolean on the error, but dont want to log because we handle the response and it's too noisy or not useful.
 func Check(e error) bool {
 	if e != nil {
-		log.Printf("ERROR: %s", e.Error())
 		return true
 	}
 
 	return false
 }
 
-// Call CheckNoLog when we want to get a boolean on the error, but dont want to log because we handle the response and
-// it's too noisy or not useful.
-func CheckNoLog(e error) bool {
+// Call CheckLog when we only want to log the error and wrap error testing, but it does not require an exceptional response
+func CheckLog(e error) bool {
 	if e != nil {
+		log.Printf("ERROR: %s", e.Error())
 		return true
 	}
 
@@ -109,33 +108,21 @@ func StringInSlice(a string, list []string) bool {
 	return false
 }
 
-var (
-	// Float64 is our primary data type, custom error for tracking problems
-	InvalidTypeFloat64 = errors.New("Value could not be converted to Float64")
-)
+// Remove a string at index.  Wrapper for go-ness
+func StringSliceRemoveIndex(slice []string, index int) []string {
+	slice = append(slice[:index], slice[index+1:]...)
+	return slice
+}
 
-// Convert any value we can into a float64 in a predictable manner
-func ConvertInterfaceToFloat(value interface{}) (float64, error) {
-	switch value := value.(type) {
-	case float64:
-		return value, nil
-	case float32:
-		return float64(value), nil
-	case int64:
-		return float64(value), nil
-	case int32:
-		return float64(value), nil
-	case int:
-		return float64(value), nil
-	case uint64:
-		return float64(value), nil
-	case uint32:
-		return float64(value), nil
-	case uint:
-		return float64(value), nil
-	default:
-		return math.NaN(), InvalidTypeFloat64
+// Returns the index of a string in a slice
+func StringSliceFindIndex(slice []string, find string) (int, error) {
+	for index, value := range slice {
+		if value == find {
+			return index, nil
+		}
 	}
+
+	return -1, errors.New(fmt.Sprintf("Couldn't find string in slice: %s", find))
 }
 
 // Clamp a value between a min and a max
@@ -186,6 +173,7 @@ func PrintStringArrayCSV(slice []string) string {
 	return string(output)
 }
 
+// Format the time in ISO 8601, without the millis
 func FormatTimeLong(t time.Time) string {
 	utc := t.UTC()
 
@@ -194,6 +182,7 @@ func FormatTimeLong(t time.Time) string {
 	return output
 }
 
+// Returns time.Now() in UTC.  Convenience wrapper, so it's never forgotten, because everything must always be in UTC
 func GetTimeNow() time.Time {
 	return time.Now().UTC()
 }

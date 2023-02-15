@@ -171,7 +171,7 @@ func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool {
 	for _, lockTimerName := range action.RequiredLockTimers {
 		lockTimer, err := GetLockTimer(botGroup, lockTimerName)
-		if util.CheckNoLog(err) {
+		if util.Check(err) {
 			log.Printf("Missing Lock Timer: %s  Invalid configuration, will never activate Action: %s  Bot Group: %s", lockTimerName, action.Name, botGroup.Name)
 			return false
 		}
@@ -193,24 +193,58 @@ func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duratio
 }
 
 // When executing an Action, we want to update the Bots States, to move it forward
-func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, states []string) {
+func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) {
 	// Update the states
-	for _, stateLabel := range states {
+	for _, state := range setStates {
 		stateBase := ""
+		stateLabel := ""
 		advanceOnly := false
 
 		// Get the State Base and Target, so we can remove any existing states that are prefixed with this
 		if strings.Contains(stateLabel, ".") {
-			stateSplit := strings.SplitN(stateLabel, ".", 1)
-			stateBase = fmt.Sprintf("%s.", stateSplit[0])
-			stateTarget := stateSplit[1]
+			stateSplit := strings.SplitN(state, ".", 2)
+			stateBase = stateSplit[0]
+			stateLabel = stateSplit[1]
 		} else {
 			// Else, we only have a base, so we will advance the state forward, instead of setting a target
-			stateBase = fmt.Sprintf("%s.", stateLabel)
 			stateBase = stateLabel
 			advanceOnly = true
 		}
+
+		log.Printf("Set Bot States: Group: %s  Bot: %s  Label: %s  Base: %s  Target: %s  Advance Only: %v", botGroup.Name, bot.Name, state, stateBase, stateLabel, advanceOnly)
 	}
+}
+
+// Returns the index of the State currently for this Bot, with the stateBase (BotForwardSequenceState.Name)
+func GetBotCurrentStateIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (int, error) {
+	for _, stateLabel := range bot.StateValues {
+		// If this is the name of the State we are looking for (BaseName.TargetName)
+		if strings.HasPrefix(stateLabel, stateBase+".") {
+			return GetStateIndex(botGroup, stateLabel)
+		}
+	}
+
+	return -1, errors.New(fmt.Sprintf("Missing State base: %s  Bot Group: %s  Bot: %s", stateBase, botGroup.Name, bot.Name))
+}
+
+// Returns the index of the State inside it's BotForwardSequenceState.  Important because States can only increase or reset to 0 index.
+func GetStateIndex(botGroup *data.BotGroup, state string) (int, error) {
+	stateSplit := strings.SplitN(state, ".", 2)
+	stateBase := stateSplit[0]
+	stateLabel := stateSplit[1]
+
+	for _, botState := range botGroup.States {
+		if botState.Name == stateBase {
+			index, err := util.StringSliceFindIndex(botState.Labels, stateLabel)
+			if util.Check(err) {
+				return -1, err
+			}
+
+			return index, nil
+		}
+	}
+
+	return -1, errors.New(fmt.Sprintf("Missing State: %s  Bot Group: %s", state, botGroup.Name))
 }
 
 // Get a BotLockTimer from the BotGroup

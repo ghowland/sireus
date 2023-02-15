@@ -56,7 +56,7 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 			actionData := bot.SortedActionData[0].Value
 
 			action, err := app.GetAction(botGroup, actionDataName)
-			if util.CheckNoLog(err) {
+			if util.Check(err) {
 				log.Printf("Missing Action: %s   Bot Group: %s  Bot: %s", actionDataName, botGroup.Name, bot.Name)
 				continue
 			}
@@ -85,7 +85,7 @@ func ExecuteBotAction(botGroup *data.BotGroup, bot *data.Bot, action data.Action
 	app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
 
 	// Execute command
-	log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
+	//log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
@@ -95,7 +95,7 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 	for botIndex := range botGroup.Bots {
 		for varIndex, value := range session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues {
 			variable, err := app.GetVariable(botGroup, value.Key)
-			if util.CheckNoLog(err) {
+			if util.Check(err) {
 				// Mark this bot as Invalid, because it is missing information
 				session.BotGroups[botGroupIndex].Bots[botIndex].IsInvalid = true
 				session.BotGroups[botGroupIndex].Bots[botIndex].InfoInvalid += fmt.Sprintf("Missing Variable: %s.  ", value.Key)
@@ -160,7 +160,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 			for _, consider := range action.Considerations {
 				// Compile Express to be used by every bot, with their own data
 				expression, err := govaluate.NewEvaluableExpression(consider.Evaluate)
-				util.Check(err)
+				util.CheckLog(err)
 
 				// Start assuming the data is invalid, and then mark it valid later
 				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
@@ -169,14 +169,14 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRawScores[consider.Name] = math.SmallestNonzeroFloat64
 
 				resultInt, err := expression.Evaluate(evalMap)
-				if util.CheckNoLog(err) {
+				if util.Check(err) {
 					// Invalidate this consideration, evaluation failed
 					//log.Printf("ERROR: Evaluate failed on Eval Map data: %s   Map: %s", consider.Evaluate, util.PrintJson(evalMap))
 					continue
 				}
 
 				resultRaw, err := util.ConvertInterfaceToFloat(resultInt)
-				if util.CheckNoLog(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
+				if util.Check(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
 					// Invalidate this consideration, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
 					continue
@@ -185,7 +185,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				// Apply the Range and Curve to the Raw score
 				resultRanged := util.RangeMapper(resultRaw, consider.RangeStart, consider.RangeEnd)
 				curve, err := app.GetCurve(consider.CurveName)
-				if util.CheckNoLog(err) {
+				if util.Check(err) {
 					// Invalidate this consideration, result was invalid
 					log.Printf("Set Consideration Invalid, no curve: %s   Curve missing: %s", consider.Name, consider.CurveName)
 					continue
@@ -274,7 +274,7 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroup
 
 		// Compile Express to be used by every bot, with their own data
 		expression, err := govaluate.NewEvaluableExpression(variable.Evaluate)
-		util.Check(err)
+		util.CheckLog(err)
 
 		for botIndex := range botGroup.Bots {
 			// Lock the bot
@@ -285,10 +285,10 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroup
 			//log.Printf("Eval Map: %v", evalMap)
 
 			resultInt, err := expression.Evaluate(evalMap)
-			util.Check(err)
+			util.CheckLog(err)
 
 			result, err := util.ConvertInterfaceToFloat(resultInt)
-			if util.Check(err) {
+			if util.CheckLog(err) {
 				util.LockRelease(session.BotGroups[botGroupIndex].Bots[botIndex].LockKey)
 				continue // Skip this variable, it was invalid
 			}
@@ -337,7 +337,7 @@ func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{} {
 // Runs Queries against Prometheus for a BotGroup
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int) {
 	query, err := app.GetQuery(&session.BotGroups[botGroupIndex], session.BotGroups[botGroupIndex].BotExtractor.QueryName)
-	util.Check(err)
+	util.CheckLog(err)
 
 	queryResult, err := GetCachedQueryResult(session, site, query)
 
@@ -389,7 +389,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 	for _, query := range botGroup.Queries {
 		// Get the cached query result, even if it is expired
 		queryResult, err := GetCachedQueryResult(session, site, query)
-		if util.CheckNoLog(err) {
+		if util.Check(err) {
 			continue // Couldn't get this query, skip
 		}
 
@@ -425,7 +425,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 							value := math.SmallestNonzeroFloat64
 							if len(promResult.Values) > 0 && len(promResult.Values[0]) > 0 {
 								value, err = strconv.ParseFloat(promResult.Values[0][1].(string), 32)
-								util.Check(err)
+								util.CheckLog(err)
 							}
 
 							nameFormatted := util.HandlebarFormatText(variable.Name, promResult.Metric)

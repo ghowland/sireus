@@ -27,7 +27,7 @@ func CalculateScore(action data.Action, actionData data.BotActionData) (float64,
 		}
 
 		consider, err := GetActionConsideration(action, considerName)
-		if util.Check(err) {
+		if util.CheckLog(err) {
 			details = append(details, fmt.Sprintf("Missing Consideration, aborting: %s", considerName))
 			return 0, details
 		}

@@ -48,14 +48,14 @@ func RegisterHandlebarsHelpers_WithData() {
 		botActionData := bot.SortedActionData[actionDataIndex]
 
 		botAction, err := app.GetAction(&botGroup, botActionData.Key)
-		util.Check(err)
+		util.CheckLog(err)
 		return raymond.SafeString(options.FnWith(botAction))
 	})
 
 	// With Query Server by Name from Site
 	raymond.RegisterHelper("with_query_server", func(queryServerName string, site *data.Site, options *raymond.Options) raymond.SafeString {
 		queryServer, err := app.GetQueryServer(site, queryServerName)
-		util.Check(err)
+		util.CheckLog(err)
 
 		return raymond.SafeString(options.FnWith(queryServer))
 	})
@@ -178,7 +178,7 @@ func RegisterHandlebarsHelpers_FormatData() {
 	// Queries
 	raymond.RegisterHelper("format_query_web", func(site *data.Site, item data.BotQuery) string {
 		queryServer, err := app.GetQueryServer(site, item.QueryServer)
-		util.Check(err)
+		util.CheckLog(err)
 		mapData := map[string]string{
 			"query": item.Query,
 		}

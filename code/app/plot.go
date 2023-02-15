@@ -22,7 +22,7 @@ func GetAPIPlotData(c *fiber.Ctx) string {
 	}
 
 	curveData, err := GetCurve(input["name"])
-	if util.CheckNoLog(err) {
+	if util.Check(err) {
 		return "{}"
 	}
 
@@ -33,7 +33,7 @@ func GetAPIPlotData(c *fiber.Ctx) string {
 	}
 
 	xPos, err := strconv.ParseFloat(input["x"], 32)
-	util.Check(err)
+	util.CheckLog(err)
 
 	if xPos >= 0 {
 		mapData["plot_selected_x"] = xPos
@@ -81,7 +81,7 @@ func GetAPIPlotMetrics(c *fiber.Ctx) string {
 		//xArray = append(xArray, axis.(float64))
 		xArray = append(xArray, float64(x))
 		yFloat, err := strconv.ParseFloat(value.(string), 64)
-		util.Check(err)
+		util.CheckLog(err)
 		yArray = append(yArray, yFloat)
 	}
 
@@ -94,7 +94,7 @@ func GetAPIPlotMetrics(c *fiber.Ctx) string {
 	}
 
 	//xPos, err := strconv.ParseFloat(input["x"], 32)
-	//util.Check(err)
+	//util.CheckLog(err)
 	//
 	//if xPos >= 0 {
 	//	mapData["plot_selected_x"] = xPos
