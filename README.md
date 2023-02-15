@@ -2,7 +2,7 @@
 <img align="right" width="30%" src="https://github.com/ghowland/sireus/blob/main/documentation/images/sireus_logo.png">
 
 ## Sireus - SRE Utility System
-### Decision System and dynamic bot manager for executing SRE and DevOps commands conditionally
+### Decision System for tracking SRE and DevOps operational state and executing commands
 
 **NOTE: Sireus is in RFC stage and not suitable for production usage.  [Please file questions, comments and requests here.](https://github.com/ghowland/sireus/issues)**
 
