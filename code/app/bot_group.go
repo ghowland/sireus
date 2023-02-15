@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
+	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -163,6 +165,78 @@ func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 	}
 
 	return true
+}
+
+// For a given Action, does this Bot Group have all the Lock Timers available to be locked?
+func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool {
+	for _, lockTimerName := range action.RequiredLockTimers {
+		lockTimer, err := GetLockTimer(botGroup, lockTimerName)
+		if util.CheckNoLog(err) {
+			log.Printf("Missing Lock Timer: %s  Invalid configuration, will never activate Action: %s  Bot Group: %s", lockTimerName, action.Name, botGroup.Name)
+			return false
+		}
+
+		// If this lock timer is active, return false.  Not all lock timers are available
+		if lockTimer.IsActive {
+			return false
+		}
+	}
+
+	return true
+}
+
+// When executing an Action, we will set all the Lock Timers that Action required, for the duration specified in the ActionCommand
+func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration) {
+	for _, lockTimerName := range action.RequiredLockTimers {
+		SetLockTimer(botGroup, lockTimerName, duration)
+	}
+}
+
+// When executing an Action, we want to update the Bots States, to move it forward
+func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, states []string) {
+	// Update the states
+	for _, stateLabel := range states {
+		stateBase := ""
+		advanceOnly := false
+
+		// Get the State Base and Target, so we can remove any existing states that are prefixed with this
+		if strings.Contains(stateLabel, ".") {
+			stateSplit := strings.SplitN(stateLabel, ".", 1)
+			stateBase = fmt.Sprintf("%s.", stateSplit[0])
+			stateTarget := stateSplit[1]
+		} else {
+			// Else, we only have a base, so we will advance the state forward, instead of setting a target
+			stateBase = fmt.Sprintf("%s.", stateLabel)
+			stateBase = stateLabel
+			advanceOnly = true
+		}
+	}
+}
+
+// Get a BotLockTimer from the BotGroup
+func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockTimer, error) {
+	for _, lockTimer := range botGroup.LockTimers {
+		if lockTimer.Name == lockTimerName {
+			// If the lock timer is active, but it has timed out, then set to inactive
+			if lockTimer.IsActive && lockTimer.Timeout.Unix() < util.GetTimeNow().Unix() {
+				lockTimer.IsActive = false
+			}
+
+			return &lockTimer, nil
+		}
+	}
+
+	return &data.BotLockTimer{}, errors.New(fmt.Sprintf("Lock Timer Not Found: %s  Bot Group: %s", lockTimerName, botGroup.Name))
+}
+
+func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration) {
+	for _, lockTimer := range botGroup.LockTimers {
+		if lockTimer.Name == lockTimerName {
+			lockTimer.IsActive = true
+			lockTimer.Timeout = util.GetTimeNow().Add(time.Duration(duration))
+			return
+		}
+	}
 }
 
 // Get a Bot from the BotGroup

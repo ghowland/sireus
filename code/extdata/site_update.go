@@ -35,14 +35,14 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, index)
 
-		//// Execute Actions
-		//ExecuteActions(session, index)
+		// Execute Actions
+		ExecuteBotGroupActions(session, index)
 	}
 }
 
 // Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
-func ExecuteActions(session *data.InteractiveSession, botGroupIndex int) {
-	botGroup := session.BotGroups[botGroupIndex]
+func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) {
+	botGroup := &session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
 		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
@@ -50,15 +50,42 @@ func ExecuteActions(session *data.InteractiveSession, botGroupIndex int) {
 		// Lock the bot, as we are accessing the Action map
 		util.LockAcquire(bot.LockKey)
 
-		//// Look to see if we have a top-scoring action, that meets all the requirements
-		//for _, actionDataPair := range bot.SortedActionData {
-		//	actionData := actionDataPair.Value
-		//	actionData.
-		//}
+		// Take the top scoring item only and see if it is available and meets any additional requirements
+		if bot.SortedActionData.Len() > 0 {
+			actionDataName := bot.SortedActionData[0].Key
+			actionData := bot.SortedActionData[0].Value
+
+			action, err := app.GetAction(botGroup, actionDataName)
+			if util.CheckNoLog(err) {
+				log.Printf("Missing Action: %s   Bot Group: %s  Bot: %s", actionDataName, botGroup.Name, bot.Name)
+				continue
+			}
+
+			// If the action is available, and the final score is over the threshold, test next steps
+			if actionData.IsAvailable && actionData.FinalScore > botGroup.ActionThreshold {
+				timeAvailable := time.Now().Sub(actionData.AvailableStartTime)
+
+				// If we have been available for long enough, this should be the final check, we can execute this Action
+				if timeAvailable.Seconds() > time.Duration(action.RequiredAvailable).Seconds() {
+					ExecuteBotAction(botGroup, bot, action, actionData)
+				}
+			}
+		}
 
 		// Unlock this bot
 		util.LockRelease(bot.LockKey)
 	}
+}
+
+func ExecuteBotAction(botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
+	// Set the Lock Timers
+	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
+
+	// Update the states
+	app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
+
+	// Execute command
+	log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
@@ -188,8 +215,10 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 
 			allActionStatesAreActive := app.AreAllActionStatesActive(action, bot)
 
+			allActionRequiredLocksTimersAvailable := app.AreAllActionLockTimersAvailable(action, botGroup)
+
 			// Action.WeightThreshold determines if an Action is available for possible execution
-			if finalScore >= action.WeightThreshold && allActionStatesAreActive {
+			if finalScore >= action.WeightThreshold && allActionStatesAreActive && allActionRequiredLocksTimersAvailable {
 				if !actionData.IsAvailable {
 					actionData.IsAvailable = true
 					actionData.AvailableStartTime = util.GetTimeNow()
@@ -198,6 +227,10 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				if !allActionStatesAreActive {
 					actionData.FinalScore = 0
 					details = append(details, fmt.Sprintf("Setting Final Score to 0.  Missing required states: %s", util.PrintStringArrayCSV(action.RequiredStates)))
+				}
+
+				if !allActionRequiredLocksTimersAvailable {
+					details = append(details, fmt.Sprintf("Not available.  Missing required Lock Timers: %s", util.PrintStringArrayCSV(action.RequiredLockTimers)))
 				}
 
 				if finalScore < action.WeightThreshold {
