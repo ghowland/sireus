@@ -42,6 +42,8 @@ func LoadSiteConfig(appConfig data.AppConfig) data.Site {
 	// Load all our Bot Groups.  We keep these cached for cloning, so we don't have to parse JSON all the time, but put nothing dynamic into them
 	for _, botGroupPath := range site.BotGroupPaths {
 		botGroup := LoadBotGroupConfig(botGroupPath)
+		botGroup.LockKey = fmt.Sprintf("%s.%s", site.Name, botGroup.Name)
+
 		site.LoadedBotGroups = append(site.LoadedBotGroups, botGroup)
 	}
 
@@ -102,7 +104,7 @@ func GetProductionInteractiveControl() data.InteractiveControl {
 }
 
 // Returns a QueryServer, scope is per Site
-func GetQueryServer(site data.Site, name string) (data.QueryServer, error) {
+func GetQueryServer(site *data.Site, name string) (data.QueryServer, error) {
 	for _, queryServer := range site.QueryServers {
 		if queryServer.Name == name {
 			return queryServer, nil
@@ -113,7 +115,7 @@ func GetQueryServer(site data.Site, name string) (data.QueryServer, error) {
 }
 
 // Gets a query, scope per BotGroup
-func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
+func GetQuery(botGroup *data.BotGroup, queryName string) (data.BotQuery, error) {
 	for _, query := range botGroup.Queries {
 		if query.Name == queryName {
 			return query, nil
@@ -123,7 +125,7 @@ func GetQuery(botGroup data.BotGroup, queryName string) (data.BotQuery, error) {
 }
 
 // Get an Action from a BotGroup, by name
-func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
+func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error) {
 	for _, action := range botGroup.Actions {
 		if action.Name == actionName {
 			return action, nil
@@ -133,7 +135,7 @@ func GetAction(botGroup data.BotGroup, actionName string) (data.Action, error) {
 }
 
 // Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
-func GetVariable(botGroup data.BotGroup, varName string) (data.BotVariable, error) {
+func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, error) {
 	for _, variable := range botGroup.Variables {
 		if variable.Name == varName {
 			return variable, nil
@@ -153,7 +155,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 }
 
 // For a given Action, does this Bot have all the RequiredStates active?
-func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
+func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 	for _, state := range action.RequiredStates {
 		if !util.StringInSlice(state, bot.StateValues) {
 			return false
@@ -164,7 +166,7 @@ func AreAllActionStatesActive(action data.Action, bot data.Bot) bool {
 }
 
 // Get a Bot from the BotGroup
-func GetBot(botGroup data.BotGroup, botName string) (data.Bot, error) {
+func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error) {
 	for _, bot := range botGroup.Bots {
 		if bot.Name == botName {
 			return bot, nil

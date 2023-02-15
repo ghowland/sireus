@@ -1,7 +1,6 @@
 package data
 
 import (
-	"sync"
 	"time"
 )
 
@@ -17,6 +16,7 @@ type (
 	// operating with a full set of data.
 	Bot struct {
 		Name                 string                   // Unique identifier pulled from the BotGroup.BotExtractor
+		LockKey              string                   // Unique identifier for performing locks on this data
 		VariableValues       map[string]float64       // These are the unique values for this Bot, and will be used for all ActionConsideration scoring
 		SortedVariableValues PairFloat64List          // Sorted VariableValues, Handlebars helper
 		StateValues          []string                 // These are the current States for this Bot.  Actions can only be available for execution, if all their Action.RequiredStates are active in the Bot
@@ -28,7 +28,6 @@ type (
 		IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
 		InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
 		IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
-		AccessLock           sync.RWMutex             // Lock for accessing maps.  Keeping the locks local means less contention
 	}
 )
 

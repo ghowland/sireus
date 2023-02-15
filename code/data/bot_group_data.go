@@ -30,7 +30,8 @@ type (
 		InvalidBots   []string
 		StaleBots     []string
 		RemovedBots   []string
-		FreezeActions bool // If true, no actions will be taken for this BotGroup.  Allows group level control.
+		FreezeActions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
+		LockKey       string // Formatted with: (Site.Name).(BotGroup.Name)
 	}
 )
 

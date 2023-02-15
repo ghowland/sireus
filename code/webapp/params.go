@@ -29,7 +29,7 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 
 	bot := data.Bot{}
 	if botId != "" && botGroup.Name != "" {
-		bot, err = app.GetBot(botGroup, botId)
+		bot, err = app.GetBot(&botGroup, botId)
 		util.Check(err)
 	}
 
@@ -37,7 +37,7 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 	inputData["bot_group_id"] = botGroupId
 	inputData["bot_id"] = botId
 
-	renderMap := BuildRenderMapFiber(site, botGroup, bot, inputData)
+	renderMap := BuildRenderMapFiber(site, &botGroup, &bot, inputData)
 
 	return renderMap
 }
@@ -91,7 +91,7 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 
 	bot := data.Bot{}
 	if len(botId) != 0 && len(botGroup.Name) != 0 {
-		bot, err = app.GetBot(botGroup, botId)
+		bot, err = app.GetBot(&botGroup, botId)
 		util.Check(err)
 	}
 
@@ -100,12 +100,12 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	inputData["bot_id"] = botId
 
 	// The site will remain the same, because it also has all our queries and lock timers and everything else.
-	renderMap := BuildRenderMap(site, botGroup, bot, inputData, interactiveControl)
+	renderMap := BuildRenderMap(site, &botGroup, &bot, inputData, interactiveControl)
 
 	return renderMap
 }
 
-func BuildRenderMapFiber(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}) fiber.Map {
+func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}) fiber.Map {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
@@ -155,7 +155,7 @@ func FormatInteractiveStartTime() string {
 	return output
 }
 
-func BuildRenderMap(site *data.Site, botGroup data.BotGroup, bot data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
+func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be

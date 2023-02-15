@@ -47,13 +47,13 @@ func RegisterHandlebarsHelpers_WithData() {
 
 		botActionData := bot.SortedActionData[actionDataIndex]
 
-		botAction, err := app.GetAction(botGroup, botActionData.Key)
+		botAction, err := app.GetAction(&botGroup, botActionData.Key)
 		util.Check(err)
 		return raymond.SafeString(options.FnWith(botAction))
 	})
 
 	// With Query Server by Name from Site
-	raymond.RegisterHelper("with_query_server", func(queryServerName string, site data.Site, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("with_query_server", func(queryServerName string, site *data.Site, options *raymond.Options) raymond.SafeString {
 		queryServer, err := app.GetQueryServer(site, queryServerName)
 		util.Check(err)
 
@@ -134,34 +134,49 @@ func RegisterHandlebarsHelpers_GetGoData() {
 func RegisterHandlebarsHelpers_GetAppData() {
 	// Consideration Scores: Final
 	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name]))
+		util.LockAcquire(bot.LockKey)
+		defer util.LockRelease(bot.LockKey)
+		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name])
+		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Raw (not Ranged, Curved, Weighted)
 	raymond.RegisterHelper("get_bot_action_data_consideration_raw_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name]))
+		util.LockAcquire(bot.LockKey)
+		defer util.LockRelease(bot.LockKey)
+		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name])
+		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Ranged (not Curved, Weighted)
 	raymond.RegisterHelper("get_bot_action_data_consideration_ranged_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name]))
+		util.LockAcquire(bot.LockKey)
+		defer util.LockRelease(bot.LockKey)
+		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRangedScores[consider.Name])
+		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Curved (not Weighted)
 	raymond.RegisterHelper("get_bot_action_data_consideration_curved_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationCurvedScores[consider.Name]))
+		util.LockAcquire(bot.LockKey)
+		defer util.LockRelease(bot.LockKey)
+		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationCurvedScores[consider.Name])
+		return raymond.SafeString(output)
 	})
 
 	// ActionData Final Score
 	raymond.RegisterHelper("get_bot_action_data_final_score", func(bot data.Bot, action data.Action) raymond.SafeString {
-		return raymond.SafeString(fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore))
+		util.LockAcquire(bot.LockKey)
+		defer util.LockRelease(bot.LockKey)
+		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore)
+		return raymond.SafeString(output)
 	})
 }
 
 // Format data, for Go and our internal data types
 func RegisterHandlebarsHelpers_FormatData() {
 	// Queries
-	raymond.RegisterHelper("format_query_web", func(site data.Site, item data.BotQuery) string {
+	raymond.RegisterHelper("format_query_web", func(site *data.Site, item data.BotQuery) string {
 		queryServer, err := app.GetQueryServer(site, item.QueryServer)
 		util.Check(err)
 		mapData := map[string]string{

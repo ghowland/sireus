@@ -61,16 +61,17 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 }
 
 // Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
-func ExtractBotsFromPromData(response data.PrometheusResponse, botKey string) []data.Bot {
+func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.BotGroup) []data.Bot {
 	bots := make(map[string]data.Bot)
 
 	for _, resultItem := range response.Data.Result {
-		name := resultItem.Metric[botKey]
+		name := resultItem.Metric[botGroup.BotExtractor.Key]
 
 		_, exists := bots[name]
 		if !exists {
 			bots[name] = data.Bot{
 				Name:           name,
+				LockKey:        fmt.Sprintf("%s.%s", botGroup.LockKey, name),
 				ActionData:     map[string]data.BotActionData{},
 				StateValues:    []string{},
 				VariableValues: map[string]float64{},

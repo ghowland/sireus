@@ -118,7 +118,7 @@ func BackgroundQuery(session *data.InteractiveSession, site *data.Site, query da
 	defer extdata.QueryLockClear(site, queryKey)
 
 	// Perform the query
-	queryServer, err := app.GetQueryServer(*site, query.QueryServer)
+	queryServer, err := app.GetQueryServer(site, query.QueryServer)
 	util.Check(err)
 
 	startTime := util.GetTimeNow()
