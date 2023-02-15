@@ -159,7 +159,7 @@ func GetActionConsideration(action data.Action, considerName string) (data.Actio
 // For a given Action, does this Bot have all the RequiredStates active?
 func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 	for _, state := range action.RequiredStates {
-		if !util.StringInSlice(state, bot.StateValues) {
+		if !util.StringInSlice(bot.StateValues, state) {
 			return false
 		}
 	}

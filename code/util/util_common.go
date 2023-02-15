@@ -99,7 +99,7 @@ func HandlebarFormatData(format string, mapData map[string]interface{}) string {
 }
 
 // Test if a string is in a slice
-func StringInSlice(a string, list []string) bool {
+func StringInSlice(list []string, a string) bool {
 	for _, b := range list {
 		if b == a {
 			return true

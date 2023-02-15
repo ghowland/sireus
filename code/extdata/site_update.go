@@ -317,7 +317,7 @@ func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[str
 	// Build a map from bots variables
 	for variableName, value := range bot.VariableValues {
 		// Only add variables that are Query Variables, because they are known before synthetic evaluation
-		if util.StringInSlice(variableName, queryVariableNames) {
+		if util.StringInSlice(queryVariableNames, variableName) {
 			evalMap[variableName] = value
 		}
 	}

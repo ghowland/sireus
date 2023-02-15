@@ -75,8 +75,8 @@ func RegisterHandlebarsHelpers_IfTests() {
 	})
 
 	// If string in []string
-	raymond.RegisterHelper("if_string_in_slice", func(a string, b []string, options *raymond.Options) interface{} {
-		if util.StringInSlice(a, b) {
+	raymond.RegisterHelper("if_string_in_slice", func(slice []string, find string, options *raymond.Options) interface{} {
+		if util.StringInSlice(slice, find) {
 			return raymond.SafeString(options.Fn())
 		} else {
 			return options.Inverse()
@@ -87,7 +87,7 @@ func RegisterHandlebarsHelpers_IfTests() {
 	raymond.RegisterHelper("if_slice_has_dot_strings_2", func(a []string, b1 string, b2 string, options *raymond.Options) interface{} {
 		testString := fmt.Sprintf("%s.%s", b1, b2)
 
-		if util.StringInSlice(testString, a) {
+		if util.StringInSlice(a, testString) {
 			return raymond.SafeString(options.Fn())
 		} else {
 			return options.Inverse()

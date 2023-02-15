@@ -29,8 +29,8 @@
             <!-- States -->
             <span style="padding-left: 1.5em">
                 {{#each action.RequiredStates as |state stateIndex|}}
-                    <span class="tag {{#if_string_in_slice state bot.StateValues}}is-primary{{else}}is-danger{{/if_string_in_slice}} has-tooltip-arrow"
-                          data-tooltip="{{#if_string_in_slice state bot.StateValues}}State is Active{{else}}State is not Active, so this Action is not available.{{/if_string_in_slice}}"
+                    <span class="tag {{#if_string_in_slice bot.StateValues state}}is-primary{{else}}is-danger{{/if_string_in_slice}} has-tooltip-arrow"
+                          data-tooltip="{{#if_string_in_slice bot.StateValues state}}State is Active{{else}}State is not Active, so this Action is not available.{{/if_string_in_slice}}"
                           style="border-bottom: 0 solid !important;">
 
                         {{state}}
