@@ -190,6 +190,29 @@ func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duratio
 	}
 }
 
+func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) error {
+	// Get our state data, so we can get the first label
+	stateData, err := GetBotForwardSequenceState(botGroup, stateBase)
+	if util.Check(err) {
+		return err
+	}
+
+	// Get the current state index, so we can remove it
+	_, currentStateIndex, err := GetBotCurrentStateAndIndex(botGroup, bot, stateBase)
+	if util.Check(err) {
+		return err
+	}
+
+	// Remove the current state
+	bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+
+	// Add the default state
+	key := fmt.Sprintf("%s.%s", stateData.Name, stateData.Labels[0])
+	bot.StateValues = append(bot.StateValues, key)
+
+	return nil
+}
+
 // When executing an Action, we want to update the Bots States, to move it forward
 func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error {
 	// Update the states

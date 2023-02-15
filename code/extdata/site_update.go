@@ -67,7 +67,7 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 
 				// If we have been available for long enough, this should be the final check, we can execute this Action
 				if timeAvailable.Seconds() > time.Duration(action.RequiredAvailable).Seconds() {
-					ExecuteBotAction(botGroup, bot, action, actionData)
+					ExecuteBotAction(session, botGroup, bot, action, actionData)
 				}
 			}
 		}
@@ -77,15 +77,26 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 	}
 }
 
-func ExecuteBotAction(botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
+func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
+	log.Printf("Execute Bot Action: %d  Bot Group: %s  Bot: %s  Action: %s", session.UUID, botGroup.Name, bot.Name, action.Name)
+
 	// Set the Lock Timers
 	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
 
 	// Update the states
 	err := app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
 	if util.Check(err) {
-		log.Printf("Aborting action execution: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
+		log.Printf("Aborting action execution, can't set state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
 		return
+	}
+
+	// Reset any states required
+	for _, resetState := range action.Command.ResetBotStates {
+		err := app.ResetBotState(botGroup, bot, resetState)
+		if util.Check(err) {
+			log.Printf("Aborting action execution, can't reset state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
+			return
+		}
 	}
 
 	// Execute command

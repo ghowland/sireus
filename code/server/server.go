@@ -49,7 +49,7 @@ func GetServerBackgroundContext() context.Context {
 	go func() {
 		select {
 		case <-channel:
-			data.SireusData.IsQuitting = true //TODO(ghowland): Is this the right place for this?  Test more...
+			data.SireusData.IsQuitting = true
 			cancel()
 		case <-ctx.Done():
 		}

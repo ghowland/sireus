@@ -175,8 +175,8 @@
     },
     {
       "is_launched": true,
-      "name": "Escalate to Repair Link",
-      "info": "Escalation to get this link repaired.  For the demo, just make an API call.",
+      "name": "Attempt to Repair Link",
+      "info": "Attempt to get this link repaired.  For the demo, just make an API call.",
       "is_disabled": false,
       "weight": 5.0,
       "weight_min": 0.5,
@@ -209,6 +209,44 @@
           "Operation.Evaluate"
         ],
         "reset_bot_states": [],
+        "journal_template": "The Link is down: ({{link_state}})"
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Evaluate Link Is Repaired",
+      "info": "Is this link repaired?  Then reset",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Evaluate"
+      ],
+      "required_available": "5s",
+      "considerations": [
+        {
+          "name": "Link Down",
+          "weight": 1.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 1,
+          "evaluate": "link_state"
+        }
+      ],
+      "command": {
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Operation"],
         "journal_template": "The Link is down: ({{link_state}})"
       }
     }
