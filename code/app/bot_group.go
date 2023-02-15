@@ -193,7 +193,7 @@ func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duratio
 }
 
 // When executing an Action, we want to update the Bots States, to move it forward
-func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) {
+func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error {
 	// Update the states
 	for _, state := range setStates {
 		stateBase := ""
@@ -201,7 +201,7 @@ func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) {
 		advanceOnly := false
 
 		// Get the State Base and Target, so we can remove any existing states that are prefixed with this
-		if strings.Contains(stateLabel, ".") {
+		if strings.Contains(state, ".") {
 			stateSplit := strings.SplitN(state, ".", 2)
 			stateBase = stateSplit[0]
 			stateLabel = stateSplit[1]
@@ -211,20 +211,76 @@ func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) {
 			advanceOnly = true
 		}
 
-		log.Printf("Set Bot States: Group: %s  Bot: %s  Label: %s  Base: %s  Target: %s  Advance Only: %v", botGroup.Name, bot.Name, state, stateBase, stateLabel, advanceOnly)
-	}
-}
+		// Get our current state index, for this stateBase
+		currentState, currentStateIndex, err := GetBotCurrentStateAndIndex(botGroup, bot, stateBase)
+		if util.Check(err) {
+			log.Printf(err.Error())
+			return err
+		}
 
-// Returns the index of the State currently for this Bot, with the stateBase (BotForwardSequenceState.Name)
-func GetBotCurrentStateIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (int, error) {
-	for _, stateLabel := range bot.StateValues {
-		// If this is the name of the State we are looking for (BaseName.TargetName)
-		if strings.HasPrefix(stateLabel, stateBase+".") {
-			return GetStateIndex(botGroup, stateLabel)
+		// Setting the state by name is the normal case, allows skipping steps.  Also, if you want a new state inserted that's a single config change
+		if !advanceOnly {
+			// Get the target state index, as it has to be higher than our current index, or that's invalid, and we can't execute
+			targetIndex, err := GetStateIndex(botGroup, state)
+			if util.Check(err) {
+				return err
+			}
+			if targetIndex < currentStateIndex {
+				return errors.New(fmt.Sprintf("Trying to set a state to an earlier label, which is not allowed.  They can only progress forward.  Target: %s (%d)  Current: %s (%d)  ", state, targetIndex, currentState, currentStateIndex))
+			}
+
+			// Remove the current state, we already have its index
+			bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+
+			// Add the new state
+			bot.StateValues = append(bot.StateValues, state)
+		} else {
+			stateData, err := GetBotForwardSequenceState(botGroup, stateBase)
+			if util.Check(err) {
+				return err
+			}
+
+			// Advance Only.  We will keep incrementing the state, until we reach the end, and then we will stay there until reset
+			lastIndex := len(stateData.Labels) - 1
+
+			if currentStateIndex < lastIndex {
+				nextState := stateData.Labels[currentStateIndex+1]
+
+				// Remove the current state, we already have its index
+				bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+
+				// Add the new state
+				bot.StateValues = append(bot.StateValues, nextState)
+			} else {
+				// We don't need to advance anymore, but this is not an error, we are waiting until we are reset back to 0
+			}
 		}
 	}
 
-	return -1, errors.New(fmt.Sprintf("Missing State base: %s  Bot Group: %s  Bot: %s", stateBase, botGroup.Name, bot.Name))
+	return nil
+}
+
+func GetBotForwardSequenceState(botGroup *data.BotGroup, name string) (data.BotForwardSequenceState, error) {
+	for _, state := range botGroup.States {
+		if state.Name == name {
+			return state, nil
+		}
+	}
+
+	return data.BotForwardSequenceState{}, errors.New(fmt.Sprintf("Missing Bot Forward Sequence State: %s  Bot Group: %s", name, botGroup.Name))
+}
+
+// Returns the index of the State currently for this Bot, with the stateBase (BotForwardSequenceState.Name)
+func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (string, int, error) {
+	for _, stateLabel := range bot.StateValues {
+		// If this is the name of the State we are looking for (BaseName.TargetName)
+		if strings.HasPrefix(stateLabel, stateBase+".") {
+			index, err := GetStateIndex(botGroup, stateLabel)
+			return stateLabel, index, err
+		}
+	}
+
+	return "", -1, errors.New(fmt.Sprintf("Missing State base: %s  Bot Group: %s  Bot: %s", stateBase, botGroup.Name, bot.Name))
 }
 
 // Returns the index of the State inside it's BotForwardSequenceState.  Important because States can only increase or reset to 0 index.

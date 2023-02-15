@@ -82,7 +82,11 @@ func ExecuteBotAction(botGroup *data.BotGroup, bot *data.Bot, action data.Action
 	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
 
 	// Update the states
-	app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
+	err := app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
+	if util.Check(err) {
+		log.Printf("Aborting action execution: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
+		return
+	}
 
 	// Execute command
 	//log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
