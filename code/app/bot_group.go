@@ -163,7 +163,6 @@ func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 			return false
 		}
 	}
-
 	return true
 }
 
@@ -181,7 +180,6 @@ func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup
 			return false
 		}
 	}
-
 	return true
 }
 

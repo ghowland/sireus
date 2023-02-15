@@ -362,26 +362,23 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 		}
 
 		if !foundBot {
+			// Initialize all the Bot Group states in Bot
+			InitializeBotStates(&session.BotGroups[botGroupIndex], &botNew)
+
+			// Add it into the botGroup slice
 			session.BotGroups[botGroupIndex].Bots = append(session.BotGroups[botGroupIndex].Bots, botNew)
 		}
 	}
-
-	// Initialize all the Bot Group states in Bot
-	InitializeStates(session, botGroupIndex)
 }
 
-// Initialize all the States for this BotGroup's Bots.   They should all start at the first state value, and only move forward or reset.
-func InitializeStates(session *data.InteractiveSession, botGroupIndex int) {
-	botGroup := &session.BotGroups[botGroupIndex]
+// Initialize all the States for this BotGroups Bots.   They should all start at the first state value, and only move forward or reset.
+func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot) {
+	// Clear the current states, or they grow out of control
+	bot.StateValues = []string{}
 
-	for botIndex := range botGroup.Bots {
-		// Clear the current states, or they grow out of control
-		session.BotGroups[botGroupIndex].Bots[botIndex].StateValues = []string{}
-
-		for _, state := range botGroup.States {
-			key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
-			session.BotGroups[botGroupIndex].Bots[botIndex].StateValues = append(session.BotGroups[botGroupIndex].Bots[botIndex].StateValues, key)
-		}
+	for _, state := range botGroup.States {
+		key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
+		bot.StateValues = append(bot.StateValues, key)
 	}
 }
 
