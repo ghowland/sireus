@@ -39,7 +39,7 @@ func GetCachedQueryResult(session *data.InteractiveSession, site *data.Site, que
 	}
 
 	if session.IgnoreCacheQueryMismatch && (result.QueryStartTime != session.QueryStartTime || result.QueryDuration != session.QueryDuration) {
-		return data.QueryResult{}, errors.New(fmt.Sprintf("Does not match start and duration: Start: %v  Duration: %s", session.QueryStartTime, session.QueryDuration))
+		return data.QueryResult{}, errors.New(fmt.Sprintf("Does not match start and duration: Start: %v  Duration: %v", session.QueryStartTime, session.QueryDuration))
 	}
 
 	// Test if it is older than the Interval refresh, this

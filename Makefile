@@ -32,6 +32,12 @@ coverage:
 vet:
 	@go vet ./code/
 
+dockerbuild:
+	docker build --build-arg PROJECT_VERSION=`cat version` -t ghowland/sireus:latest .
+
+dockerrunsh:
+	docker run -it --entrypoint sh ghowland/sireus:latest
+
 clean:
 	go clean
 	rm -f ./build/${BINARY_NAME}

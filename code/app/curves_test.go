@@ -13,7 +13,7 @@ func TestSomething(t *testing.T) {
 
 	assert.NotNil(t, appConfig, "App Config found, loaded, not nil")
 
-	curve_data := LoadCurveData(appConfig, "inc_smooth")
+	curve_data, _ := LoadCurveData(appConfig, "inc_smooth")
 
 	assert.NotNil(t, curve_data, "Curve data found, loaded, not nil")
 	assert.Equal(t, curve_data.Values[0], float64(0), "First value of this curve should be 0")
