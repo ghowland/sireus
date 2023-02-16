@@ -1,0 +1,11 @@
+# action.yml
+name: 'Sireus Docker'
+description: 'Build the Sireus docker container'
+inputs:
+  sireus_config:
+    server_port: 3000
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.sireus_config }}

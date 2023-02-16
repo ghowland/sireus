@@ -1,6 +1,7 @@
 BINARY_NAME=sireus
 
 buildonly:
+	@go get 2>/dev/null || (echo "Go packages up to date")
 	@go build -o build/${BINARY_NAME} code/sireus.go || (echo "Build failed: $$?"; exit 1)
 	@echo Build done: build/${BINARY_NAME}
 
@@ -14,6 +15,9 @@ force-build:
 
 test:
 	@go test ./code/...
+
+format:
+	@go fmt code/sireus.go
 
 doc:
 	@cd code ; ~/go/bin/gomarkdoc ./... > ../documentation/godoc.md
