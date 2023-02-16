@@ -275,7 +275,10 @@ func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) er
 			}
 
 			// Remove the current state, we already have its index
-			bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+			bot.StateValues, err = util.StringSliceRemoveString(bot.StateValues, currentState)
+			if util.Check(err) {
+				return err
+			}
 
 			// Add the new state
 			bot.StateValues = append(bot.StateValues, state)
@@ -292,7 +295,10 @@ func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) er
 				nextState := stateData.Labels[currentStateIndex+1]
 
 				// Remove the current state, we already have its index
-				bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+				bot.StateValues, err = util.StringSliceRemoveString(bot.StateValues, currentState)
+				if util.Check(err) {
+					return err
+				}
 
 				// Add the new state
 				bot.StateValues = append(bot.StateValues, nextState)

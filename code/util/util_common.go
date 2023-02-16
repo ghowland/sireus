@@ -108,6 +108,16 @@ func StringInSlice(list []string, a string) bool {
 	return false
 }
 
+func StringSliceRemoveString(slice []string, remove string) ([]string, error) {
+	removeIndex, err := StringSliceFindIndex(slice, remove)
+	if Check(err) {
+		return slice, err
+	}
+
+	newSlice := StringSliceRemoveIndex(slice, removeIndex)
+	return newSlice, nil
+}
+
 // Remove a string at index.  Wrapper for go-ness
 func StringSliceRemoveIndex(slice []string, index int) []string {
 	slice = append(slice[:index], slice[index+1:]...)
