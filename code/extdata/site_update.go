@@ -14,7 +14,7 @@ import (
 )
 
 // Update all the BotGroups in this Site
-func UpdateSiteBotGroups(session *data.InteractiveSession, isProdInternal bool) {
+func UpdateSiteBotGroups(session *data.InteractiveSession) {
 	for index := range session.BotGroups {
 		// Create Bots in the BotGroup from the Prometheus ExtractorKey query
 		UpdateBotGroupFromPrometheus(session, &data.SireusData.Site, index)
@@ -32,20 +32,26 @@ func UpdateSiteBotGroups(session *data.InteractiveSession, isProdInternal bool) 
 		// Sort alpha, so they print consistently
 		SortAllVariablesAndActions(session, index)
 
+		// Execute Actions (lock and delay testing inside)
+		executedActions := ExecuteBotGroupActions(session, index)
+
+		// If we executed actions, we need to make sure things are updated and sorted again, because they have changed
+		if executedActions {
+			// Repeat this, to ensure things that are now Inactive after a state change from Executing Actions
+			UpdateBotActionConsiderations(session, index)
+			SortAllVariablesAndActions(session, index)
+		}
+
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
 		CreateFormattedVariables(session, index)
-
-		// Execute Actions (lock and delay testing inside)
-		ExecuteBotGroupActions(session, index)
-		if isProdInternal {
-			//TODO:Remove?  Is this useful?
-		}
 	}
 }
 
 // Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
-func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) {
+func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) bool {
 	botGroup := &session.BotGroups[botGroupIndex]
+
+	executedActions := false
 
 	for botIndex := range botGroup.Bots {
 		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
@@ -71,6 +77,7 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 				// If we have been available for long enough, this should be the final check, we can execute this Action
 				if timeAvailable.Seconds() > time.Duration(action.RequiredAvailable).Seconds() {
 					ExecuteBotAction(session, botGroup, bot, action, actionData)
+					executedActions = true
 				}
 			}
 		}
@@ -78,6 +85,8 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 		// Unlock this bot
 		util.LockRelease(bot.LockKey)
 	}
+
+	return executedActions
 }
 
 func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
