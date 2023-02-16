@@ -36,8 +36,18 @@ FROM ubuntu:22.04
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/ghowland/sireus/build/sireus .
 
-RUN apt-get update
-RUN apt-get install -y prometheus
+RUN mkdir ./config
+RUN mkdir ./web
+RUN mkdir ./static_web
+
+# Copy configuration files needed
+COPY --from=builder /go/src/github.com/ghowland/sireus/config/ ./config/
+COPY --from=builder /go/src/github.com/ghowland/sireus/web/ ./web/
+COPY --from=builder /go/src/github.com/ghowland/sireus/static_web/ ./static_web/
+
+# Install Prometheus, for the demo
+RUN /usr/bin/apt update
+RUN /usr/bin/apt install -y prometheus
 
 EXPOSE 3000
 EXPOSE 8611

@@ -36,7 +36,7 @@ dockerbuild:
 	docker build --build-arg PROJECT_VERSION=`cat version` -t ghowland/sireus:latest .
 
 dockerrunsh:
-	docker run -it --entrypoint sh ghowland/sireus:latest
+	docker run -it --entrypoint /usr/bin/bash ghowland/sireus:latest
 
 clean:
 	go clean
