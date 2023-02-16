@@ -27,35 +27,25 @@
     // Configure Draggable items
     const position = { x: 0, y: 0 }
 
+    // Set elements to be draggable with the "draggon" class, and ignore elements with "no-draggon"
     interact('.draggon').draggable({onmove: dragMoveListener, ignoreFrom: '.no-draggon'})
     function dragMoveListener (event) {
         var target = event.target;
 
-        // keep the dragged position in the data-x/data-y attributes
+        // Keep the dragged position in the data-x/data-y attributes
         var x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
         var y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-        // translate the element
-        target.style.webkitTransform = target.style.transform
-                = 'translate(' + x + 'px, ' + y + 'px)';
+        // Translate the element
+        target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
 
-        // update the posiion attributes
+        // Update the position attributes
         target.setAttribute('data-x', x);
         target.setAttribute('data-y', y);
     }
-
 </script>
 
 <script>
-    function objToString (obj) {
-        let str = '';
-        for (const [p, val] of Object.entries(obj)) {
-            str += `${p}::${val}\n`;
-        }
-        return str;
-    }
-
-
     // Saves or Loads the Session UUID from local storage
     function ProcessInteractiveControlData(interactiveControlData) {
         // Get the Session UUID from the server, it sets this, and this is how we ensure we keep getting the same Interactive data
@@ -76,5 +66,23 @@
 
         // Always save it.  So we can use it everywhere.
         localStorage.setItem('interactiveControl', JSON.stringify(interactiveControl));
+    }
+
+    function objToString (obj) {
+        let str = '';
+        for (const [p, val] of Object.entries(obj)) {
+            str += `${p}::${val}\n`;
+        }
+        return str;
+    }
+</script>
+
+<script>
+    // Handle page display issues by saving them to local storage, and verifying when we update the HTML with jQuery
+    function ToggleClassAndSave(elementId, className, saveKey) {
+        $(elementId).toggleClass(className);
+        var hasClassBool = $(elementId).hasClass(className);
+        // alert('Toggle: ' + elementId + '  Class: ' + className + '  Save: ' + saveKey + ' Has Class: ' + hasClassBool)
+        localStorage.setItem(saveKey, hasClassBool)
     }
 </script>

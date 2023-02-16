@@ -60,7 +60,7 @@
         </p>
         <button class="card-header-icon" aria-label="more options">
       <span class="icon">
-        <i class="fas fa-angle-down" aria-hidden="true" onclick="$('#action_content_{{format_html_id action.Name}}').toggleClass('is-hidden')"></i>
+        <i class="fas fa-angle-down" aria-hidden="true" onclick="ToggleClassAndSave('#action_content_{{format_html_id action.Name}}', 'is-hidden', 'is_hidden.action_content_{{format_html_id action.Name}}')"></i>
       </span>
         </button>
     </header>
@@ -81,3 +81,14 @@
 
     </div>
 </div>
+<script>
+    // Each time we render a card, check if it should be hidden or not.  Generic pattern to store page display info
+    saveKey = 'is_hidden.action_content_{{format_html_id action.Name}}'
+    hasClassBool = localStorage.getItem(saveKey);
+    if (hasClassBool === 'true') {
+        // alert('Load: ' + saveKey + ' Has Class: ' + hasClassBool)
+        $('#action_content_{{format_html_id action.Name}}').addClass('is-hidden')
+    } else {
+        $('#action_content_{{format_html_id action.Name}}').removeClass('is-hidden')
+    }
+</script>
