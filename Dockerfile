@@ -36,6 +36,7 @@ FROM ubuntu:22.04
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/ghowland/sireus/build/sireus .
 
+RUN apt-get update
 RUN apt-get install -y prometheus
 
 EXPOSE 3000
