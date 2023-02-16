@@ -49,7 +49,9 @@ COPY --from=builder /go/src/github.com/ghowland/sireus/static_web/ ./static_web/
 RUN /usr/bin/apt update
 RUN /usr/bin/apt install -y prometheus
 
+COPY --from=builder /go/src/github.com/ghowland/sireus/demo/config/prometheus.yml /etc/prometheus/prometheus.yml
+
 EXPOSE 3000
 EXPOSE 8611
 EXPOSE 8709
-ENTRYPOINT ["./sireus"]
+CMD service prometheus start && ./sireus
