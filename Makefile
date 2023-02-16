@@ -48,7 +48,8 @@ dockerpush:
 
 gcloudpush:
 	gcloud builds submit --pack image=us-docker.pkg.dev/glowing-cargo-376619/gcr.io/sireus-web
-	gcloud run deploy sireus --image=us-docker.pkg.dev/glowing-cargo-376619/gcr.io/sireus-web --vpc-connector=sireus-web --vpc-egress=all-traffic
+	gcloud run deploy sireus --image=us-docker.pkg.dev/glowing-cargo-376619/gcr.io/sireus-web
+
 
 clean:
 	go clean
