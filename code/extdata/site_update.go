@@ -94,8 +94,6 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 		return
 	}
 
-	log.Printf("Execute Bot Action: %d  Bot Group: %s  Bot: %s  Action: %s  States: %v", session.UUID, botGroup.Name, bot.Name, action.Name, bot.StateValues)
-
 	// Create the Action Command Result which will go into the Bot Command History
 	commandResult := data.ActionCommandResult{
 		ActionName: action.Name,
@@ -130,8 +128,6 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 
 	// Append the Command Result to the Bots Command History
 	bot.CommandHistory = append(bot.CommandHistory, commandResult)
-
-	log.Printf("Finished: Execute Bot Action: %d  Bot Group: %s  Bot: %s  Action: %s  States: %v", session.UUID, botGroup.Name, bot.Name, action.Name, bot.StateValues)
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists

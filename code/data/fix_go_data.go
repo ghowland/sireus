@@ -20,9 +20,17 @@ type (
 	PairFloat64List []PairFloat64
 )
 
-func (p PairFloat64List) Len() int           { return len(p) }
-func (p PairFloat64List) Less(i, j int) bool { return p[i].Value < p[j].Value }
-func (p PairFloat64List) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p PairFloat64List) Len() int { return len(p) }
+func (p PairFloat64List) Less(i, j int) bool {
+	// If they aren't the same value, return the lesser
+	if p[i].Value != p[j].Value {
+		return p[i].Value < p[j].Value
+	} else {
+		// Else, test their Key names, and return lesser of the strings so order is consistent.  Only for consistency
+		return p[i].Key < p[j].Key
+	}
+}
+func (p PairFloat64List) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 type (
 	// Allows for sorting BotActionData by FinalScore

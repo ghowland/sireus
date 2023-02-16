@@ -196,3 +196,11 @@ func FormatTimeLong(t time.Time) string {
 func GetTimeNow() time.Time {
 	return time.Now().UTC()
 }
+
+// Replace any characters in unsafeChars with the replace string.  Quickly convert into a safe string
+func StringReplaceUnsafeChars(value string, unsafeChars string, replace string) string {
+	for _, unsafeChar := range unsafeChars {
+		value = strings.Replace(value, string(unsafeChar), replace, -1)
+	}
+	return value
+}

@@ -217,6 +217,11 @@ func RegisterHandlebarsHelpers_FormatData() {
 		return raymond.SafeString(time.Duration(d).String())
 	})
 
+	raymond.RegisterHelper("format_html_id", func(name string) raymond.SafeString {
+		nameId := util.StringReplaceUnsafeChars(name, " [](){}=-!@#$%^&*()+<>,./?;:'\"`~", "_")
+		return raymond.SafeString(nameId)
+	})
+
 	// Variables
 	raymond.RegisterHelper("format_variable_type", func(item data.BotVariableType) string {
 		return item.String()
