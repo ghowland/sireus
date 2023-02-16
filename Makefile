@@ -42,6 +42,10 @@ dockerrun:
 dockerrunsh:
 	docker run -it --entrypoint /usr/bin/bash ghowland/sireus:latest
 
+dockerpush:
+	docker build --build-arg PROJECT_VERSION=`cat version` -t us-docker.pkg.dev/ghowland/sireus:latest .
+	docker push us-docker.pkg.dev/ghowland/sireus:latest
+
 clean:
 	go clean
 	rm -f ./build/${BINARY_NAME}
