@@ -36,7 +36,8 @@ dockerbuild:
 	docker build --build-arg PROJECT_VERSION=`cat version` -t ghowland/sireus:latest .
 
 dockerrun:
-	docker run -d -p 3000:3000 ghowland/sireus:latest
+	echo "Export Sireus to port 3000 and Prometheus to 9191"
+	docker run -d -p 3000:3000 -p 9191:9090 ghowland/sireus:latest
 
 dockerrunsh:
 	docker run -it --entrypoint /usr/bin/bash ghowland/sireus:latest

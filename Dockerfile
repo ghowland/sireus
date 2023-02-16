@@ -48,10 +48,12 @@ COPY --from=builder /go/src/github.com/ghowland/sireus/static_web/ ./static_web/
 # Install Prometheus, for the demo
 RUN /usr/bin/apt update
 RUN /usr/bin/apt install -y prometheus
+RUN /usr/bin/apt install -y net-tools
 
 COPY --from=builder /go/src/github.com/ghowland/sireus/demo/config/prometheus.yml /etc/prometheus/prometheus.yml
 
 EXPOSE 3000
 EXPOSE 8611
 EXPOSE 8709
+EXPOSE 9090
 CMD service prometheus start && ./sireus
