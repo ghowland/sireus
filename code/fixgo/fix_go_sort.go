@@ -9,7 +9,7 @@ import (
 func SortMapStringFloat64ByKey(input map[string]float64) data.PairFloat64List {
 	var keys []string
 
-	for key, _ := range input {
+	for key := range input {
 		keys = append(keys, key)
 	}
 

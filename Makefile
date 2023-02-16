@@ -17,7 +17,7 @@ test:
 	@go test ./code/...
 
 format:
-	@go fmt code/sireus.go
+	@gofmt -l -s -w code
 
 doc:
 	@cd code ; ~/go/bin/gomarkdoc ./... > ../documentation/godoc.md

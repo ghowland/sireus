@@ -11,10 +11,11 @@ Contributions to this project are released to the public under the [MIT license]
 3. Create a new branch: `git checkout -b my-branch-name`
 4. Make your changes
 5. Make sure the tests pass: `make test`
-6. Format code and build javascript artifacts: `docker buildx bake pre-checkin`
-7. Validate all code has correctly formatted and built: `docker buildx bake validate`
-8. Push to your fork and [submit a pull request](https://github.com/docker/build-push-action/compare)
-9. Pat your self on the back and wait for your pull request to be reviewed and merged.
+6. Format the code: `make format`
+7. Update the docs: `make doc`
+8. Validate all code has correctly formatted and built: `docker buildx bake validate`
+9. Push to your fork and [submit a pull request](https://github.com/docker/build-push-action/compare)
+10. Pat your self on the back and wait for your pull request to be reviewed and merged.
 
 Here are a few things you can do that will increase the likelihood of your pull request being accepted:
 
