@@ -35,12 +35,5 @@
 
 </section>
 <script>
-    // Configure the Reload Bot RPC, using our input data we go from our response.  Also reuses SessionUUID from local storage, if available
-    $(function() {
-        var inputData = JSON.parse("{{{ input_data }}}");
-        var interactiveControlData = JSON.parse("{{{ interactive_control }}}");
-        ProcessInteractiveControlData(interactiveControlData)
-        inputData['interactive_control'] = JSON.stringify(interactiveControl);
-        setTimeout(function() { RPC('/api/web/bot', inputData) }, 1500)
-    });
+    $(function() { HandlePageDataReloads('/api/web/bot', "{{{ input_data }}}", "{{{ interactive_control }}}"); });
 </script>

@@ -1,24 +1,46 @@
 <section class="section">
 {{> 'partials/breadcrumbs_common' }}
-    <h1 class="title is-1">
-        Demo Control: {{#if app_config.EnableDemo}}Enabled{{else}}Disabled{{/if}}
+    <h1 class="title is-3">
+        Demo Actions
     </h1>
-    <p class="subtitle">
-        {{#if app_config.EnableDemo}}
-            Internal demo for learning how the system works.  This is not a part of production Sireus.
-        {{else}}
-            To enable the demo, change the "config.json" value "enable_demo" to true.
-        {{/if}}
-    </p>
-
-    {{#if app_config.EnableDemo}}
-    <div class="block">
-        <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-users"></i> Interactive Sessions</h1>
-
-            {{> 'partials/interactive/table_session' }}
+    <div class="content">
+        <p>Welcome to the demo!  Please break the demo circuits or degrade the database storage and watch the system react.</p>
+        <p><strong>Circuit 1</strong> and the <strong>Database Storage</strong> will automatically be fixed by the Sireus Actions, but <strong>Circuit 2</strong> must be manually fixed with the button below.</p>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <button class="button is-danger">Break Circuit 1</button>
+        </div>
+        <div class="column">
+            <button class="button is-danger">Break Circuit 2</button>
+        </div>
+        <div class="column">
+            <button class="button is-info">Fix Circuit 2</button>
+        </div>
+        <div class="column">
+            <button class="button is-danger">Degrade Database Storage</button>
         </div>
     </div>
-    {{/if}}
+
+    <div class="columns">
+        <div class="column">
+            {{#with_bot_group_by_name session "Edge" as |botGroup|}}
+                {{> 'partials/bot_group/card_summary' }}
+            {{/with_bot_group_by_name}}
+        </div>
+        <div class="column">
+            {{#with_bot_group_by_name session "App" as |botGroup|}}
+                {{> 'partials/bot_group/card_summary' }}
+            {{/with_bot_group_by_name}}
+        </div>
+        <div class="column">
+            {{#with_bot_group_by_name session "Database" as |botGroup|}}
+                {{> 'partials/bot_group/card_summary' }}
+            {{/with_bot_group_by_name}}
+        </div>
+    </div>
 
 </section>
+<script>
+    $(function() { HandlePageDataReloads('/api/web/demo_control', "{{{ input_data }}}", "{{{ interactive_control }}}"); });
+</script>

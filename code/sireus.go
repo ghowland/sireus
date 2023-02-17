@@ -59,6 +59,11 @@ func main() {
 		}
 	})
 
+	web.Post("/api/web/demo_control", func(c *fiber.Ctx) error {
+		renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
+		return c.SendString(webapp.RenderRPCHtml("web/demo_control.hbs", renderMap))
+	})
+
 	// Raw Data Page - Not an API call
 	web.Get("/raw/metrics", func(c *fiber.Ctx) error {
 		return c.SendString(app.GetRawMetricsJSON(c))
@@ -67,7 +72,7 @@ func main() {
 	// Web Pages
 	web.Get("/", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
-		return c.Render("overwatch", renderMap, "layouts/main_common")
+		return c.Render("demo_control", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/site", func(c *fiber.Ctx) error {
@@ -90,9 +95,14 @@ func main() {
 		return c.Render("site_query", renderMap, "layouts/main_common")
 	})
 
-	web.Get("/demo_control", func(c *fiber.Ctx) error {
+	web.Get("/overwatch", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
-		return c.Render("demo_control", renderMap, "layouts/main_common")
+		return c.Render("overwatch", renderMap, "layouts/main_common")
+	})
+
+	web.Get("/demo_info", func(c *fiber.Ctx) error {
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("demo_info", renderMap, "layouts/main_common")
 	})
 
 	web.Get("/test", func(c *fiber.Ctx) error {

@@ -402,3 +402,18 @@ func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, bo
 
 	return data.BotGroup{}, errors.New(fmt.Sprintf("Bot Group Missing: %s", botGroupName))
 }
+
+// Returns a slice of Bots in this BotGroup that have this state
+func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string) []data.Bot {
+	stateKey := fmt.Sprintf("%s.%s", stateName, stateLabel)
+
+	bots := []data.Bot{}
+
+	for _, bot := range botGroup.Bots {
+		if util.StringInSlice(bot.StateValues, stateKey) {
+			bots = append(bots, bot)
+		}
+	}
+
+	return bots
+}

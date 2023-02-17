@@ -86,3 +86,17 @@
         localStorage.setItem(saveKey, hasClassBool)
     }
 </script>
+
+<script>
+    // Handle page reloads
+    function HandlePageDataReloads(apiTarget, inputDataJSON, interactiveControlDataJSON) {
+        // Configure the Reload Bot RPC, using our input data we go from our response.  Also reuses SessionUUID from local storage, if available
+        var inputData = JSON.parse(inputDataJSON);
+        var interactiveControlData = JSON.parse(interactiveControlDataJSON);
+
+        ProcessInteractiveControlData(interactiveControlData)
+        inputData['interactive_control'] = JSON.stringify(interactiveControl);
+        setTimeout(function() { RPC(apiTarget, inputData) }, 1500)
+    }
+</script>
+

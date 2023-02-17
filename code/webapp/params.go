@@ -2,7 +2,6 @@ package webapp
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/extdata"
@@ -37,7 +36,9 @@ func GetRenderMapFromParams(c *fiber.Ctx, site *data.Site) fiber.Map {
 	inputData["bot_group_id"] = botGroupId
 	inputData["bot_id"] = botId
 
-	renderMap := BuildRenderMapFiber(site, &botGroup, &bot, inputData)
+	session := app.GetInteractiveSession(site.ProductionControl, site)
+
+	renderMap := BuildRenderMapFiber(&session, site, &botGroup, &bot, inputData)
 
 	return renderMap
 }
@@ -100,12 +101,12 @@ func GetRenderMapFromRPC(c *fiber.Ctx, site *data.Site) map[string]interface{} {
 	inputData["bot_id"] = botId
 
 	// The site will remain the same, because it also has all our queries and lock timers and everything else.
-	renderMap := BuildRenderMap(site, &botGroup, &bot, inputData, interactiveControl)
+	renderMap := BuildRenderMap(&session, site, &botGroup, &bot, inputData, interactiveControl)
 
 	return renderMap
 }
 
-func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}) fiber.Map {
+func BuildRenderMapFiber(session *data.InteractiveSession, site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}) fiber.Map {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
@@ -118,11 +119,12 @@ func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot
 		inputDataStr = "{}"
 	}
 
-	interactiveStartTime := FormatInteractiveStartTime()
+	interactiveStartTime := util.FormatInteractiveStartTime()
 
 	renderMap := fiber.Map{
 		"title":                        "Sireus",
 		"app_config":                   data.SireusData.AppConfig,
+		"session":                      session,
 		"site":                         site,
 		"site_id":                      site.Name,
 		"botGroup":                     botGroup,
@@ -139,23 +141,7 @@ func BuildRenderMapFiber(site *data.Site, botGroup *data.BotGroup, bot *data.Bot
 	return renderMap
 }
 
-func FormatInteractiveStartTime() string {
-	// 15 minutes ago
-	//TODO(ghowland): Remove hard-code, put into AppConfig, also make default Duration in the webapp
-	var t = util.GetTimeNow().Add(time.Duration(-data.SireusData.AppConfig.InteractiveDurationMinutesDefault*60) * time.Second)
-
-	ampm := "AM"
-	hour := t.Hour()
-	if hour > 12 {
-		hour -= 12
-		ampm = "PM"
-	}
-
-	output := fmt.Sprintf("%02d/%02d/%d, %d:%02d %s", t.Day(), t.Month(), t.Year(), hour, t.Minute(), ampm)
-	return output
-}
-
-func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
+func BuildRenderMap(session *data.InteractiveSession, site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inputData map[string]interface{}, interactiveControl data.InteractiveControl) map[string]interface{} {
 	// Format the Render Time string.  If the Query Time is different, show both so the user knows when they got the
 	// information (page load), and when the information query was, if different
 	//TODO(ghowland): This will be updated to when we want it to be
@@ -176,6 +162,7 @@ func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inp
 	renderMap := map[string]interface{}{
 		"title":               "Sireus",
 		"app_config":          data.SireusData.AppConfig,
+		"session":             session,
 		"site":                site,
 		"site_id":             site.Name,
 		"botGroup":            botGroup,
@@ -196,4 +183,18 @@ func BuildRenderMap(site *data.Site, botGroup *data.BotGroup, bot *data.Bot, inp
 	}
 
 	return renderMap
+}
+
+func RenderRPCHtml(path string, renderMap map[string]interface{}) string {
+	formatString, err := util.FileLoad(path)
+	if err == nil {
+		output := util.HandlebarFormatData(formatString, renderMap)
+		payload := map[string]interface{}{
+			"embed": output,
+		}
+		jsonOutput := util.PrintJson(payload)
+		return jsonOutput
+	} else {
+		return "{\"message\": \"Couldn't find path\"}"
+	}
 }

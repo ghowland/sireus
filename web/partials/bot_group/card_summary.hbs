@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-content">
+        <h2 class="title is-primary is-4">{{botGroup.Name}} States</h2>
+        {{#each botGroup.States as |state stateIndex|}}
+            <div class="columns is-gapless">
+                <div class="column is-one-third">
+                    <strong>{{state.Name}}:</strong>
+                </div>
+                <div class="column">
+                    <div class="field is-grouped is-grouped-multiline">
+                        {{#each state.Labels as |label labelIndex|}} <!-- Bot Group States:Start -->
+                            {{#with_bots_in_state_len botGroup state.Name label as |botStateCount|}}
+                                {{#if botStateCount}}
+                                    <div class="control" style="padding: 0.1em;">
+                                        <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{botStateCount}} Bots actively in this State" style="border-bottom: 0px solid !important;">
+                                            <span class="tag is-warning">{{label}}</span>
+                                            <span class="tag is-info">{{botStateCount}}</span>
+                                        </div>
+                                    </div>
+                                {{/if}}
+                            {{/with_bots_in_state_len}}
+                        {{/each}} <!-- Bot Group States:End -->
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>

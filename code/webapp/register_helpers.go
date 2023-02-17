@@ -36,6 +36,28 @@ func RegisterHandlebarsHelpers() {
 
 // Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
 func RegisterHandlebarsHelpers_WithData() {
+	// With BotGroup by name
+	raymond.RegisterHelper("with_bot_group_by_name", func(session data.InteractiveSession, name string, options *raymond.Options) raymond.SafeString {
+		for _, botGroup := range session.BotGroups {
+			if botGroup.Name == name {
+				return raymond.SafeString(options.FnWith(botGroup))
+			}
+		}
+		return raymond.SafeString(options.FnWith(data.BotGroup{Name: "Missing"}))
+	})
+
+	// With Bots in specified state
+	raymond.RegisterHelper("with_bots_in_state", func(botGroup data.BotGroup, stateName string, stateLabel string, options *raymond.Options) raymond.SafeString {
+		bots := app.GetBotsInState(&botGroup, stateName, stateLabel)
+		return raymond.SafeString(options.FnWith(bots))
+	})
+
+	// With Count of Bots in specified state
+	raymond.RegisterHelper("with_bots_in_state_len", func(botGroup data.BotGroup, stateName string, stateLabel string, options *raymond.Options) raymond.SafeString {
+		bots := app.GetBotsInState(&botGroup, stateName, stateLabel)
+		return raymond.SafeString(options.FnWith(len(bots)))
+	})
+
 	// With BotActionData
 	raymond.RegisterHelper("with_bot_action", func(bot data.Bot, action data.Action, options *raymond.Options) raymond.SafeString {
 		botActionData := bot.ActionData[action.Name]
