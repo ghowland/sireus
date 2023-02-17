@@ -1,6 +1,6 @@
 {
   "name": "Edge",
-  "info": "Example Edge",
+  "info": "Example Edge, simulating traffic coming through into a web app from the Internet",
   "states": [
     {
       "name": "Operation",

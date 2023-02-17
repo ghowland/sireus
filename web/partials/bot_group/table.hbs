@@ -3,15 +3,15 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Consideration Name">Name</abbr></th>
-            <th><abbr title="Information">Info</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Bot Group is group of agents (Bots)">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Description of the Bot Group">Info</span></th>
         </tr>
         </thead>
         {{#if_bot_group_length site.BotGroups 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Consideration Name">Name</abbr></th>
-                <th><abbr title="Information">Info</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Bot Group is group of agents">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Description of the Bot Group">Info</span></th>
             </tr>
             </tfoot>
         {{/if_bot_group_length}}

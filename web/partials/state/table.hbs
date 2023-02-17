@@ -3,17 +3,17 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Name">Name</abbr></th>
-            <th><abbr title="Information">Info</abbr></th>
-            <th><abbr title="Forward Sequence State Labels">States</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="States are used to track one line of potential state progress">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Forward Sequence State Labels">States</span></th>
         </tr>
         </thead>
         {{#if_state_length States 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Name">Name</abbr></th>
-                <th><abbr title="Information">Info</abbr></th>
-                <th><abbr title="Forward Sequence State Labels">States</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="States are used to track one line of potential state progress">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Forward Sequence State Labels">States</span></th>
             </tr>
             </tfoot>
         {{/if_state_length}}
@@ -24,8 +24,8 @@
 
             <tr>
                 <th>{{state.Name}}</th>
-                <th>{{state.Info}}</th>
-                <th>{{format_array_string_csv state.Labels}}</th>
+                <td>{{state.Info}}</td>
+                <td>{{format_array_string_csv state.Labels}}</td>
             </tr>
 
         {{/each}} <!-- State:End -->

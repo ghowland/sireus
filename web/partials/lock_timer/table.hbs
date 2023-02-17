@@ -3,21 +3,17 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Name">Name</abbr></th>
-            <th><abbr title="Type">Type</abbr></th>
-            <th><abbr title="Information">Info</abbr></th>
-            <th><abbr title="Is Active">Is Active</abbr></th>
-            <th><abbr title="Timeout">Timeout</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Lock Timers are used to block Actions that require them for a period of time">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Type of Timer">Type</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
         </tr>
         </thead>
         {{#if_lock_timer_length LockTimers 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Name">Name</abbr></th>
-                <th><abbr title="Type">Type</abbr></th>
-                <th><abbr title="Information">Info</abbr></th>
-                <th><abbr title="Is Active">Is Active</abbr></th>
-                <th><abbr title="Timeout">Timeout</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Lock Timers are used to block Actions that require them for a period of time">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Type of Timer">Type</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
             </tr>
             </tfoot>
         {{/if_lock_timer_length}}
@@ -28,10 +24,8 @@
 
             <tr>
                 <th>{{lockTimer.Name}}</th>
-                <th>{{lockTimer.Type}}</th>
-                <th>{{lockTimer.Info}}</th>
-                <th>{{lockTimer.IsActive}}</th>
-                <th>{{lockTimer.Timeout}}</th>
+                <td>{{lockTimer.Type}}</td>
+                <td>{{lockTimer.Info}}</td>
             </tr>
 
 

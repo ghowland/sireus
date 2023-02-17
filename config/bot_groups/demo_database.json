@@ -1,6 +1,6 @@
 {
   "name": "Database",
-  "info": "Example Database",
+  "info": "Example Database, to simulate requests that can back up and timeout if in a degraded state or too much traffic",
   "states": [
     {
       "name": "Operation",

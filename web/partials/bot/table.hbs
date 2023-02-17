@@ -3,17 +3,17 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Consideration Name">Name</abbr></th>
-            <th><abbr title="Information">Info</abbr></th>
-            <th><abbr title="Current State Values">States</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Bot name, extracted from Metric metadata">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Active States">States</span></th>
         </tr>
         </thead>
         {{#if_bot_length botGroup.Bots 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Consideration Name">Name</abbr></th>
-                <th><abbr title="Information">Info</abbr></th>
-                <th><abbr title="Current State Values">States</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Bot name, extracted from Metric metadata">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Active States">States</span></th>
             </tr>
             </tfoot>
         {{/if_bot_length}}

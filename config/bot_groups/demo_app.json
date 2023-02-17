@@ -1,6 +1,6 @@
 {
   "name": "App",
-  "info": "Example Application",
+  "info": "Example Application, to simulate a web app that can process or timeout requests",
   "states": [
     {
       "name": "Operation",

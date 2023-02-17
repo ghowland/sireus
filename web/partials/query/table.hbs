@@ -3,19 +3,19 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Name">Name</abbr></th>
-            <th><abbr title="Query">Query</abbr></th>
-            <th><abbr title="Query Server">Server</abbr></th>
-            <th><abbr title="Information">Info</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Queries are referenced by this name">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="The Prometheus metric query">Query</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Named Server the query is made against">Server</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
         </tr>
         </thead>
         {{#if_query_length Queries 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Name">Name</abbr></th>
-                <th><abbr title="Query">Query</abbr></th>
-                <th><abbr title="Query Server">Server</abbr></th>
-                <th><abbr title="Information">Info</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Queries are referenced by this name">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="The Prometheus metric query">Query</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Named Server the query is made against">Server</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
             </tr>
             </tfoot>
         {{/if_query_length}}

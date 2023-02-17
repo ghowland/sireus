@@ -3,25 +3,25 @@
     <table class="table">
         <thead>
         <tr>
-            <th><abbr title="Name">Name</abbr></th>
-            <th><abbr title="Type">Type</abbr></th>
-            <th><abbr title="Query Name">Query Name</abbr></th>
-            <th><abbr title="Query Key">Query Key</abbr></th>
-            <th><abbr title="Boolean Range Start">Range Start</abbr></th>
-            <th><abbr title="Boolean Range End">Range End</abbr></th>
-            <th><abbr title="Invert Boolean Result">Invert</abbr></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Variable that is extracted from Metrics or Synthesized after">Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Type of data">Type</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Name of the query to extract this variable from">Query Name</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Key in the query to extract this variable from">Query Key</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, start of the float range for a true value">Range Start</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, end of the float range for a true value">Range End</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, do we invert the Range test result?">Invert</span></th>
         </tr>
         </thead>
         {{#if_variable_length Variables 10}}
             <tfoot>
             <tr>
-                <th><abbr title="Name">Name</abbr></th>
-                <th><abbr title="Type">Type</abbr></th>
-                <th><abbr title="Query Name">Query Name</abbr></th>
-                <th><abbr title="Query Key">Query Key</abbr></th>
-                <th><abbr title="Boolean Range Start">Range Start</abbr></th>
-                <th><abbr title="Boolean Range End">Range End</abbr></th>
-                <th><abbr title="Invert Boolean Result">Invert</abbr></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Variable that is extracted from Metrics or Synthesized after">Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Type of data">Type</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Name of the query to extract this variable from">Query Name</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Key in the query to extract this variable from">Query Key</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, start of the float range for a true value">Range Start</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, end of the float range for a true value">Range End</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="If this is a Boolean, do we invert the Range test result?">Invert</span></th>
             </tr>
             </tfoot>
         {{/if_variable_length}}
@@ -32,12 +32,12 @@
 
             <tr>
                 <th>{{variable.Name}}</th>
-                <th>{{format_variable_type variable.Type}}</th>
-                <th>{{variable.QueryName}}</th>
-                <th>{{variable.QueryKey}}</th>
-                <th>{{variable.BoolRangeStart}}</th>
-                <th>{{variable.BoolRangeEnd}}</th>
-                <th>{{variable.BoolInvert}}</th>
+                <td>{{format_variable_type variable.Type}}</td>
+                <td>{{variable.QueryName}}</td>
+                <td>{{variable.QueryKey}}</td>
+                <td>{{variable.BoolRangeStart}}</td>
+                <td>{{variable.BoolRangeEnd}}</td>
+                <td>{{variable.BoolInvert}}</td>
             </tr>
 
 

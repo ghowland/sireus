@@ -7,6 +7,10 @@
         {{bot.Info}}
     </p>
 
+    <div class="content">
+        <p>States and Variables make up this Bots data.</p>
+    </div>
+
     <div class="block">
         <div class="box">
             <h1 class="title is-big">States</h1>
@@ -27,12 +31,24 @@
         </div>
     </div>
 
+    <div class="content">
+        <p>Action gets a Final Score, on the left side of the header, and will be green or red depending on whether it
+            is Available to executed.</p>
+    </div>
+
     {{#each bot.SortedActionData as |actionData actionDataIndex|}} <!-- Action:Start -->
         {{#with_action_from_bot botGroup bot actionDataIndex as |action|}}
             {{> 'partials/action/card_box' }}
         {{/with_action_from_bot}}
     {{/each}} <!-- Action:End -->
 
+    <div class="content">
+        <p></p>
+        <p>Actions can only be Available if their Required States are currently active.  There is a description if you
+            expand them which explains the scoring in detail, up to the final score.</p>
+        <p>An Action with a score of 0 will never be executed, and there are several conditions which will force a 0 score.</p>
+        <p>When more than one Action is Available and meets all their requirements, the highest score will be executed.</p>
+    </div>
 </section>
 <script>
     $(function() { HandlePageDataReloads('/api/web/bot', "{{{ input_data }}}", "{{{ interactive_control }}}"); });
