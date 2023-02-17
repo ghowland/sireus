@@ -81,6 +81,8 @@ type (
 type (
 	// When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result.
 	ActionCommandResult struct {
+		BotGroupName  string
+		BotName       string
 		ActionName    string
 		ResultStatus  string
 		ResultContent string

@@ -58,6 +58,12 @@ func RegisterHandlebarsHelpers_WithData() {
 		return raymond.SafeString(options.FnWith(len(bots)))
 	})
 
+	// With Count of Bots in specified state
+	raymond.RegisterHelper("with_command_history_all_latest", func(session data.InteractiveSession, count int, options *raymond.Options) raymond.SafeString {
+		allCommandHistory := app.GetCommandHistoryAll(&session, count)
+		return raymond.SafeString(options.FnWith(allCommandHistory))
+	})
+
 	// With BotActionData
 	raymond.RegisterHelper("with_bot_action", func(bot data.Bot, action data.Action, options *raymond.Options) raymond.SafeString {
 		botActionData := bot.ActionData[action.Name]
@@ -296,6 +302,14 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 	})
 
 	raymond.RegisterHelper("if_action_length", func(items []data.Action, count int, options *raymond.Options) raymond.SafeString {
+		if len(items) >= count {
+			return raymond.SafeString(options.Fn())
+		} else {
+			return raymond.SafeString("")
+		}
+	})
+
+	raymond.RegisterHelper("if_command_history_length", func(items []data.ActionCommandResult, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {

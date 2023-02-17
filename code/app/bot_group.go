@@ -5,9 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/fixgo"
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -416,4 +418,26 @@ func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string
 	}
 
 	return bots
+}
+
+func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ActionCommandResult {
+	history := []data.ActionCommandResult{}
+
+	for _, botGroup := range session.BotGroups {
+		for _, bot := range botGroup.Bots {
+			for _, commandResult := range bot.CommandHistory {
+				history = append(history, commandResult)
+			}
+		}
+	}
+
+	// Sort the list
+	sort.Slice(history, fixgo.SliceReverse(func(i, j int) bool { return history[i].Started.Before(history[j].Started) }))
+
+	// Slice from top
+	if count > 0 && len(history) > count {
+		history = history[0:count]
+	}
+
+	return history
 }

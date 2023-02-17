@@ -9,13 +9,13 @@
     </div>
     <div class="columns">
         <div class="column">
-            <button class="button is-danger">Break Circuit 1</button>
+            <button class="button is-danger">Break Circuit SFO-WAS-11</button>
         </div>
         <div class="column">
-            <button class="button is-danger">Break Circuit 2</button>
+            <button class="button is-danger">Break Circuit SFO-LAS-27</button>
         </div>
         <div class="column">
-            <button class="button is-info">Fix Circuit 2</button>
+            <button class="button is-info">Fix Circuit SFO-LAS-27</button>
         </div>
         <div class="column">
             <button class="button is-danger">Degrade Database Storage</button>
@@ -37,6 +37,22 @@
             {{#with_bot_group_by_name session "Database" as |botGroup|}}
                 {{> 'partials/bot_group/card_summary' }}
             {{/with_bot_group_by_name}}
+        </div>
+    </div>
+
+    <h1 class="title is-4">
+        Action History
+    </h1>
+    <div class="content">
+        <p>Here you can see the highest scoring Actions that are executed when all requirements are met.</p>
+    </div>
+    <div class="block">
+        <div class="box">
+            <div class="content">
+                {{#with_command_history_all_latest session 10 as |commandHistory|}}
+                    {{> 'partials/command_history/table' }}
+                {{/with_command_history_all_latest}}
+            </div>
         </div>
     </div>
 

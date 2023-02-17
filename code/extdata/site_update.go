@@ -105,9 +105,11 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 
 	// Create the Action Command Result which will go into the Bot Command History
 	commandResult := data.ActionCommandResult{
-		ActionName: action.Name,
-		Started:    util.GetTimeNow(),
-		Score:      actionData.FinalScore,
+		BotGroupName: botGroup.Name,
+		BotName:      bot.Name,
+		ActionName:   action.Name,
+		Started:      util.GetTimeNow(),
+		Score:        actionData.FinalScore,
 	}
 
 	// Set the Lock Timers
