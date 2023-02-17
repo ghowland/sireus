@@ -44,7 +44,6 @@ dockerrunsh:
 
 dockerpush:
 	docker build --build-arg PROJECT_VERSION=`cat version` -t us-docker.pkg.dev/ghowland/sireus:latest .
-	docker push us-docker.pkg.dev/ghowland/sireus:latest
 
 gcloudpush:
 	gcloud builds submit --pack image=us-docker.pkg.dev/glowing-cargo-376619/gcr.io/sireus-web

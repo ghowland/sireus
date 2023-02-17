@@ -52,8 +52,13 @@ RUN /usr/bin/apt install -y net-tools
 
 COPY --from=builder /go/src/github.com/ghowland/sireus/demo/config/prometheus.yml /etc/prometheus/prometheus.yml
 
+# Wrap starting Prometheus and the Sireus service
+COPY --from=builder /go/src/github.com/ghowland/sireus/demo/container_start.sh .
+
 EXPOSE 3000
 EXPOSE 8611
 EXPOSE 8709
 EXPOSE 9090
-CMD service prometheus start && ./sireus
+
+#CMD service prometheus start && ./sireus
+CMD ./container_start.sh

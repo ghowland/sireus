@@ -70,6 +70,11 @@ func GetAPIPlotMetrics(c *fiber.Ctx) string {
 		return "{}"
 	}
 
+	// If no results, just return.  We didn't get the data.  TODO(ghowland): Can add dynamic error messages later
+	if len(queryResult.Result.PrometheusResponse.Data.Result) == 0 {
+		return "{}"
+	}
+
 	xArray := []float64{}
 	yArray := []float64{}
 
