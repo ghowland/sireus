@@ -19,7 +19,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - [Data Structure](#data-structure)
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
   * [Terminology](#terminology)
-  * [How a Utility System or "Utility AI" works](#how-a-utility-system-or--utility-ai--works)
+  * [How a Utility System or "Utility AI" works](#how-a-utility-system-or-utility-ai-works)
     + [State Condition Consideration Data](#state-condition-consideration-data)
     + [State Condition Final Scores from Multiple Considerations](#state-condition-final-scores-from-multiple-considerations)
     + [Why so many steps to get to a Final State Condition Score?](#why-so-many-steps-to-get-to-a-final-state-condition-score)
