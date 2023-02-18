@@ -31,7 +31,7 @@
             <td><a href="bot?bot_id={{command.BotName}}&bot_group_id={{command.BotGroupName}}">{{command.BotName}}</a></td>
             <td><span class="has-tooltip-arrow" data-tooltip="Condition: {{command.ConditionName}}">{{command.CommandLog}}</span></td>
             <td>{{format_time command.Started}}</td>
-            <td>{{command.Score}}</td>
+            <td>{{format_float64 "%0.2f" command.Score}}</td>
             <td><span class="has-tooltip-arrow" data-tooltip="Before: {{format_array_string_csv command.StatesBefore}}"><i class="fa-solid fa-arrow-left"></i></span> <span class="has-tooltip-arrow" data-tooltip="After: {{format_array_string_csv command.StatesAfter}}"><i class="fa-solid fa-arrow-right"></i></span></td>
         </tr>
         {{/each}}

@@ -150,6 +150,9 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
 	var valueRange float64
 	var rawValue float64
 
+	// Are we doing this backwards, going from high to low?
+	isDecreaing := false
+
 	if rangeMax == rangeMin {
 		// Avoid division by zero, and just say it is always true
 		return 1
@@ -157,6 +160,8 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
 		// Get the distance between the values
 		valueRange = rangeMax - rangeMin
 	} else {
+		isDecreaing = true
+
 		// Get the distance between the values
 		valueRange = rangeMin - rangeMax
 	}
@@ -166,6 +171,11 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
 
 	// Clamp between 0 and 1
 	finalValue := Clamp(rawValue, 0, 1)
+
+	// If we are going the opposite direction, invert the value
+	if isDecreaing {
+		finalValue = 1 - finalValue
+	}
 
 	return finalValue
 }

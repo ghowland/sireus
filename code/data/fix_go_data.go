@@ -27,7 +27,7 @@ func (p PairFloat64List) Less(i, j int) bool {
 		return p[i].Value < p[j].Value
 	} else {
 		// Else, test their Key names, and return lesser of the strings so order is consistent.  Only for consistency
-		return p[i].Key < p[j].Key
+		return StringCompare(p[i].Key, p[j].Key) < 0
 	}
 }
 func (p PairFloat64List) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
@@ -44,7 +44,13 @@ type PairBotConditionDataList []PairBotConditionData
 
 func (p PairBotConditionDataList) Len() int { return len(p) }
 func (p PairBotConditionDataList) Less(i, j int) bool {
-	return p[i].Value.FinalScore < p[j].Value.FinalScore
+	// If they aren't the same value, return the lesser
+	if p[i].Value.FinalScore != p[j].Value.FinalScore {
+		return p[i].Value.FinalScore < p[j].Value.FinalScore
+	} else {
+		// Else, test their Key names, and return lesser of the strings so order is consistent.  Only for consistency
+		return StringCompare(p[i].Key, p[j].Key) < 0
+	}
 }
 func (p PairBotConditionDataList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
@@ -78,4 +84,18 @@ func (d *Duration) UnmarshalJSON(b []byte) error {
 	default:
 		return errors.New("invalid duration")
 	}
+}
+
+// Compares 2 strings, -1 is s1 is less, 0 is equal, 1 is s1 is greater
+func StringCompare(s1, s2 string) int {
+	lens := len(s1)
+	if lens > len(s2) {
+		lens = len(s2)
+	}
+	for i := 0; i < lens; i++ {
+		if s1[i] != s2[i] {
+			return int(s1[i]) - int(s2[i])
+		}
+	}
+	return len(s1) - len(s2)
 }
