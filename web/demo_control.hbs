@@ -21,6 +21,9 @@
         <div class="column">
             <button class="button is-danger" onclick="RPC('/demo/action', {'action': 'break', 'bot_group': 'Database', 'bot':'sireus'})">Degrade Database Storage</button>
         </div>
+        <div class="column">
+            <button class="button is-warning-reverse" onclick="RPC('/demo/action', {'action': 'clear_command_history', 'bot_group': '', 'bot':''})">Clear Command History</button>
+        </div>
     </div>
 
     <div class="columns">
@@ -42,15 +45,15 @@
     </div>
 
     <h1 class="title is-4">
-        Action History
+        Command History
     </h1>
     <div class="content">
-        <p>Here you can see the highest scoring Actions that are executed when all requirements are met.</p>
+        <p>Here you can see the highest scoring Condition Commands that are executed when all requirements are met.</p>
     </div>
     <div class="block">
         <div class="box">
             <div class="content">
-                {{#with_command_history_all_latest session 10 as |commandHistory|}}
+                {{#with_command_history_all_latest session 15 as |commandHistory|}}
                     {{> 'partials/command_history/table' }}
                 {{/with_command_history_all_latest}}
             </div>

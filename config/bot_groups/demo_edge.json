@@ -238,7 +238,7 @@
         {
           "name": "Link Down",
           "weight": 1.0,
-          "curve": "dec_boolean",
+          "curve": "inc_boolean",
           "range_start": 0,
           "range_end": 1,
           "evaluate": "link_state"
@@ -246,6 +246,47 @@
       ],
       "command": {
         "name": "Reset Problem, it was fixed",
+        "log_format": "{{condition.Name}}.  Reset States: {{format_array_string_csv conditionCommand.ResetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Operation"],
+        "journal_template": "The Link is down: ({{link_state}})"
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Link Is Repaired Without Command",
+      "info": "Is this link repaired without waiting for a command?  Then reset",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Problem"
+      ],
+      "required_available": "5s",
+      "considerations": [
+        {
+          "name": "Link Down",
+          "weight": 1.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 1,
+          "evaluate": "link_state"
+        }
+      ],
+      "command": {
+        "name": "Problem fixed itself.  Reset Operation",
         "log_format": "{{condition.Name}}.  Reset States: {{format_array_string_csv conditionCommand.ResetBotStates}}",
         "type": 0,
         "content": "",

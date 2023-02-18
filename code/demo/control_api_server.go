@@ -2,6 +2,7 @@ package demo
 
 import (
 	"fmt"
+	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
@@ -47,6 +48,9 @@ func ProcessWebDemoAction(c *fiber.Ctx) string {
 		return DemoBreakBot(botGroupName, botName)
 	case "fix":
 		return DemoFixBot(botGroupName, botName)
+	case "clear_command_history":
+		app.AdminClearCommandHistory()
+		return fmt.Sprintf("{\"_success\": \"Command History has been cleared.\"}")
 	default:
 		return fmt.Sprintf("{\"_failure\": \"Unknown action: %s\"}", actionName)
 	}

@@ -224,13 +224,13 @@ func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) err
 	}
 
 	// Get the current state index, so we can remove it
-	_, currentStateIndex, err := GetBotCurrentStateAndIndex(botGroup, bot, stateBase)
+	currentStateName, _, err := GetBotCurrentStateAndIndex(botGroup, bot, stateBase)
 	if util.Check(err) {
 		return err
 	}
 
 	// Remove the current state
-	bot.StateValues = util.StringSliceRemoveIndex(bot.StateValues, currentStateIndex)
+	bot.StateValues, _ = util.StringSliceRemoveString(bot.StateValues, currentStateName)
 
 	// Add the default state
 	key := fmt.Sprintf("%s.%s", stateData.Name, stateData.Labels[0])
@@ -446,4 +446,14 @@ func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.Co
 	}
 
 	return history
+}
+
+func AdminClearCommandHistory() {
+	session := GetInteractiveSession(data.SireusData.Site.ProductionControl, &data.SireusData.Site)
+	for botGroupIndex := range session.BotGroups {
+		for botIndex := range session.BotGroups[botGroupIndex].Bots {
+			bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
+			bot.CommandHistory = []data.ConditionCommandResult{}
+		}
+	}
 }
