@@ -15,7 +15,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 ### Table of Contents
 
 - [Sireus Goals](#sireus-goals)
-- [Need Contributors in Many Areas including Data Visualization](#help-wanted)
+- [Help Wanted... in Many Areas including Data Visualization and Web Design](#help-wanted)
 - [Links to Documentation and Communication Options](#links)
 - [Data Structure](#data-structure)
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
