@@ -88,6 +88,23 @@
 </script>
 
 <script>
+    // Live Update Control
+    var LiveDataUpdate = true;
+    var LiveDataUpdateScheduled = false;
+    var LastAPITarget = '';
+    var LastInputData = {};
+    function UpdateLiveDataUpdate() {
+        var isChecked = ToggleCheckboxData('#liveDataUpdate', 'live_data_update');
+        if (isChecked === true) {
+            LiveDataUpdate = true;
+            ScheduleLiveUpdate(0);
+        } else {
+            LiveDataUpdate = false;
+        }
+    }
+</script>
+
+<script>
     // Handle page reloads
     function HandlePageDataReloads(apiTarget, inputDataJSON, interactiveControlDataJSON) {
         // Configure the Reload Bot RPC, using our input data we go from our response.  Also reuses SessionUUID from local storage, if available
@@ -96,7 +113,20 @@
 
         ProcessInteractiveControlData(interactiveControlData)
         inputData['interactive_control'] = JSON.stringify(interactiveControl);
-        setTimeout(function() { RPC(apiTarget, inputData) }, 1500)
-    }
-</script>
 
+        // Save this, so we can use it if we turn off LiveDataUpdate
+        LastAPITarget = apiTarget;
+        LastInputData = inputData;
+
+        // If we want to perform a Live Data Update, schedule the next one
+        if (LiveDataUpdate) {
+            ScheduleLiveUpdate(1500);
+        }
+    }
+
+    function ScheduleLiveUpdate(scheduleDelayMilli) {
+        setTimeout(function() { RPC(LastAPITarget, LastInputData) }, scheduleDelayMilli)
+        LiveDataUpdateScheduled = true;
+    }
+
+</script>

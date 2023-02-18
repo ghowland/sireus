@@ -27,9 +27,6 @@
                 </a>
 
                 <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/demo_control">
-                        Demo Control
-                    </a>
                     <a class="navbar-item" href="/site_query">
                         Site Queries
                     </a>
@@ -59,6 +56,10 @@
         <div class="navbar-end">
             <div class="navbar-item">
                 <div class="buttons">
+                    <div class="field" style="padding-right: 0.5em; padding-top: 0.5em;">
+                        <input id="liveDataUpdate" type="checkbox" name="liveDataUpdate" class="switch is-rtl is-info" checked="checked" onclick="UpdateLiveDataUpdate()">
+                        <label for="liveDataUpdate">Live Update</label>
+                    </div>
                     <a class="button is-warning" onclick="$('#interactive_control').toggleClass('is-hidden')">
                         Interactive
                     </a>
