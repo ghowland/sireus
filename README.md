@@ -50,7 +50,8 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Developement
 	* A small plugin-system, so that custom functions could be called throughtout the pipeline of the system.
 		+ I (ghowland) think it's best to start this small with a minimal interface, and it can be kept as a legacy implementation when we find out what all the additional requirements we learn from use.  It needs a good first start to be a useful feedback tool so that users can spend the time to develop the experitise needed to push the system to it's current limits, and get our feature set for the more mature plugin-system.  Because it's golang, I think it is best to just have them compile the plugins in, so can also avoid the expense of dynamic plugins.
-
+- Feedback
+	* Sireus is in the Design RFC phase.  I want to get feedback on whether it is understandable, if not what are areas that lack clarity.  "What is it for?"  "Why should I use this?"  "How would I implement it?"  I have some of this information here now, but I (ghowland) don't know what is clear and what is unclear without more feedback.  [Please file questions, comments and requests here.](https://github.com/ghowland/sireus/issues).
 
 
 ## Links
