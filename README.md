@@ -20,9 +20,9 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
   * [Terminology](#terminology)
   * [How a Utility System or "Utility AI" works](#how-a-utility-system-or--utility-ai--works)
-    + [State Condition Consideration Data](#condition-consideration-data)
-    + [State Condition Final Scores from Multiple Considerations](#condition-final-scores-from-multiple-considerations)
-    + [Why so many steps to get to a Final State Condition Score?](#why-so-many-steps-to-get-to-a-final-condition-score)
+    + [State Condition Consideration Data](#state-condition-consideration-data)
+    + [State Condition Final Scores from Multiple Considerations](#state-condition-final-scores-from-multiple-considerations)
+    + [Why so many steps to get to a Final State Condition Score?](#why-so-many-steps-to-get-to-a-final-state-condition-score)
 - [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
 - [Sireus Portrait](#sireus-portrait)
 
@@ -111,7 +111,7 @@ The Curve Result (0.71) is multiplied by the Weight (5): 0.71 * 5 = 3.55 Conside
 
 In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multiplied by the State Condition Weight to get a final State Condition Score.
 
-**Example of an State Condition with Multiple Considerations:**
+**Example of a State Condition with Multiple Considerations:**
 
 - **State Condition**: Send API Remediation XYZ
 - **State Condition Weight**: 1.5
@@ -120,7 +120,7 @@ In the above single Consideration Data, we had a single Consideration Score of 3
 
 When all the State Conditions have had their Final Scores calculated, if 5.32 is the highest score, then that condition will be executed.  
 
-For a given State Condition, if **any** of the Considerations have a score of zero, then the entire Final State Condition Score is zero.  This allows any Consideration to make an State Condition invalid.
+For a given State Condition, if **any** of the Considerations have a score of zero, then the entire Final State Condition Score is zero.  This allows any Consideration to make a State Condition invalid.
 
 #### Why so many steps to get to a Final State Condition Score?
 
