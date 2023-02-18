@@ -196,7 +196,7 @@
         {
           "name": "Link Down",
           "weight": 1.0,
-          "curve": "inc_boolean",
+          "curve": "dec_boolean",
           "range_start": 0,
           "range_end": 1,
           "evaluate": "link_state"
@@ -238,7 +238,7 @@
         {
           "name": "Link Down",
           "weight": 1.0,
-          "curve": "inc_boolean",
+          "curve": "dec_boolean",
           "range_start": 0,
           "range_end": 1,
           "evaluate": "link_state"

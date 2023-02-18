@@ -32,6 +32,11 @@ func main() {
 	// If we want to run the demo, run in the background
 	if data.SireusData.AppConfig.EnableDemo {
 		go demo.RunDemoForever(web)
+
+		// Demo control through the Website.  The Demo API is for the Sireus Client, which won't have CORS issues like the Web API would
+		web.Post("/demo/action", func(c *fiber.Ctx) error {
+			return c.SendString(demo.ProcessWebDemoAction(c))
+		})
 	}
 
 	// API Calls

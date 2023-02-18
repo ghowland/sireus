@@ -41,14 +41,14 @@ func RunDemoForever(webPrimary *fiber.App) {
 func ConfigureDemoWebPrimary(webPrimary *fiber.App) {
 	// Add our API paths to the Web Primary, so we can control the demo inside the normal web app
 	webPrimary.Post("/demo/edge/break/circuit1", func(c *fiber.Ctx) error {
-		return c.SendString("{\"__toast\": " + BreakCircuit1())
+		return c.SendString("{\"_success\": " + BreakCircuit1())
 	})
 
 	webPrimary.Post("/demo/edge/break/circuit2", func(c *fiber.Ctx) error {
-		return c.SendString("{\"__toast\": " + BreakCircuit2())
+		return c.SendString("{\"_success\": " + BreakCircuit2())
 	})
 
 	webPrimary.Post("/demo/database/break/storage_degraded", func(c *fiber.Ctx) error {
-		return c.SendString("{\"__toast\": " + BreakStorageDegraded())
+		return c.SendString("{\"_success\": " + BreakStorageDegraded())
 	})
 }
