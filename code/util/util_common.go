@@ -147,11 +147,25 @@ func Clamp(value float64, min float64, max float64) float64 {
 
 // Returns clamped value between 0-1, where the value falls between the range
 func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64 {
-	valueRange := rangeMax - rangeMin
+	var valueRange float64
+	var rawValue float64
 
-	rawRangeValue := value / valueRange
+	if rangeMax == rangeMin {
+		// Avoid division by zero, and just say it is always true
+		return 1
+	} else if rangeMax > rangeMin {
+		// Get the distance between the values
+		valueRange = rangeMax - rangeMin
+	} else {
+		// Get the distance between the values
+		valueRange = rangeMin - rangeMax
+	}
 
-	finalValue := Clamp(rawRangeValue, 0, 1)
+	// Proportional Value Range
+	rawValue = value / valueRange
+
+	// Clamp between 0 and 1
+	finalValue := Clamp(rawValue, 0, 1)
 
 	return finalValue
 }

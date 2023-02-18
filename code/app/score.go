@@ -32,15 +32,19 @@ func CalculateScore(action data.Condition, actionData data.BotConditionData) (fl
 			return 0, details
 		}
 
-		// Multiply the raw Score by the Weight
-		rangedScore := util.RangeMapper(considerScore, consider.RangeStart, consider.RangeEnd)
-
-		weightedScore := rangedScore * consider.Weight
+		// Weight the Ranged Score, allowing it to be more important than other Considerations in this Condition
+		//NOTE(ghowland):BEST-PRACTICE: Use scores close to from 1.0 to 10.0 for the maximum Consideration Weight.
+		//		Having a 1-10 max score per condition makes the math work properly.  Mostly keep the max values near 1.0
+		//		and go higher than that as you need to relatively prioritize some conditions over others.  Staying
+		//		normalized to 1.0 has a lot of benefits, but the ability to adjust higher or lower gives flexibility.
+		//		Use the Condition.Weight to differentiate different Conditions with their Final Scores.
+		//		Use the Consideration.Weight to relatively prioritize Considerations in the Condition score
+		weightedScore := considerScore * consider.Weight
 
 		// Move a constantly Running Score
 		runningScore *= weightedScore
 
-		//log.Printf("Consider: %s  Score: %.2f  Ranged Score: %.2f  Weighted: %.2f  Running: %.2f", consider.Name, considerScore, rangedScore, weightedScore, runningScore)
+		//details = append(details, fmt.Sprintf("Consider: %s  Final Consider Score: %.2f  Consider Weight: %.2f  Weighted: %.2f  Running: %.2f", consider.Name, considerScore, consider.Weight, weightedScore, runningScore))
 	}
 
 	// Mix the numbers together in a "modified average" which yields a good result, especially for low or 0-1 numbers

@@ -76,6 +76,9 @@ func ReceiveSuccessFromDatabase(requests int) {
 // Receive requests from the edge.
 func ReceiveRequestsFromEdge(requests int) {
 	AppRequestQueueLength += requests
+	if AppRequestQueueLength < 0 {
+		AppRequestQueueLength = 0
+	}
 	appWaiting.Set(float64(AppRequestQueueLength))
 
 	// Send the requests to the database

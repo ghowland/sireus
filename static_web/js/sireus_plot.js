@@ -26,7 +26,7 @@ function CreatePlot(element_id, title, plot_x, plot_y, plot_selected_x, plot_sel
         y: plot_y,
         // mode: 'lines+markers',
         mode: 'lines',
-        name: 'Curve',
+        name: 'Curve Score',
         line: {shape: 'linear'},
         type: 'scatter'
     };
@@ -40,7 +40,7 @@ function CreatePlot(element_id, title, plot_x, plot_y, plot_selected_x, plot_sel
             y: [plot_selected_y],
             // mode: 'lines+markers',
             mode: 'markers',
-            name: 'Data Point',
+            name: 'Ranged Score',
             line: {shape: 'linear'},
             type: 'scatter'
         };

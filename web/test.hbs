@@ -798,22 +798,4 @@
         </div>
     </div>
 
-    <script>
-        function GetPlot(name, xPos)
-        {
-            if (xPos == undefined) xPos = -1;
-
-            RPC('/api/plot', {'name': name, 'x': xPos}, SetupPlot);
-        }
-
-        function SetupPlot(data)
-        {
-            // alert('running Setup Plot: ' + JSON.stringify(data));
-
-            CreatePlot('plot', data['title'], data['plot_x'], data['plot_y'], data['plot_selected_x'], data['plot_selected_y']);
-
-            $('#modal1').addClass('is-active')
-        }
-    </script>
-
 </section>

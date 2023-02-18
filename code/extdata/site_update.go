@@ -100,7 +100,7 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 
 	// Return early if we executed within the delay threshold.  In this case, err means it wasn't executed, so we will perform the execution.  err is not a failure case here
 	if !util.Check(err) && util.GetTimeNow().Sub(conditionLastExecuteTime) < time.Duration(condition.ExecuteRepeatDelay) {
-		log.Printf(fmt.Sprintf("Session Bot Execute Conditions returning early because called too soon: %d  Last: %v  Cur: %v", session.UUID, util.GetTimeNow(), util.GetTimeNow()))
+		//log.Printf(fmt.Sprintf("Session Bot Execute Conditions returning early because called too soon: %d  Last: %v  Cur: %v", session.UUID, util.GetTimeNow(), util.GetTimeNow()))
 		return
 	}
 

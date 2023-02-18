@@ -130,17 +130,17 @@
       "required_available": "4s",
       "considerations": [
         {
-          "name": "Wait Queue over 2000",
+          "name": "Wait Queue over 100",
           "weight": 1.0,
-          "curve": "inc_smooth",
+          "curve": "inc_boolean",
           "range_start": 0,
-          "range_end": 1000,
-          "evaluate": "wait_queue - 2000"
+          "range_end": 200,
+          "evaluate": "wait_queue"
         }
       ],
       "command": {
         "name": "Long wait queue.  Set state to Problem.",
-        "log_format": "{{condition.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "log_format": "{{condition.Name}}: {{wait_queue}}  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,
@@ -150,8 +150,48 @@
         "set_bot_states": [
           "Operation.Problem"
         ],
-        "reset_bot_states": [],
-        "journal_template": "The Wait Queue has become long: ({{wait_queue}}).  Expect it to be lower than 2000."
+        "reset_bot_states": []
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Many Timeouts",
+      "info": "Many requests are timing out",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Default"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "Timeout Rate over 100",
+          "weight": 1.0,
+          "curve": "inc_boolean",
+          "range_start": 0,
+          "range_end": 200,
+          "evaluate": "timeout_rate"
+        }
+      ],
+      "command": {
+        "name": "Many requesting timing out.  Set state to Problem.",
+        "log_format": "{{condition.Name}}: {{timeout_rate}}  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+          "Operation.Problem"
+        ],
+        "reset_bot_states": []
       }
     }
   ]

@@ -172,8 +172,7 @@
         "set_bot_states": [
           "Operation.Problem"
         ],
-        "reset_bot_states": [],
-        "journal_template": "The Link is down: ({{link_state}})"
+        "reset_bot_states": []
       }
     },
     {
@@ -298,6 +297,87 @@
         ],
         "reset_bot_states": ["Operation"],
         "journal_template": "The Link is down: ({{link_state}})"
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Traffic is High",
+      "info": "High amount of Traffic",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Traffic.Default"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "High Traffic",
+          "weight": 1.0,
+          "curve": "inc_smooth",
+          "range_start": 1000,
+          "range_end": 4000,
+          "evaluate": "demo_app_requests"
+        }
+      ],
+      "command": {
+        "name": "Set High Traffic State",
+        "log_format": "{{condition.Name}}.  Set States: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+          "Traffic.High"
+        ],
+        "reset_bot_states": []
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "No longer High Traffic",
+      "info": "Used to have High Traffic, but do not now",
+      "is_disabled": false,
+      "weight": 6.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Traffic.High"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "No Longer High Traffic",
+          "weight": 1.0,
+          "curve": "inc_smooth",
+          "range_start": 4000,
+          "range_end": 1000,
+          "evaluate": "demo_app_requests"
+        }
+      ],
+      "command": {
+        "name": "Set High Traffic State back to Default",
+        "log_format": "{{condition.Name}}.  Reset States: {{format_array_string_csv conditionCommand.ResetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Traffic"]
       }
     }
   ]
