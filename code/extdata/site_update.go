@@ -110,7 +110,7 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 		ConditionName: condition.Name,
 		Started:       util.GetTimeNow(),
 		Score:         conditionData.FinalScore,
-		StatesBefore:  bot.StateValues,
+		StatesBefore:  util.CopyStringSlice(bot.StateValues),
 	}
 
 	// Format the CommandLog so we have a rich version
@@ -143,7 +143,7 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 	}
 
 	// Save the States after our changes
-	commandResult.StatesAfter = bot.StateValues
+	commandResult.StatesAfter = util.CopyStringSlice(bot.StateValues)
 
 	// Execute command
 	//log.Printf("TODO: Execute command.  And log this condition too.  Bot Group: %s  Bot: %s  Condition: %s", botGroup.Name, bot.Name, condition.Name)
