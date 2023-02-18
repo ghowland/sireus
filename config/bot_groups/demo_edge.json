@@ -154,13 +154,15 @@
         {
           "name": "Link Down",
           "weight": 1.0,
-          "curve": "inc_boolean",
+          "curve": "dec_boolean",
           "range_start": 0,
           "range_end": 1,
           "evaluate": "link_state"
         }
       ],
       "command": {
+        "name": "Link is down.  Set state to Problem.",
+        "log_format": "Link is down for {{action.Name}}.  Set forward states: {{#format_array_string_csv actionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,
@@ -176,8 +178,8 @@
     },
     {
       "is_launched": true,
-      "name": "Attempt to Repair Link",
-      "info": "Attempt to get this link repaired.  For the demo, just make an API call.",
+      "name": "Attempt Link Repair via API",
+      "info": "This is the fastest way to fix the link state, but it only works in some cases.  Best to try this first.",
       "is_disabled": false,
       "weight": 5.0,
       "weight_min": 0.5,
@@ -201,6 +203,8 @@
         }
       ],
       "command": {
+        "name": "Attempt to Automatic Link Repair",
+        "log_format": "Link is down for {{action.Name}}.  Set forward states: {{#format_array_string_csv actionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,

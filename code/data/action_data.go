@@ -22,7 +22,7 @@ type (
 )
 
 type (
-	// Considerations are units for scoring an Action.  Each creates a Score, and they are combined to created the
+	// Considerations are units for scoring an Action.  Each creates a Score, and they are combined to create the
 	// Consideration Final Score.
 	ActionConsideration struct {
 		Name       string  `json:"name"`
@@ -64,22 +64,24 @@ func (act ActionCommandType) String() string {
 }
 
 type (
-	// When an Action is selected for execution by it's Final Score, the ActionCommand is executed.  A command or web request.
+	// When an Action is selected for execution by its Final Score, the ActionCommand is executed.  A command or web request.
 	ActionCommand struct {
-		Type              ActionCommandType `json:"type"`
-		Content           string            `json:"content"`
-		SuccessStatus     int               `json:"success_status"`
-		SuccessContent    string            `json:"success_content"`
-		LockTimerDuration Duration          `json:"lock_timer_duration"`
-		HostExecKey       string            `json:"host_exec_key"`    // Sireus Client presents this key to get commands to run
-		SetBotStates      []string          `json:"set_bot_states"`   // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
-		ResetBotStates    []string          `json:"reset_bot_states"` // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
-		JournalTemplate   string            `json:"journal_template"` // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
+		Name              string            `json:"name"`                // Best Practice: Description of what this command is going to do.  Focus on the effect this will cause, and what it affects.
+		LogFormat         string            `json:"log_format"`          // This is what will be logged for human readability for the name of this action.  It is formatted by Handlebars and can access data from: bot, botGroup, action, actionCommand.  Best practices, expand into a specific target for the Name field's general purpose.
+		Type              ActionCommandType `json:"type"`                // Type of command that was executed
+		Content           string            `json:"content"`             // Payload of the command or RPC
+		SuccessStatus     int               `json:"success_status"`      // Success or failure?
+		SuccessContent    string            `json:"success_content"`     // Data received from endpoint about our SuccessState and any return payload
+		LockTimerDuration Duration          `json:"lock_timer_duration"` // We will set the Action.RequiredLockTimers to this duration to block anything from running.  Each of them all had to be available, and now will all be blocked.  Design your structures around this concept.  LockTimers provide "lanes" of execution that can overlap or work independently.
+		HostExecKey       string            `json:"host_exec_key"`       // Sireus Client presents this key to get commands to run
+		SetBotStates      []string          `json:"set_bot_states"`      // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
+		ResetBotStates    []string          `json:"reset_bot_states"`    // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
+		JournalTemplate   string            `json:"journal_template"`    // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
 	}
 )
 
 type (
-	// When an Action is selected for execution by it's Final Score, the ActionCommand will execute and store this result.
+	// When an Action is selected for execution by its Final Score, the ActionCommand will execute and store this result.
 	ActionCommandResult struct {
 		BotGroupName  string
 		BotName       string

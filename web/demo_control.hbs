@@ -9,16 +9,16 @@
     </div>
     <div class="columns">
         <div class="column">
-            <button class="button is-danger">Break Circuit SFO-WAS-11</button>
+            <button class="button is-danger" onclick="RPC('/api/web/demo_control', {'action': 'break', 'bot_group': 'Edge', 'bot':'SFO-WAS-11'})">Break Circuit SFO-WAS-11</button>
         </div>
         <div class="column">
-            <button class="button is-danger">Break Circuit SFO-LAS-27</button>
+            <button class="button is-danger" onclick="RPC('/api/web/demo_control', {'action': 'break', 'bot_group': 'Edge', 'bot':'SFO-LAS-27'})">Break Circuit SFO-LAS-27</button>
         </div>
         <div class="column">
-            <button class="button is-info">Fix Circuit SFO-LAS-27</button>
+            <button class="button is-info" onclick="RPC('/api/web/demo_control', {'action': 'fix', 'bot_group': 'Edge', 'bot':'SFO-LAS-27'})">Fix Circuit SFO-LAS-27</button>
         </div>
         <div class="column">
-            <button class="button is-danger">Degrade Database Storage</button>
+            <button class="button is-danger" onclick="RPC('/api/web/demo_control', {'action': 'break', 'bot_group': 'Database', 'bot':'sireus'})">Degrade Database Storage</button>
         </div>
     </div>
 
