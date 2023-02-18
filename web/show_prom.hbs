@@ -1,0 +1,34 @@
+<section class="section">
+{{> 'partials/breadcrumbs_common' }}
+    <h1 class="title is-1">
+        Show Prometheus Exporter
+    </h1>
+    <p class="subtitle">
+        Query Cache and Lock Timers for debugging metric data polling
+    </p>
+
+    <div class="block">
+        <div class="box">
+            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-users"></i> Interactive Sessions</h1>
+
+            {{> 'partials/interactive/table_session' }}
+        </div>
+    </div>
+
+    <div class="block">
+        <div class="box">
+            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-database"></i> Query Cache</h1>
+
+            {{> 'partials/query/table_site_query_result_cache_pool_item' }}
+        </div>
+    </div>
+
+    <div class="block">
+        <div class="box">
+            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-lock"></i> Query Request Locks</h1>
+
+            {{> 'partials/query/table_site_query_result_lock' }}
+        </div>
+    </div>
+
+</section>

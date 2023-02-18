@@ -94,6 +94,16 @@ func main() {
 		return c.Render("overwatch", renderMap, "layouts/main_common")
 	})
 
+	web.Get("/show_prom", func(c *fiber.Ctx) error {
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("show_prom", renderMap, "layouts/main_common")
+	})
+
+	web.Get("/show_config", func(c *fiber.Ctx) error {
+		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		return c.Render("show_config", renderMap, "layouts/main_common")
+	})
+
 	web.Get("/demo_info", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
 		return c.Render("demo_info", renderMap, "layouts/main_common")
