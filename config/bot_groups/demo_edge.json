@@ -162,7 +162,7 @@
       ],
       "command": {
         "name": "Link is down.  Set state to Problem.",
-        "log_format": "Link is down for {{action.Name}}.  Set forward states: {{#format_array_string_csv actionCommand.SetBotStates}}",
+        "log_format": "Link is down for {{condition.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,
@@ -204,7 +204,7 @@
       ],
       "command": {
         "name": "Attempt to Automatic Link Repair",
-        "log_format": "Link is down for {{action.Name}}.  Set forward states: {{#format_array_string_csv actionCommand.SetBotStates}}",
+        "log_format": "Link is down for {{condition.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,
@@ -220,7 +220,7 @@
     },
     {
       "is_launched": true,
-      "name": "Evaluate Link Is Repaired",
+      "name": "Link Is Repaired",
       "info": "Is this link repaired?  Then reset",
       "is_disabled": false,
       "weight": 5.0,
@@ -245,6 +245,8 @@
         }
       ],
       "command": {
+        "name": "Reset Problem, it was fixed",
+        "log_format": "{{condition.Name}}.  Reset States: {{format_array_string_csv conditionCommand.ResetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,

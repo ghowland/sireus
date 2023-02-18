@@ -67,7 +67,7 @@ type (
 	// When a Condition is selected for execution by its Final Score, the ConditionCommand is executed.  A command or web request.
 	ConditionCommand struct {
 		Name              string               `json:"name"`                // Best Practice: Description of what this command is going to do.  Focus on the effect this will cause, and what it affects.
-		LogFormat         string               `json:"log_format"`          // This is what will be logged for human readability for the name of this action.  It is formatted by Handlebars and can access data from: bot, botGroup, action, actionCommand.  Best practices, expand into a specific target for the Name field's general purpose.
+		LogFormat         string               `json:"log_format"`          // This is what will be logged for human readability for the Name of this command.  It is formatted by Handlebars and can access data from: bot, botGroup, action, actionCommand.  Best practices, expand into a specific target for the Name field's general purpose.
 		Type              ConditionCommandType `json:"type"`                // Type of command that was executed
 		Content           string               `json:"content"`             // Payload of the command or RPC
 		SuccessStatus     int                  `json:"success_status"`      // Success or failure?
@@ -83,14 +83,17 @@ type (
 type (
 	// When a Condition is selected for execution by its Final Score, the ConditionCommand will execute and store this result.
 	ConditionCommandResult struct {
-		BotGroupName  string
-		BotName       string
-		ConditionName string
-		ResultStatus  string
-		ResultContent string
-		HostExecOn    string
-		Started       time.Time
-		Finished      time.Time
-		Score         float64
+		BotGroupName  string    // Name of the BotGroup that had this Bot Condition, for easy lookup
+		BotName       string    // Name of the Bot that had this condition, for easy lookup
+		ConditionName string    // Name of the Condition that had this command, for easy lookup
+		CommandLog    string    // ConditionCommand.LogFormat gets formatted and put here for rich markup over Name field
+		ResultStatus  string    // Status of the result (success/failure)
+		ResultContent string    // Content of the result, for full inspection
+		HostExecOn    string    // Host this command was executed on, given by Sireus Client
+		Started       time.Time // Time this command started
+		Finished      time.Time // Time this command finishing
+		Score         float64   // This was the Condition Final Score
+		StatesBefore  []string  // These are the Bot.StateValues before this command was run
+		StatesAfter   []string  // These are the Bot.StateValues after this command was run
 	}
 )

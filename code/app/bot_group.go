@@ -236,6 +236,9 @@ func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) err
 	key := fmt.Sprintf("%s.%s", stateData.Name, stateData.Labels[0])
 	bot.StateValues = append(bot.StateValues, key)
 
+	// Sort so they are in a consistent order
+	sort.Strings(bot.StateValues)
+
 	return nil
 }
 
@@ -309,6 +312,9 @@ func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) er
 			}
 		}
 	}
+
+	// Sort the Bot.StateValues, so they are consistent when reading them
+	sort.Strings(bot.StateValues)
 
 	return nil
 }

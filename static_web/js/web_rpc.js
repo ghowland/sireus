@@ -82,7 +82,7 @@ function ProcessRPCData(data) {
 
         // Else, this is a success message
         else if (key == '_success') {
-            Toast('info', 'Success', data[key]);
+            Toast('info', 'Success', data[key], 8000);
             /*
                 swal({
                     title: "Success!",
@@ -95,7 +95,7 @@ function ProcessRPCData(data) {
         }
         // Else, this is a success message
         else if (key == '_failure') {
-            Toast('danger', 'Failure', data[key]);
+            Toast('danger', 'Failure', data[key], 8000);
             // alert(data[key])
             return false;
         /*
