@@ -457,3 +457,22 @@ func AdminClearCommandHistory() {
 		}
 	}
 }
+
+func GetBotGroupAllBotVariablesByName(botGroup data.BotGroup, varName string) []map[string]string {
+	varMaps := []map[string]string{}
+
+	for _, bot := range botGroup.Bots {
+		for _, value := range bot.SortedVariableValues {
+			if value.Key == varName {
+				varMap := map[string]string{
+					"bot_name":       bot.Name,
+					"bot_group_name": botGroup.Name,
+					"name":           value.Key,
+					"value":          value.Formatted,
+				}
+				varMaps = append(varMaps, varMap)
+			}
+		}
+	}
+	return varMaps
+}

@@ -82,6 +82,12 @@ func RegisterHandlebarsHelpers_WithData() {
 
 		return raymond.SafeString(options.FnWith(queryServer))
 	})
+
+	// With Query Server by Name from Site
+	raymond.RegisterHelper("with_bot_group_bot_variable_by_name", func(botGroup data.BotGroup, varName string, options *raymond.Options) raymond.SafeString {
+		variables := app.GetBotGroupAllBotVariablesByName(botGroup, varName)
+		return raymond.SafeString(options.FnWith(variables))
+	})
 }
 
 // Expanded test logic

@@ -34,20 +34,56 @@
         </div>
 
         <div class="field is-grouped is-grouped-multiline">
-            <div class="control" style="padding: 0.1em;">
-                <div class="tags has-addons has-tooltip-arrow" data-tooltip="asdf" style="border-bottom: 0px solid !important;">
-                    <span class="tag is-link">SFO-WAS11</span>
-                    <span class="tag is-warning">stuff</span>
-                    <span class="tag is-info">79</span>
-                </div>
-            </div>
-            <div class="control" style="padding: 0.1em;">
-                <div class="tags has-addons has-tooltip-arrow" data-tooltip="asdf" style="border-bottom: 0px solid !important;">
-                    <span class="tag is-link">SFO-WAS11</span>
-                    <span class="tag is-warning">Cool </span>
-                    <span class="tag is-info">79</span>
-                </div>
-            </div>
+
+            <!-- BAD PERF!!!  I'm being wasteful to skip time on the demo, but it will search ALL the BotGroups for these vars.  It's not targeted.  I should target them per BotGroup -->
+            {{#with_bot_group_bot_variable_by_name botGroup "link_state" as |botVars|}} <!-- Bot Group: All Bot Variables for 1 Name:Start -->
+                {{#each botVars as |botVar botVarIndex|}}
+                    <div class="control">
+                        <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{botVar.bot_group_name}}" style="border-bottom: 0px solid !important;">
+                            <span class="tag is-link">{{botVar.bot_name}}</span>
+                            <span class="tag is-warning">{{botVar.name}}</span>
+                            <span class="tag is-info">{{botVar.value}}</span>
+                        </div>
+                    </div>
+                {{/each}}
+            {{/with_bot_group_bot_variable_by_name}} <!-- Bot Group: All Bot Variables for 1 Name:End -->
+
+            {{#with_bot_group_bot_variable_by_name botGroup "processed" as |botVars|}} <!-- Bot Group: All Bot Variables for 1 Name:Start -->
+                {{#each botVars as |botVar botVarIndex|}}
+                    <div class="control">
+                        <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{botVar.bot_group_name}}" style="border-bottom: 0px solid !important;">
+                            <span class="tag is-link">{{botVar.bot_name}}</span>
+                            <span class="tag is-warning">{{botVar.name}}</span>
+                            <span class="tag is-info">{{botVar.value}}</span>
+                        </div>
+                    </div>
+                {{/each}}
+            {{/with_bot_group_bot_variable_by_name}} <!-- Bot Group: All Bot Variables for 1 Name:End -->
+
+            {{#with_bot_group_bot_variable_by_name botGroup "timeout_rate" as |botVars|}} <!-- Bot Group: All Bot Variables for 1 Name:Start -->
+                {{#each botVars as |botVar botVarIndex|}}
+                    <div class="control">
+                        <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{botVar.bot_group_name}}" style="border-bottom: 0px solid !important;">
+                            <span class="tag is-link">{{botVar.bot_name}}</span>
+                            <span class="tag is-warning">{{botVar.name}}</span>
+                            <span class="tag is-info">{{botVar.value}}</span>
+                        </div>
+                    </div>
+                {{/each}}
+            {{/with_bot_group_bot_variable_by_name}} <!-- Bot Group: All Bot Variables for 1 Name:End -->
+
+            {{#with_bot_group_bot_variable_by_name botGroup "wait_queue" as |botVars|}} <!-- Bot Group: All Bot Variables for 1 Name:Start -->
+                {{#each botVars as |botVar botVarIndex|}}
+                    <div class="control">
+                        <div class="tags has-addons has-tooltip-arrow" data-tooltip="{{botVar.bot_group_name}}" style="border-bottom: 0px solid !important;">
+                            <span class="tag is-link">{{botVar.bot_name}}</span>
+                            <span class="tag is-warning">{{botVar.name}}</span>
+                            <span class="tag is-info">{{botVar.value}}</span>
+                        </div>
+                    </div>
+                {{/each}}
+            {{/with_bot_group_bot_variable_by_name}} <!-- Bot Group: All Bot Variables for 1 Name:End -->
+
         </div>
     </div>
 </div>
