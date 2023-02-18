@@ -15,7 +15,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 ### Table of Contents
 
 - [Sireus Goals](#sireus-goals)
-- [Help Wanted... in Many Areas including Data Visualization and Web Design](#help-wanted)
+- [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
 - [Links to Documentation and Communication Options](#links)
 - [Data Structure](#data-structure)
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
@@ -39,6 +39,8 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Uses the ["Utility AI" or "Utility System" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.  Scales to large numbers of commands, allowing for complex reactions in large environments.
 
 ### Help Wanted
+
+A Decision System being used in SRE and DevOps land is a new tool, and how to represent and work with the data is not yet explored.  Looking for people to help make this easier for users to learn and become experts in, to create better automation and operational outcomes.
 
 - Data visualization mysteries
 	* How should the current state of a Bot Group be represented so that it can be understood at a glance?
