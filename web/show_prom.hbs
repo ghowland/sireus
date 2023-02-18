@@ -4,30 +4,17 @@
         Show Prometheus Exporter
     </h1>
     <p class="subtitle">
-        Query Cache and Lock Timers for debugging metric data polling
+        Current Prometheus Exporter data
     </p>
 
-    <div class="block">
-        <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-users"></i> Interactive Sessions</h1>
-
-            {{> 'partials/interactive/table_session' }}
-        </div>
+    <div class="content">
+        <p>Currently only the Demo metrics are being exported, and are prefixed with "<strong>demo_</strong>"</p>
+        <p>Soon there will be metrics for all the Bot States, Variables marked for export and Condition and Consideration scores.</p>
     </div>
 
     <div class="block">
         <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-database"></i> Query Cache</h1>
-
-            {{> 'partials/query/table_site_query_result_cache_pool_item' }}
-        </div>
-    </div>
-
-    <div class="block">
-        <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-lock"></i> Query Request Locks</h1>
-
-            {{> 'partials/query/table_site_query_result_lock' }}
+<code class="is-family-code" style="white-space: pre ; display: block;">{{{prometheus_exporter}}}</code>
         </div>
     </div>
 

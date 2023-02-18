@@ -7,6 +7,7 @@ import (
 	"github.com/ghowland/sireus/code/demo"
 	"github.com/ghowland/sireus/code/exporter"
 	"github.com/ghowland/sireus/code/server"
+	"github.com/ghowland/sireus/code/util"
 	"github.com/ghowland/sireus/code/webapp"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -96,6 +97,12 @@ func main() {
 
 	web.Get("/show_prom", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromParams(c, &data.SireusData.Site)
+		url := fmt.Sprintf("http://localhost:%d/metrics", data.SireusData.AppConfig.PrometheusExportPort)
+		body, err := util.HttpGet(url)
+		if util.Check(err) {
+			body = fmt.Sprintf("Failed to get Prometheus data from URL: %s  Error: %s", url, err.Error())
+		}
+		renderMap["prometheus_exporter"] = body
 		return c.Render("show_prom", renderMap, "layouts/main_common")
 	})
 

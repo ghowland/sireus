@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/aymerick/raymond"
+	"io"
 	"log"
 	"math"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -210,4 +212,19 @@ func CopyStringSlice(src []string) []string {
 	dst := make([]string, len(src))
 	copy(dst, src)
 	return dst
+}
+
+func HttpGet(url string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	bodyStr := string(body)
+	return bodyStr, nil
 }
