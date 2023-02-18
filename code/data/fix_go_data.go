@@ -27,7 +27,7 @@ func (p PairFloat64List) Less(i, j int) bool {
 		return p[i].Value < p[j].Value
 	} else {
 		// Else, test their Key names, and return lesser of the strings so order is consistent.  Only for consistency
-		return StringCompare(p[i].Key, p[j].Key) < 0
+		return StringCompare(p[i].Key, p[j].Key) > 0
 	}
 }
 func (p PairFloat64List) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
@@ -49,7 +49,7 @@ func (p PairBotConditionDataList) Less(i, j int) bool {
 		return p[i].Value.FinalScore < p[j].Value.FinalScore
 	} else {
 		// Else, test their Key names, and return lesser of the strings so order is consistent.  Only for consistency
-		return StringCompare(p[i].Key, p[j].Key) < 0
+		return StringCompare(p[i].Key, p[j].Key) > 0
 	}
 }
 func (p PairBotConditionDataList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
