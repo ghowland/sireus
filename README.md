@@ -8,7 +8,7 @@
 
 Replaces cron jobs, Jenkins, Nagios, or other less sophisticated execution methods for SRE/DevOps automation.  
 
-Sireus is a Decision System, made to collect information from Monitoring or other data sources, and make a decision on which action to execute, if any action should be executed.
+Sireus is a Decision System, made to collect information from Monitoring or other data sources, and make a decision on which condition command to execute, if any condition should be executed.
 
 <img width="70%" src="https://github.com/ghowland/sireus/blob/main/documentation/images/sireus_stack_pos_exec.png" alt="Sireus Stack Position">
 
@@ -20,9 +20,9 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
   * [Terminology](#terminology)
   * [How a Utility System or "Utility AI" works](#how-a-utility-system-or--utility-ai--works)
-    + [Action Consideration Data](#action-consideration-data)
-    + [Action Final Scores from Multiple Considerations](#action-final-scores-from-multiple-considerations)
-    + [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score)
+    + [Condition Consideration Data](#condition-consideration-data)
+    + [Condition Final Scores from Multiple Considerations](#condition-final-scores-from-multiple-considerations)
+    + [Why so many steps to get to a Final Condition Score?](#why-so-many-steps-to-get-to-a-final-condition-score)
 - [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
 - [Sireus Portrait](#sireus-portrait)
 
@@ -55,7 +55,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ## Data Structure
 
-![Data Structure](https://github.com/ghowland/sireus/blob/main/documentation/images/data_structures.png)
+![Data Structure](https://github.com/ghowland/sireus/blob/main/documentation/images/data_structure.png)
 
 ### Sireus Bots and Bot Groups
 
@@ -68,24 +68,24 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ### Terminology
 
-- **Bot Group**: A collection of Bots, for executing Actions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
-- **Bot**: A collection of Variable Data and Actions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
-- **Action**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
-- **Action Score**: This is the priority of execution.  Given a set of potential Actions, we rank them from highest to lowest score, executing the highest score, and never execute Actions with a score of 0.
-- **Action Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
-- **Action Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to an "Action Command".
+- **Bot Group**: A collection of Bots, for executing Conditions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
+- **Bot**: A collection of Variable Data and Conditions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
+- **Condition**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
+- **Condition Score**: This is the priority of execution.  Given a set of potential Conditions, we rank them from highest to lowest score, executing the highest score, and never execute Conditions with a score of 0.
+- **Condition Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
+- **Condition Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to an "Condition Command".
 
 ### How a Utility System or "Utility AI" works
 
-- All configuration is defined per Bot Group.  These consist of a set of Actions.
-- Each Action has a set of Considerations (Conditions that are not just boolean) which create a Score.
-- The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Action will be executed.
+- All configuration is defined per Bot Group.  These consist of a set of Conditions.
+- Each Condition has a set of Considerations (Conditions that are not just boolean) which create a Score.
+- The highest non-zero score will be executed.  In most cases, nothing will be done and all scores will be zero, because no actions are necessary.  When actions become necessary, the highest non-zero scored Condition will be executed.
 
-<img width="70%" src="https://github.com/ghowland/sireus/blob/main/documentation/images/bot_action_execution.png" alt="Bot Action Execution">
+<img width="70%" src="https://github.com/ghowland/sireus/blob/main/documentation/images/bot_condition_execution.png" alt="Bot Condition Execution">
 
-#### Action Consideration Data
+#### Condition Consideration Data
 
-An Action has N Considerations, made from the following data:
+A Condition has N Considerations, made from the following data:
 
 - **Weight**: Per-consideration weight, so each consideration can have higher or lower weight than others
 - **Value Function**: A function or command to execute to get a value (float)
@@ -107,28 +107,28 @@ In the Curve, with the X=0.6 the Y value = 0.71
 
 The Curve Result (0.71) is multiplied by the Weight (5): 0.71 * 5 = 3.55 Consideration Score
 
-#### Action Final Scores from Multiple Considerations
+#### Condition Final Scores from Multiple Considerations
 
-In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multiplied by the Action Weight to get a final Action Score.
+In the above single Consideration Data, we had a single Consideration Score of 3.55.  If there were more considerations, all of these would be calculated together, to get a final consideration score, and then multiplied by the Condition Weight to get a final Condition Score.
 
-**Example of an Action with Multiple Considerations:**
+**Example of an Condition with Multiple Considerations:**
 
-- **Action**: Send API Remediation XYZ
-- **Action Weight**: 1.5
+- **Condition**: Send API Remediation XYZ
+- **Condition Weight**: 1.5
 - **Final Calculated Scores for all Considerations**: 3.55
-- **Final Action Score**: 5.32
+- **Final Condition Score**: 5.32
 
-When all the Actions have had their Final Scores calculated, if 5.32 is the highest score, then that action will be executed.  
+When all the Conditions have had their Final Scores calculated, if 5.32 is the highest score, then that condition will be executed.  
 
-For a given Action, if **any** of the Considerations have a score of zero, then the entire Final Action Score is zero.  This allows any Consideration to make an Action invalid.
+For a given Condition, if **any** of the Considerations have a score of zero, then the entire Final Condition Score is zero.  This allows any Consideration to make an Condition invalid.
 
-#### Why so many steps to get to a Final Action Score?
+#### Why so many steps to get to a Final Condition Score?
 
-The reason to have all of these steps is to be able to control exactly how important any given consideration test is to executing that action, and to provide multiple ways to invalidate the action (any consideration with a 0 score).
+The reason to have all of these steps is to be able to control exactly how important any given consideration test is to executing that condition, and to provide multiple ways to invalidate the condition (any consideration with a 0 score).
 
-The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
+The benefit of this is that even with hundreds or thousands of Conditions, they can be tuned so that the correct condition executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
 
-Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
+Having the ability to tune values at the top level Condition, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
 
 ### Help Wanted
 
