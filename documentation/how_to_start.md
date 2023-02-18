@@ -68,15 +68,15 @@ Every Bot in a Bot Group gets all their data from Queries in the Bot Group.  So 
 
 Only bring queries in when you have variables you want to extract from the queries.  You can extract more than 1 variable per query, using the metrics matching, but remember to keep the Bot Key in one of the Metric Names so that you can match the query to all the Bots in the Bot Group.
 
-## 6. Add an Action to Cover Every Troubelshooting State
+## 6. Add an State Condition to Cover Every Troubleshooting State
 
-Actions are only evalauted if all their Required States are currently active.  So you need to have at least 1 Action for every state in your troubleshooting pipeline, which will move the pipeline forward.
+State Conditions are only evalauted if all their Required States are currently active.  So you need to have at least 1 State Condition for every state in your troubleshooting pipeline, which will move the pipeline forward.
 
 You will usually want more than 1 action, so that you can differentiate different kinds of situations inside that state.
 
-## 7. Add an Action to Cover Non-Troubleshooting State
+## 7. Add an State Condition to Cover Non-Troubleshooting State
 
-For all the non-troubleshooting state pipelines, like the "Traffic" example above, you also want Actions to adjust their states.  Always remember you will either need to advance the state, or reset the state.  You can also auto-advance the state, where you don't need to specify the state name, it will just go to the next state.  
+For all the non-troubleshooting state pipelines, like the "Traffic" example above, you also want State Conditions to adjust their states.  Always remember you will either need to advance the state, or reset the state.  You can also auto-advance the state, where you don't need to specify the state name, it will just go to the next state.  
 
 Auto-advancing state pipelines is useful for a state like, "Corrections":
 
@@ -84,9 +84,9 @@ Auto-advancing state pipelines is useful for a state like, "Corrections":
 
 Here we can track how many corrections we have performed so far, defaulting to "Zero", and then auto-advance it into the "Corrections.Escalate" state, because we tried 2 things before.
 
-## 8. Make Boolean Action Considerations for all your Actions
+## 8. Make Boolean State Condition Considerations for all your State Conditions
 
-All Actions could have at least 1 Action Consideration that can be 0 or not-0.  If it's not 0, it will get a score, and as long as that score is above the minimum threshold, it will fire, allowing you to enter different states.
+All State Conditions could have at least 1 State Condition Consideration that can be 0 or not-0.  If it's not 0, it will get a score, and as long as that score is above the minimum threshold, it will fire, allowing you to enter different states.
 
 Starting with simple boolean considerations is best.  Use more complex curve based calculations when you are in the deeper tuning phases of working with Sireus.
 
@@ -106,7 +106,7 @@ Use the interactive mode to go back in time and look at different data sets, to 
 
 If you can match up your scoring with past data accurately, you give yourself the best opportunity to match future data as well.
 
-## 10. Once Confidence in Action Score Exists, Add Commands
+## 10. Once Confidence in State Condition Score Exists, Add Commands
 
 Start with adding alerting and escalation commands, because these bring a human to check on things.  This is the safest first change.  At worst, you increase your noise, and then can tune your action scores.
 
