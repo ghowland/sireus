@@ -53,10 +53,6 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 ![Web App Example Page](https://github.com/ghowland/sireus/blob/main/documentation/images/webapp_example.png)
 
-## Data Structure
-
-![Data Structure](https://github.com/ghowland/sireus/blob/main/documentation/images/data_structure.png)
-
 ### Sireus Bots and Bot Groups
 
 - A Bot Group is defined statically to create Bots.  Queries against monitoring software (ex: Prometheus) or services (ex: Kubernetes) are defined in the Bot Group to be used by Bots.
@@ -66,7 +62,13 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Triggers to execute commands for common functions, such as a Bots data disappearing from monitoring data (stale or missing)
 - Commands are meant to execute against a service or web API, host (ex: bash), or to update internal Sireus data for more complex conditional testing.  This allows building up more complex state variables, which are easier to read and reason about in the conditional logic.
 
+## Data Structure
+
+![Data Structure](https://github.com/ghowland/sireus/blob/main/documentation/images/data_structure.png)
+
 ### Terminology
+
+The data structure image above shows the relation between these terms:
 
 - **Bot Group**: A collection of Bots, for executing State Conditions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
 - **Bot**: A collection of Variable Data and State Conditions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
