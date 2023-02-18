@@ -6,6 +6,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
+	"strconv"
 )
 
 // This is the API server for the Sireus Client to use.  The web app demo controls do not use this, they go through the web app to avoid CORS issues.
@@ -51,6 +52,18 @@ func ProcessWebDemoAction(c *fiber.Ctx) string {
 	case "clear_command_history":
 		app.AdminClearCommandHistory()
 		return fmt.Sprintf("{\"_success\": \"Command History has been cleared.\"}")
+	case "set_edge_traffic":
+		valueStr, ok := input["value"]
+		if !ok {
+			return fmt.Sprintf("{\"_failure\": \"Missing key 'value'\"}")
+		}
+		value, err := strconv.ParseFloat(valueStr, 64)
+		if util.Check(err) {
+			return fmt.Sprintf("{\"_failure\": \"Invalid value: %s\"}", err.Error())
+		}
+		// Set the demo requests per second
+		CurrentRequestsPerSecond = value
+		return fmt.Sprintf("{\"_success\": \"Edge traffic set to %0.0f requests per second\"}", CurrentRequestsPerSecond)
 	default:
 		return fmt.Sprintf("{\"_failure\": \"Unknown action: %s\"}", actionName)
 	}

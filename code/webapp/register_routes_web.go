@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/demo"
 	"github.com/ghowland/sireus/code/util"
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,6 +20,8 @@ func RegisterRoutesWeb(web *fiber.App) {
 	// Web Pages
 	web.Get("/", func(c *fiber.Ctx) error {
 		renderMap := GetRenderMapFromParams(c, &data.SireusData.Site)
+		// Update the Demo Control with demo specific data
+		demo.UpdateRenderMapWithDemoData(renderMap)
 		return c.Render("demo_control", renderMap, "layouts/main_common")
 	})
 

@@ -3,6 +3,7 @@ package webapp
 import (
 	"github.com/ghowland/sireus/code/app"
 	"github.com/ghowland/sireus/code/data"
+	"github.com/ghowland/sireus/code/demo"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -25,6 +26,8 @@ func RegisterRoutesAPI(web *fiber.App) {
 
 	web.Post("/api/web/demo_control", func(c *fiber.Ctx) error {
 		renderMap := GetRenderMapFromRPC(c, &data.SireusData.Site)
+		// Update the Demo Control with demo specific data
+		demo.UpdateRenderMapWithDemoData(renderMap)
 		return c.SendString(RenderRPCHtml("web/demo_control.hbs", renderMap))
 	})
 

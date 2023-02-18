@@ -38,6 +38,7 @@ func RunDemoForever(webPrimary *fiber.App) {
 	}
 }
 
+// Configure the Demo's primary web server
 func ConfigureDemoWebPrimary(webPrimary *fiber.App) {
 	// Add our API paths to the Web Primary, so we can control the demo inside the normal web app
 	webPrimary.Post("/demo/edge/break/circuit1", func(c *fiber.Ctx) error {
@@ -51,4 +52,9 @@ func ConfigureDemoWebPrimary(webPrimary *fiber.App) {
 	webPrimary.Post("/demo/database/break/storage_degraded", func(c *fiber.Ctx) error {
 		return c.SendString("{\"_success\": " + BreakStorageDegraded())
 	})
+}
+
+// Takes the existing Render map, and adds the Demo variables to it, so they can be rendered
+func UpdateRenderMapWithDemoData(renderMap map[string]interface{}) {
+	renderMap["demo_current_request_per_second"] = CurrentRequestsPerSecond
 }

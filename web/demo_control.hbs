@@ -7,6 +7,13 @@
         <p>Welcome to the <a href="https://github.com/ghowland/sireus">Sireus decision system</a> demo!  Please break the demo circuits or degrade the database storage and watch the system react.</p>
         <p><i>Expect 10-15 seconds possible delay between actions.</i>  This is using live data exported from the Demo Server to Prometheus, and Sireus then requests the data from Prometheus and processes it.</p>
         <p><strong>Circuit SFO-WAS-11</strong> and the <strong>Database Storage</strong> will automatically be fixed by the Sireus Actions, but <strong>Circuit SFO-LAS-27</strong> must be manually fixed with the button below.</p>
+
+        <div>
+            <div class="divider">Traffic Control Slider: {{demo_current_request_per_second}} Requests Per Second</div>
+        </div>
+
+        <input class="slider is-fullwidth is-info" step="1" min="0" max="4000" value="{{demo_current_request_per_second}}" type="range" id="demo_traffic_control" onchange="RPC('/demo/action', {'action': 'set_edge_traffic', 'value': $(this).val()})">
+
     </div>
     <div class="columns">
         <div class="column">
