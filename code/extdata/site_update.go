@@ -9,6 +9,7 @@ import (
 	"github.com/ghowland/sireus/code/util"
 	"log"
 	"math"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -443,6 +444,8 @@ func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot) {
 		key := fmt.Sprintf("%s.%s", state.Name, state.Labels[0])
 		bot.StateValues = append(bot.StateValues, key)
 	}
+
+	sort.Strings(bot.StateValues)
 }
 
 // Update all the Bot VariableValues from our Queries
