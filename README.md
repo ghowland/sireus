@@ -70,6 +70,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 
 - **Bot Group**: A collection of Bots, for executing State Conditions, based on conditional scoring.  This would be mapped against a Web App or other software service in your infrastructure.
 - **Bot**: A collection of Variable Data and State Conditions, which contain conditional scoring information based on monitoring queries, which then executes a command.  Each Bot keeps information to use in making decisions.
+- **State**: Bot Groups describe all the states a Bot can be in in the form of Forward Sequence State pipelines.  This gives several different "pipelines" of states that only move or skip forward or reset to the beginning, so they never get stuck in an inner loop.  The current set of States a Bot has will determine was State Conditions are available, and ultimately what State Condition Commands can be executed.
 - **State Condition**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
 - **State Condition Score**: This is the priority of execution.  Given a set of potential State Conditions, we rank them from highest to lowest score, executing the highest score, and never execute State Conditions with a score of 0.
 - **State Condition Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
