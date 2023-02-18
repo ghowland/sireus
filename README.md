@@ -15,7 +15,6 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 ### Table of Contents
 
 - [Sireus Goals](#sireus-goals)
-- [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
 - [Links to Documentation and Communication Options](#links)
 - [Data Structure](#data-structure)
   * [Sireus Bots and Bot Groups](#sireus-bots-and-bot-groups)
@@ -24,6 +23,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
     + [Action Consideration Data](#action-consideration-data)
     + [Action Final Scores from Multiple Considerations](#action-final-scores-from-multiple-considerations)
     + [Why so many steps to get to a Final Action Score?](#why-so-many-steps-to-get-to-a-final-action-score-)
+- [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
 - [Sireus Portrait](#sireus-portrait)
 
 ### Sireus Goals
@@ -37,27 +37,6 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data to aid in configuration and adjusting values to better respond to future events.
 - Locking commands per Bot or Bot Group, to stop conflicting commands from running at once, or within a window to verify results of previous commands.
 - Uses the ["Utility AI" or "Utility System" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.  Scales to large numbers of commands, allowing for complex reactions in large environments.
-
-### Help Wanted
-
-A Decision System being used in SRE and DevOps land is a new tool, and how to represent and work with the data is not yet explored.  Looking for people to help make this easier for users to learn and become experts in, to create better automation and operational outcomes.
-
-- Data visualization mysteries
-	* How should the current state of a Bot Group be represented so that it can be understood at a glance?
-		+ In the demo I (ghowland) show a list of the Bot Groups States, and how many Bots are in each state.  This gives some information, but I think much more information could be represented in a very brief manner and need someone to help figure this and other problems out.
-		+ Another mystery to solve is how best to show the scoring values and curves.  My (ghowland) thought's on this are that there should be a simple-mode that is normally presented, which is just a boolean system, and hides the underlying scoring system, but still uses it so it's unified.  Then an advanced system can open up all the scoring values as they are shown in the demo.  But, this needs to get designed.  I'll take a first pass at it soon.
-- Web page design improvements for readability.
-	* I (ghowland) did my best to keep it simple, but someone with an eye for design would be really helpful in making the pages easier to read and thus easier to gain insight from.
-		+ All the web pages are rendered with [Handlebars](https://github.com/aymerick/raymond) (a [Mustache](https://github.com/cbroglie/mustache)-like), and I do almost all the processing using Handlebars Registered Helper system, where you would have full access to the data in the application, and then just use the handlebars syntax to loop over stuff or set a current context.  It's becoming a fairly robust library for this initial version's data representation.  It's also very easy to add any new Helpers, and my policy is to just add one for every condition as a 1-1 mapping of "I want to do X".  And of course reusing the existing ones as much as possible, but with an eye to not make any sneaky use cases, just a straight forward "Need to Verb with Adjective Noun" mappings.
-- Developement
-	* A small plugin-system, so that custom functions could be called throughtout the pipeline of the system.
-		+ I (ghowland) think it's best to start this small with a minimal interface, and it can be kept as a legacy implementation when we find out what all the additional requirements we learn from use.  It needs a good first start to be a useful feedback tool so that users can spend the time to develop the experitise needed to push the system to it's current limits, and get our feature set for the more mature plugin-system.  Because it's golang, I think it is best to just have them compile the plugins in, so can also avoid the expense of dynamic plugins.
-- Organizing Documentation
-	* I (ghowland) will create as much documentation as I think is needed to cover explaining the various areas and use cases, but I could use help organizing it.  Often as the primary author it's unclear what is confusing or understandable, or what information should be presented first.
-		+ There are pretty good standards for this from other projects, so it would probably be best to just pick a successful project and model Sireus documentation's organization after theirs.  This decision hasn't been made yet for who to copy.
-		+ A big help would just be suggestions or pull requests on re-organizing any existing documents to be easier to understand, please give the reason why it would make it easier to understand in the PR.
-- Feedback
-	* Sireus is in the Design RFC phase.  I want to get feedback on whether it is understandable, if not what are areas that lack clarity.  "What is it for?"  "Why should I use this?"  "How would I implement it?"  I have some of this information here now, but I (ghowland) don't know what is clear and what is unclear without more feedback.  [Please file questions, comments and requests here.](https://github.com/ghowland/sireus/issues).
 
 
 ## Links
@@ -150,6 +129,27 @@ The reason to have all of these steps is to be able to control exactly how impor
 The benefit of this is that even with hundreds or thousands of Actions, they can be tuned so that the correct action executes at the correct time.  These tests are deterministic, and can be run on historic or test data, so that execution can be tested on prior outages to see how the rules would execute in known failure situations, or proposed failure situations using test data.
 
 Having the ability to tune values at the top level Action, and for each Consideration, allows for a lot of tuning ability to ensure correct execution.
+
+### Help Wanted
+
+A Decision System being used in SRE and DevOps land is a new tool, and how to represent and work with the data is not yet explored.  Looking for people to help make this easier for users to learn and become experts in, to create better automation and operational outcomes.
+
+- Data visualization mysteries
+	* How should the current state of a Bot Group be represented so that it can be understood at a glance?
+		+ In the demo I (ghowland) show a list of the Bot Groups States, and how many Bots are in each state.  This gives some information, but I think much more information could be represented in a very brief manner and need someone to help figure this and other problems out.
+		+ Another mystery to solve is how best to show the scoring values and curves.  My (ghowland) thought's on this are that there should be a simple-mode that is normally presented, which is just a boolean system, and hides the underlying scoring system, but still uses it so it's unified.  Then an advanced system can open up all the scoring values as they are shown in the demo.  But, this needs to get designed.  I'll take a first pass at it soon.
+- Web page design improvements for readability.
+	* I (ghowland) did my best to keep it simple, but someone with an eye for design would be really helpful in making the pages easier to read and thus easier to gain insight from.
+		+ All the web pages are rendered with [Handlebars](https://github.com/aymerick/raymond) (a [Mustache](https://github.com/cbroglie/mustache)-like), and I do almost all the processing using Handlebars Registered Helper system, where you would have full access to the data in the application, and then just use the handlebars syntax to loop over stuff or set a current context.  It's becoming a fairly robust library for this initial version's data representation.  It's also very easy to add any new Helpers, and my policy is to just add one for every condition as a 1-1 mapping of "I want to do X".  And of course reusing the existing ones as much as possible, but with an eye to not make any sneaky use cases, just a straight forward "Need to Verb with Adjective Noun" mappings.
+- Developement
+	* A small plugin-system, so that custom functions could be called throughtout the pipeline of the system.
+		+ I (ghowland) think it's best to start this small with a minimal interface, and it can be kept as a legacy implementation when we find out what all the additional requirements we learn from use.  It needs a good first start to be a useful feedback tool so that users can spend the time to develop the experitise needed to push the system to it's current limits, and get our feature set for the more mature plugin-system.  Because it's golang, I think it is best to just have them compile the plugins in, so can also avoid the expense of dynamic plugins.
+- Organizing Documentation
+	* I (ghowland) will create as much documentation as I think is needed to cover explaining the various areas and use cases, but I could use help organizing it.  Often as the primary author it's unclear what is confusing or understandable, or what information should be presented first.
+		+ There are pretty good standards for this from other projects, so it would probably be best to just pick a successful project and model Sireus documentation's organization after theirs.  This decision hasn't been made yet for who to copy.
+		+ A big help would just be suggestions or pull requests on re-organizing any existing documents to be easier to understand, please give the reason why it would make it easier to understand in the PR.
+- Feedback
+	* Sireus is in the Design RFC phase.  I want to get feedback on whether it is understandable, if not what are areas that lack clarity.  "What is it for?"  "Why should I use this?"  "How would I implement it?"  I have some of this information here now, but I (ghowland) don't know what is clear and what is unclear without more feedback.  [Please file questions, comments and requests here.](https://github.com/ghowland/sireus/issues).
 
 ## Sireus Portrait
 
