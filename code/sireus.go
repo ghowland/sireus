@@ -7,7 +7,6 @@ import (
 	"github.com/ghowland/sireus/code/demo"
 	"github.com/ghowland/sireus/code/exporter"
 	"github.com/ghowland/sireus/code/server"
-	"github.com/ghowland/sireus/code/util"
 	"github.com/ghowland/sireus/code/webapp"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
@@ -46,17 +45,7 @@ func main() {
 
 	web.Post("/api/web/bot", func(c *fiber.Ctx) error {
 		renderMap := webapp.GetRenderMapFromRPC(c, &data.SireusData.Site)
-		formatString, err := util.FileLoad("web/bot.hbs")
-		if err == nil {
-			output := util.HandlebarFormatData(formatString, renderMap)
-			payload := map[string]interface{}{
-				"embed": output,
-			}
-			jsonOutput := util.PrintJson(payload)
-			return c.SendString(jsonOutput)
-		} else {
-			return c.SendString("{\"message\": \"Couldn't find path\"}")
-		}
+		return c.SendString(webapp.RenderRPCHtml("web/bot.hbs", renderMap))
 	})
 
 	web.Post("/api/web/demo_control", func(c *fiber.Ctx) error {
