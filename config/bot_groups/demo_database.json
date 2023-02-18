@@ -127,7 +127,7 @@
       "required_states": [
         "Operation.Default"
       ],
-      "required_available": "5s",
+      "required_available": "4s",
       "considerations": [
         {
           "name": "Wait Queue over 2000",
