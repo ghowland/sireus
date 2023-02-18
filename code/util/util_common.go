@@ -75,7 +75,10 @@ func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string,
 	// Import partials into handlebars template
 	for _, topPath := range topPaths {
 		fileInfo, err := os.Stat(topPath)
-		Check(err)
+		if Check(err) {
+			log.Printf(fmt.Sprintf("Could not stat path: %s  Error: %s", topPaths, err))
+			continue
+		}
 
 		if strings.HasSuffix(topPath, ".hbs") {
 			partialName := strings.Replace(topPath, ".hbs", "", 1)

@@ -19,22 +19,23 @@ import "github.com/ghowland/sireus/code/app"
 ## Index
 
 - [Variables](<#variables>)
-- [func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool](<#func-areallactionlocktimersavailable>)
-- [func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool](<#func-areallactionstatesactive>)
+- [func AdminClearCommandHistory()](<#func-adminclearcommandhistory>)
+- [func AreAllConditionLockTimersAvailable(action data.Condition, botGroup *data.BotGroup) bool](<#func-areallconditionlocktimersavailable>)
+- [func AreAllConditionStatesActive(action data.Condition, bot *data.Bot) bool](<#func-areallconditionstatesactive>)
 - [func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)](<#func-averageandfixup>)
-- [func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)](<#func-calculatescore>)
+- [func CalculateScore(action data.Condition, actionData data.BotConditionData) (float64, []string)](<#func-calculatescore>)
 - [func FormatBotVariable(format data.BotVariableFormat, value float64) string](<#func-formatbotvariable>)
 - [func GetAPIPlotData(c *fiber.Ctx) string](<#func-getapiplotdata>)
 - [func GetAPIPlotMetrics(c *fiber.Ctx) string](<#func-getapiplotmetrics>)
-- [func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error)](<#func-getaction>)
-- [func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)](<#func-getactionconsideration>)
-- [func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error)](<#func-getactionlastexecutetime>)
 - [func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error)](<#func-getbot>)
 - [func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (string, int, error)](<#func-getbotcurrentstateandindex>)
 - [func GetBotForwardSequenceState(botGroup *data.BotGroup, name string) (data.BotForwardSequenceState, error)](<#func-getbotforwardsequencestate>)
 - [func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)](<#func-getbotgroup>)
 - [func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string) []data.Bot](<#func-getbotsinstate>)
-- [func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ActionCommandResult](<#func-getcommandhistoryall>)
+- [func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ConditionCommandResult](<#func-getcommandhistoryall>)
+- [func GetCondition(botGroup *data.BotGroup, actionName string) (data.Condition, error)](<#func-getcondition>)
+- [func GetConditionConsideration(action data.Condition, considerName string) (data.ConditionConsideration, error)](<#func-getconditionconsideration>)
+- [func GetConditionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Condition, stopLookingAfter data.Duration) (time.Time, error)](<#func-getconditionlastexecutetime>)
 - [func GetCurveDataX(curveData CurveData) []float64](<#func-getcurvedatax>)
 - [func GetCurveValue(curveData CurveData, x float64) float64](<#func-getcurvevalue>)
 - [func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession](<#func-getinteractivesession>)
@@ -50,10 +51,10 @@ import "github.com/ghowland/sireus/code/app"
 - [func LoadConfig(path string) data.AppConfig](<#func-loadconfig>)
 - [func LoadSiteConfig(appConfig data.AppConfig) data.Site](<#func-loadsiteconfig>)
 - [func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) error](<#func-resetbotstate>)
-- [func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration)](<#func-setallactionlocktimers>)
+- [func SetAllConditionLockTimers(action data.Condition, botGroup *data.BotGroup, duration data.Duration)](<#func-setallconditionlocktimers>)
 - [func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error](<#func-setbotstates>)
 - [func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration)](<#func-setlocktimer>)
-- [func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList](<#func-sortmapstringactiondatabyfinalscore>)
+- [func SortMapStringConditionDataByFinalScore(input map[string]data.BotConditionData, sortForward bool) data.PairBotConditionDataList](<#func-sortmapstringconditiondatabyfinalscore>)
 - [type CurveData](<#type-curvedata>)
   - [func GetCurve(name string) (CurveData, error)](<#func-getcurve>)
   - [func LoadCurveData(name string) (CurveData, error)](<#func-loadcurvedata>)
@@ -67,21 +68,27 @@ var (
 )
 ```
 
-## func [AreAllActionLockTimersAvailable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L196>)
+## func [AdminClearCommandHistory](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L451>)
 
 ```go
-func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool
+func AdminClearCommandHistory()
 ```
 
-For a given Action, does this Bot Group have all the Lock Timers available to be locked?
-
-## func [AreAllActionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L186>)
+## func [AreAllConditionLockTimersAvailable](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L196>)
 
 ```go
-func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool
+func AreAllConditionLockTimersAvailable(action data.Condition, botGroup *data.BotGroup) bool
 ```
 
-For a given Action, does this Bot have all the RequiredStates active?
+For a given Condition, does this Bot Group have all the Lock Timers available to be locked?
+
+## func [AreAllConditionStatesActive](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L186>)
+
+```go
+func AreAllConditionStatesActive(action data.Condition, bot *data.Bot) bool
+```
+
+For a given Condition, does this Bot have all the RequiredStates active?
 
 ## func [AverageAndFixup](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L62>)
 
@@ -89,15 +96,15 @@ For a given Action, does this Bot have all the RequiredStates active?
 func AverageAndFixup(runningScore float64, considerCount int) (float64, []string)
 ```
 
-This is the heuristic we use to get a good "modified average" of the Considerations to a Consideration Final Score This works well when all the ActionConsideration.Weight values are \~1.0, so that they have relative importance to each other.  Try to keep ActionConsideration.Weight values between 0.1 and 10.0 for a good result.
+This is the heuristic we use to get a good "modified average" of the Considerations to a Consideration Final Score This works well when all the ConditionConsideration.Weight values are \~1.0, so that they have relative importance to each other.  Try to keep ConditionConsideration.Weight values between 0.1 and 10.0 for a good result.
 
 ## func [CalculateScore](<https://github.com/ghowland/sireus/blob/main/code/app/score.go#L10>)
 
 ```go
-func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string)
+func CalculateScore(action data.Condition, actionData data.BotConditionData) (float64, []string)
 ```
 
-Calculate the Utility Score for a given Action using a Bots BotActionData
+Calculate the Utility Score for a given Condition using a Bots BotConditionData
 
 ## func [FormatBotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/format_human.go#L12>)
 
@@ -121,29 +128,7 @@ Returns JSON data needed to create a Plotly graph for our Curves
 func GetAPIPlotMetrics(c *fiber.Ctx) string
 ```
 
-## func [GetAction](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L132>)
-
-```go
-func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error)
-```
-
-Get an Action from a BotGroup, by name
-
-## func [GetActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L152>)
-
-```go
-func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error)
-```
-
-Get an ActionConsideration from an Action, by name
-
-## func [GetActionLastExecuteTime](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L161>)
-
-```go
-func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error)
-```
-
-## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L386>)
+## func [GetBot](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L392>)
 
 ```go
 func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error)
@@ -151,7 +136,7 @@ func GetBot(botGroup *data.BotGroup, botName string) (data.Bot, error)
 
 Get a Bot from the BotGroup
 
-## func [GetBotCurrentStateAndIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L327>)
+## func [GetBotCurrentStateAndIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L333>)
 
 ```go
 func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBase string) (string, int, error)
@@ -159,13 +144,13 @@ func GetBotCurrentStateAndIndex(botGroup *data.BotGroup, bot *data.Bot, stateBas
 
 Returns the index of the State currently for this Bot, with the stateBase \(BotForwardSequenceState.Name\)
 
-## func [GetBotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L316>)
+## func [GetBotForwardSequenceState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L322>)
 
 ```go
 func GetBotForwardSequenceState(botGroup *data.BotGroup, name string) (data.BotForwardSequenceState, error)
 ```
 
-## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L396>)
+## func [GetBotGroup](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L402>)
 
 ```go
 func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, botGroupName string) (data.BotGroup, error)
@@ -173,7 +158,7 @@ func GetBotGroup(interactiveControl data.InteractiveControl, site *data.Site, bo
 
 Gets a BotGroup from the Site, using the InteractiveControl
 
-## func [GetBotsInState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L409>)
+## func [GetBotsInState](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L415>)
 
 ```go
 func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string) []data.Bot
@@ -181,10 +166,32 @@ func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string
 
 Returns a slice of Bots in this BotGroup that have this state
 
-## func [GetCommandHistoryAll](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L423>)
+## func [GetCommandHistoryAll](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L429>)
 
 ```go
-func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ActionCommandResult
+func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ConditionCommandResult
+```
+
+## func [GetCondition](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L132>)
+
+```go
+func GetCondition(botGroup *data.BotGroup, actionName string) (data.Condition, error)
+```
+
+Get a Condition from a BotGroup, by name
+
+## func [GetConditionConsideration](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L152>)
+
+```go
+func GetConditionConsideration(action data.Condition, considerName string) (data.ConditionConsideration, error)
+```
+
+Get a ConditionConsideration from a Condition, by name
+
+## func [GetConditionLastExecuteTime](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L161>)
+
+```go
+func GetConditionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Condition, stopLookingAfter data.Duration) (time.Time, error)
 ```
 
 ## func [GetCurveDataX](<https://github.com/ghowland/sireus/blob/main/code/app/curves.go#L58>)
@@ -211,7 +218,7 @@ func GetInteractiveSession(interactiveControl data.InteractiveControl, site *dat
 
 Takes an InteractiveControl struct, and creates a InteractiveSession, which is used everywhere and contains live BotGroups
 
-## func [GetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L360>)
+## func [GetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L366>)
 
 ```go
 func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockTimer, error)
@@ -255,7 +262,7 @@ Returns a QueryServer, scope is per Site
 func GetRawMetricsJSON(c *fiber.Ctx) string
 ```
 
-## func [GetStateIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L340>)
+## func [GetStateIndex](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L346>)
 
 ```go
 func GetStateIndex(botGroup *data.BotGroup, state string) (int, error)
@@ -301,32 +308,32 @@ Load our Site config for a path
 func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) error
 ```
 
-## func [SetAllActionLockTimers](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L213>)
+## func [SetAllConditionLockTimers](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L213>)
 
 ```go
-func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration)
+func SetAllConditionLockTimers(action data.Condition, botGroup *data.BotGroup, duration data.Duration)
 ```
 
-When executing an Action, we will set all the Lock Timers that Action required, for the duration specified in the ActionCommand
+When executing a Condition, we will set all the Lock Timers that Condition required, for the duration specified in the ConditionCommand
 
-## func [SetBotStates](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L243>)
+## func [SetBotStates](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L246>)
 
 ```go
 func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error
 ```
 
-When executing an Action, we want to update the Bots States, to move it forward
+When executing a Condition, we want to update the Bots States, to move it forward
 
-## func [SetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L375>)
+## func [SetLockTimer](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L381>)
 
 ```go
 func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration)
 ```
 
-## func [SortMapStringActionDataByFinalScore](<https://github.com/ghowland/sireus/blob/main/code/app/fix_go_sort.go#L9>)
+## func [SortMapStringConditionDataByFinalScore](<https://github.com/ghowland/sireus/blob/main/code/app/fix_go_sort.go#L9>)
 
 ```go
-func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList
+func SortMapStringConditionDataByFinalScore(input map[string]data.BotConditionData, sortForward bool) data.PairBotConditionDataList
 ```
 
 Go doesnt handle map sorting easily, so this is the fix\-up
@@ -365,15 +372,9 @@ import "github.com/ghowland/sireus/code/data"
 ## Index
 
 - [Variables](<#variables>)
-- [type Action](<#type-action>)
-- [type ActionCommand](<#type-actioncommand>)
-- [type ActionCommandResult](<#type-actioncommandresult>)
-- [type ActionCommandType](<#type-actioncommandtype>)
-  - [func (act ActionCommandType) String() string](<#func-actioncommandtype-string>)
-- [type ActionConsideration](<#type-actionconsideration>)
 - [type AppConfig](<#type-appconfig>)
 - [type Bot](<#type-bot>)
-- [type BotActionData](<#type-botactiondata>)
+- [type BotConditionData](<#type-botconditiondata>)
 - [type BotExtractorQueryKey](<#type-botextractorquerykey>)
 - [type BotForwardSequenceState](<#type-botforwardsequencestate>)
 - [type BotGroup](<#type-botgroup>)
@@ -387,6 +388,12 @@ import "github.com/ghowland/sireus/code/data"
 - [type BotVariableFormat](<#type-botvariableformat>)
 - [type BotVariableType](<#type-botvariabletype>)
   - [func (bvt BotVariableType) String() string](<#func-botvariabletype-string>)
+- [type Condition](<#type-condition>)
+- [type ConditionCommand](<#type-conditioncommand>)
+- [type ConditionCommandResult](<#type-conditioncommandresult>)
+- [type ConditionCommandType](<#type-conditioncommandtype>)
+  - [func (act ConditionCommandType) String() string](<#func-conditioncommandtype-string>)
+- [type ConditionConsideration](<#type-conditionconsideration>)
 - [type Duration](<#type-duration>)
   - [func (d Duration) MarshalJSON() ([]byte, error)](<#func-duration-marshaljson>)
   - [func (d *Duration) UnmarshalJSON(b []byte) error](<#func-duration-unmarshaljson>)
@@ -397,11 +404,11 @@ import "github.com/ghowland/sireus/code/data"
 - [type OverrideActionConsideration](<#type-overrideactionconsideration>)
 - [type OverrideBot](<#type-overridebot>)
 - [type OverrideBotGroup](<#type-overridebotgroup>)
-- [type PairBotActionData](<#type-pairbotactiondata>)
-- [type PairBotActionDataList](<#type-pairbotactiondatalist>)
-  - [func (p PairBotActionDataList) Len() int](<#func-pairbotactiondatalist-len>)
-  - [func (p PairBotActionDataList) Less(i, j int) bool](<#func-pairbotactiondatalist-less>)
-  - [func (p PairBotActionDataList) Swap(i, j int)](<#func-pairbotactiondatalist-swap>)
+- [type PairBotConditionData](<#type-pairbotconditiondata>)
+- [type PairBotConditionDataList](<#type-pairbotconditiondatalist>)
+  - [func (p PairBotConditionDataList) Len() int](<#func-pairbotconditiondatalist-len>)
+  - [func (p PairBotConditionDataList) Less(i, j int) bool](<#func-pairbotconditiondatalist-less>)
+  - [func (p PairBotConditionDataList) Swap(i, j int)](<#func-pairbotconditiondatalist-swap>)
 - [type PairFloat64](<#type-pairfloat64>)
 - [type PairFloat64List](<#type-pairfloat64list>)
   - [func (p PairFloat64List) Len() int](<#func-pairfloat64list-len>)
@@ -430,105 +437,6 @@ var (
         IsQuitting: false,
     }
 )
-```
-
-## type [Action](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L7-L21>)
-
-Action is what is considered for execution.  It will receive a Final Score from its Weight and Consideration Final Scores
-
-```go
-type Action struct {
-    Name               string                `json:"name"`                 // Name of the Action
-    Info               string                `json:"info"`                 // Description
-    IsLaunched         bool                  `json:"is_launched"`          // If false, this will never execute.  Launching means it is configured and ready to run live.  When Actions are created, is_launched==false and must be changed so that the action could execute.
-    IsDisabled         bool                  `json:"is_disabled"`          // When testing changes, disable with modifying config
-    Weight             float64               `json:"weight"`               // This is the multiplier for the Final Score, from the Consideration Final Score
-    WeightMin          float64               `json:"weight_min"`           // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
-    WeightThreshold    float64               `json:"weight_threshold"`     // If non-0, this is the threshold to be Active, and potentially execute Actions.  If the Final Score is less than this Threshold, this Action can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
-    ExecuteRepeatDelay Duration              `json:"execute_repeat_delay"` // Duration until this Action can execute again.  If short, this just the problem of double execution if it is 0, which is required.  It can't be 0.  If this is long, this becomes a good way to process other actions instead of this one, because you already tried it recently.
-    RequiredLockTimers []string              `json:"required_lock_timers"` // All of these Lock Timers must be available for this Action to trigger.  Afterwards, they will all be locked for ActionCommand.LockTimerDuration automatically
-    RequiredStates     []string              `json:"required_states"`      // All of these states must be Active for this
-    RequiredAvailable  Duration              `json:"required_available"`   // If greater than 0s, this Action must have been continuously Available for this Duration for it to be executed.  Allows us to make sure it's not flapping or inconsistent for a period of time before being executed
-    Considerations     []ActionConsideration `json:"considerations"`       // These Considerations are used to create a Score for this Action, which must be the highest score, and must be higher than the MinimumThreshold, and if all other requirements are met, this Action will be executed
-    Command            ActionCommand         `json:"command"`              // This is the command that will be executed.  It could just change States, or run a Command or API call
-}
-```
-
-## type [ActionCommand](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L68-L80>)
-
-When an Action is selected for execution by its Final Score, the ActionCommand is executed.  A command or web request.
-
-```go
-type ActionCommand struct {
-    Name              string            `json:"name"`                // Best Practice: Description of what this command is going to do.  Focus on the effect this will cause, and what it affects.
-    LogFormat         string            `json:"log_format"`          // This is what will be logged for human readability for the name of this action.  It is formatted by Handlebars and can access data from: bot, botGroup, action, actionCommand.  Best practices, expand into a specific target for the Name field's general purpose.
-    Type              ActionCommandType `json:"type"`                // Type of command that was executed
-    Content           string            `json:"content"`             // Payload of the command or RPC
-    SuccessStatus     int               `json:"success_status"`      // Success or failure?
-    SuccessContent    string            `json:"success_content"`     // Data received from endpoint about our SuccessState and any return payload
-    LockTimerDuration Duration          `json:"lock_timer_duration"` // We will set the Action.RequiredLockTimers to this duration to block anything from running.  Each of them all had to be available, and now will all be blocked.  Design your structures around this concept.  LockTimers provide "lanes" of execution that can overlap or work independently.
-    HostExecKey       string            `json:"host_exec_key"`       // Sireus Client presents this key to get commands to run
-    SetBotStates      []string          `json:"set_bot_states"`      // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
-    ResetBotStates    []string          `json:"reset_bot_states"`    // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
-    JournalTemplate   string            `json:"journal_template"`    // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
-}
-```
-
-## type [ActionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L85-L95>)
-
-When an Action is selected for execution by its Final Score, the ActionCommand will execute and store this result.
-
-```go
-type ActionCommandResult struct {
-    BotGroupName  string
-    BotName       string
-    ActionName    string
-    ResultStatus  string
-    ResultContent string
-    HostExecOn    string
-    Started       time.Time
-    Finished      time.Time
-    Score         float64
-}
-```
-
-## type [ActionCommandType](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L39>)
-
-What will we do with this ActionCommand?  We will only ever do 1 thing per Action, as this is a Decision System
-
-```go
-type ActionCommandType int64
-```
-
-```go
-const (
-    ShellCommand    ActionCommandType = iota // Shell Command
-    WebHttps                                 // HTTPS request
-    WebHttpInsecure                          // HTTP request
-    WebRPC                                   // RPC call
-    NoOperation                              // Do nothing
-)
-```
-
-### func \(ActionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L50>)
-
-```go
-func (act ActionCommandType) String() string
-```
-
-## type [ActionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/action_data.go#L27-L34>)
-
-Considerations are units for scoring an Action.  Each creates a Score, and they are combined to create the Consideration Final Score.
-
-```go
-type ActionConsideration struct {
-    Name       string  `json:"name"`
-    Weight     float64 `json:"weight"`
-    CurveName  string  `json:"curve"`
-    RangeStart float64 `json:"range_start"`
-    RangeEnd   float64 `json:"range_end"`
-    Evaluate   string  `json:"evaluate"`
-}
 ```
 
 ## type [AppConfig](<https://github.com/ghowland/sireus/blob/main/code/data/config_data.go#L5-L21>)
@@ -565,32 +473,32 @@ If a Bot is missing any data for it's variables, it is considered Invalid, becau
 
 ```go
 type Bot struct {
-    Name                 string                   // Unique identifier pulled from the BotGroup.BotExtractor
-    LockKey              string                   // Unique identifier for performing locks on this data
-    VariableValues       map[string]float64       // These are the unique values for this Bot, and will be used for all ActionConsideration scoring
-    SortedVariableValues PairFloat64List          // Sorted VariableValues, Handlebars helper
-    StateValues          []string                 // These are the current States for this Bot.  Actions can only be available for execution, if all their Action.RequiredStates are active in the Bot
-    CommandHistory       []ActionCommandResult    // Storage of previous ActionCommand data run, so we can see insight into the history
-    LockTimers           []BotLockTimer           // LockTimers allow control over Actions that require them, so they cant be available until they can get all their LockTimers
-    ActionData           map[string]BotActionData // Key is Action.Name
-    SortedActionData     PairBotActionDataList    // Scored ActionData, Handlebars helper
-    FreezeActions        bool                     // If true, no actions will be taken for this Bot.  Single agent control
-    IsInvalid            bool                     // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
-    InfoInvalid          string                   // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
-    IsStale              bool                     // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
+    Name                 string                      // Unique identifier pulled from the BotGroup.BotExtractor
+    LockKey              string                      // Unique identifier for performing locks on this data
+    VariableValues       map[string]float64          // These are the unique values for this Bot, and will be used for all ConditionConsideration scoring
+    SortedVariableValues PairFloat64List             // Sorted VariableValues, Handlebars helper
+    StateValues          []string                    // These are the current States for this Bot.  Conditions can only be available for execution, if all their Condition.RequiredStates are active in the Bot
+    CommandHistory       []ConditionCommandResult    // Storage of previous ConditionCommand data run, so we can see insight into the history
+    LockTimers           []BotLockTimer              // LockTimers allow control over Conditions that require them, so they cant be available until they can get all their LockTimers
+    ConditionData        map[string]BotConditionData // Key is Condition.Name
+    SortedConditionData  PairBotConditionDataList    // Scored ConditionData, Handlebars helper
+    FreezeConditions     bool                        // If true, no actions will be taken for this Bot.  Single agent control
+    IsInvalid            bool                        // If true, this Bot is Invalid and cannot make actions, because not all the Variables were found
+    InfoInvalid          string                      // Short sentences ending with ".  " concatenated into this string to give all the reasons this Bot.IsInvalid
+    IsStale              bool                        // If true, this Bot is Stale, and cannot make decisions.  IsInvalid is the super-state, and will be marked from this sub-reason for invalidity
 }
 ```
 
-## type [BotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L37-L47>)
+## type [BotConditionData](<https://github.com/ghowland/sireus/blob/main/code/data/bot_data.go#L37-L47>)
 
-This stores the Final Scores and related data for all Actions, so they can be compared to determin if any Action should be executed
+This stores the Final Scores and related data for all Conditions, so they can be compared to determin if any Condition should be executed
 
 ```go
-type BotActionData struct {
+type BotConditionData struct {
     FinalScore                float64            // Final Score is the total result of calculations to Score this action for execution
-    IsAvailable               bool               // This Action is Available (not blocked) if the FinalScore is over the WeightThreshold
+    IsAvailable               bool               // This Condition is Available (not blocked) if the FinalScore is over the WeightThreshold
     AvailableStartTime        time.Time          // Time IsAvailable started, so we can use it for an internal Evaluation variable "_available_start_time".  Stateful.
-    LastExecutedActionTime    time.Time          // Last time we executed this Action.  Stateful.
+    LastExecutedConditionTime time.Time          // Last time we executed this Condition.  Stateful.
     Details                   []string           // Details about the Evaluation and Scoring, to make it easier to understand the result
     ConsiderationRawScores    map[string]float64 // Considerations Raw score, before it is applied to the Range and Curve, to help users understand what is happening
     ConsiderationRangedScores map[string]float64 // Considerations Ranged score, taking the Raw score and applying to the range, before applying the Curve
@@ -616,9 +524,9 @@ Forward Sequence State is the term I am using to describe a State Machine that o
 
 In this way you can create a State Machine for investigating problems, trying to solve them, checking for resolution, and finally escalating and waiting for someone else to fix it.
 
-If a resolution is detected by an Action, the action can Reset this state, starting the States process over again.
+If a resolution is detected by a Condition, the action can Reset this state, starting the States process over again.
 
-States are used to exclude Actions from being tested, so that Actions can be targetted at a specific State of a Bot's operation.  This allows segmenting logic.  Actions use Action.RequiredStates to limit when they can execute.
+States are used to exclude Conditions from being tested, so that Conditions can be targetted at a specific State of a Bot's operation.  This allows segmenting logic.  Conditions use Condition.RequiredStates to limit when they can execute.
 
 ```go
 type BotForwardSequenceState struct {
@@ -639,31 +547,31 @@ type BotGroup struct {
     BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`             // This is the information we use to create the ephemeral Bots, but taking their names from this query's metric key
     States                 []BotForwardSequenceState `json:"states"`                    // States can only advance from the start to the end, they can never go backwards.  It's a sequence, but you can skip steps forward.  Using several of these, many situations can be modelled.
     LockTimers             []BotLockTimer            `json:"lock_timers"`               // Lock timers work at BotGroup or Bot level, and block any execution for a period of time, so the previous action's results can be evaluated
-    BotTimeoutStale        Duration                  `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
+    BotTimeoutStale        Duration                  `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Conditions from a State named "Stale", so that you can respond, but no other states actions will apply.
     BotTimeoutRemove       Duration                  `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
     BotRemoveStoreDuration Duration                  `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
     RefuseBotResumption    bool                      `json:"refuse_bot_resumption"`     // If true, once a bot is removed, while it is being stored for inspect, if it returns it will not be resumed.  Instead a new bot will be created to disconnect their history, even though they share the same BotKey
-    ActionThreshold        float64                   `json:"action_threshold"`          // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-    CommandHistoryDuration Duration                  `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
+    ConditionThreshold     float64                   `json:"action_threshold"`          // Minimum Condition Final Score to execute a command.  Allows ignoring lower scoring Conditions for testing or troubleshooting
+    CommandHistoryDuration Duration                  `json:"command_history_duration"`  // How long we keep history for ConditionCommandResult values
     JournalRollupStates    []string                  `json:"journal_rollup_states"`     // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
     JournalRollupDuration  Duration                  `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
     Queries                []BotQuery                `json:"queries"`                   // Queries used to populate the Variables
-    Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ActionConsideration evaluations to score the Action
-    Actions                []Action                  `json:"actions"`                   // Actions get scored using ActionConsideration and the highest scored Action that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Actions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Actions based on the BotState.
-    Bots                   []Bot                     // These are the ephemeral workers of Sireus.  In an Action, the Queries populate VariableValues and then the ActionConsiderations are scored to determine if an action IsAvailable.
+    Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ConditionConsideration evaluations to score the Condition
+    Conditions             []Condition               `json:"actions"`                   // Conditions get scored using ConditionConsideration and the highest scored Condition that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Conditions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Conditions based on the BotState.
+    Bots                   []Bot                     // These are the ephemeral workers of Sireus.  In a Condition, the Queries populate VariableValues and then the ConditionConsiderations are scored to determine if an action IsAvailable.
 
     // Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
-    InvalidBots   []string
-    StaleBots     []string
-    RemovedBots   []string
-    FreezeActions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
-    LockKey       string // Formatted with: (Site.Name).(BotGroup.Name)
+    InvalidBots      []string
+    StaleBots        []string
+    RemovedBots      []string
+    FreezeConditions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
+    LockKey          string // Formatted with: (Site.Name).(BotGroup.Name)
 }
 ```
 
 ## type [BotLockTimer](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L125-L132>)
 
-BotLockTimer is used to both block an Action from being executed, if the BotLockTimer.IsActive and has not reached the Timeout yet.  Actions can use multiple BotLockTimers which essentially act as execution "channels" where Actions execute 1 at a time.
+BotLockTimer is used to both block a Condition from being executed, if the BotLockTimer.IsActive and has not reached the Timeout yet.  Conditions can use multiple BotLockTimers which essentially act as execution "channels" where Conditions execute 1 at a time.
 
 BotLockTimeType specifies the scope of the lock.  Is it locked at the Bot level or the BotGroup level? BotGroup level locks \(LockBotGroup\) are essentially global level locks, as BotGroups do not interact with each other, as they are data silos for decision\-making.
 
@@ -674,13 +582,13 @@ type BotLockTimer struct {
     Info           string           `json:"info"`
     IsActive       bool
     Timeout        time.Time
-    ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Actions
+    ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Conditions
 }
 ```
 
 ## type [BotLockTimerType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L98>)
 
-Scope for locking Actions
+Scope for locking Conditions
 
 ```go
 type BotLockTimerType int64
@@ -740,7 +648,7 @@ Format the BotQueryType to a string usable for building the request
 
 ## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L191-L204>)
 
-BotVariable is what is used for the ActionConsideration scoring process.
+BotVariable is what is used for the ConditionConsideration scoring process.
 
 BotVariable is assigned in the BotGroup, which is the definition of what will be queried or synthesized into each Bot.
 
@@ -816,6 +724,108 @@ func (bvt BotVariableType) String() string
 ```
 
 Format the BotVariableType for human readability
+
+## type [Condition](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L7-L21>)
+
+State Condition is what is considered for execution.  It will receive a Final Score from its Weight and Consideration Final Scores
+
+```go
+type Condition struct {
+    Name               string                   `json:"name"`                 // Name of the Condition
+    Info               string                   `json:"info"`                 // Description
+    IsLaunched         bool                     `json:"is_launched"`          // If false, this will never execute.  Launching means it is configured and ready to run live.  When Conditions are created, is_launched==false and must be changed so that the action could execute.
+    IsDisabled         bool                     `json:"is_disabled"`          // When testing changes, disable with modifying config
+    Weight             float64                  `json:"weight"`               // This is the multiplier for the Final Score, from the Consideration Final Score
+    WeightMin          float64                  `json:"weight_min"`           // If Weight != 0, then this is the Floor value.  We will bump it to this value, if it is less than this value
+    WeightThreshold    float64                  `json:"weight_threshold"`     // If non-0, this is the threshold to be Active, and potentially execute Conditions.  If the Final Score is less than this Threshold, this Condition can never run.  WeightMin and WeightThreshold are independent tests, and will have different results when used together, so take that into consideration.
+    ExecuteRepeatDelay Duration                 `json:"execute_repeat_delay"` // Duration until this Condition can execute again.  If short, this just the problem of double execution if it is 0, which is required.  It can't be 0.  If this is long, this becomes a good way to process other actions instead of this one, because you already tried it recently.
+    RequiredLockTimers []string                 `json:"required_lock_timers"` // All of these Lock Timers must be available for this Condition to trigger.  Afterwards, they will all be locked for ConditionCommand.LockTimerDuration automatically
+    RequiredStates     []string                 `json:"required_states"`      // All of these states must be Active for this
+    RequiredAvailable  Duration                 `json:"required_available"`   // If greater than 0s, this Condition must have been continuously Available for this Duration for it to be executed.  Allows us to make sure it's not flapping or inconsistent for a period of time before being executed
+    Considerations     []ConditionConsideration `json:"considerations"`       // These Considerations are used to create a Score for this Condition, which must be the highest score, and must be higher than the MinimumThreshold, and if all other requirements are met, this Condition will be executed
+    Command            ConditionCommand         `json:"command"`              // This is the command that will be executed.  It could just change States, or run a Command or API call
+}
+```
+
+## type [ConditionCommand](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L68-L80>)
+
+When a Condition is selected for execution by its Final Score, the ConditionCommand is executed.  A command or web request.
+
+```go
+type ConditionCommand struct {
+    Name              string               `json:"name"`                // Best Practice: Description of what this command is going to do.  Focus on the effect this will cause, and what it affects.
+    LogFormat         string               `json:"log_format"`          // This is what will be logged for human readability for the Name of this command.  It is formatted by Handlebars and can access data from: bot, botGroup, action, actionCommand.  Best practices, expand into a specific target for the Name field's general purpose.
+    Type              ConditionCommandType `json:"type"`                // Type of command that was executed
+    Content           string               `json:"content"`             // Payload of the command or RPC
+    SuccessStatus     int                  `json:"success_status"`      // Success or failure?
+    SuccessContent    string               `json:"success_content"`     // Data received from endpoint about our SuccessState and any return payload
+    LockTimerDuration Duration             `json:"lock_timer_duration"` // We will set the Condition.RequiredLockTimers to this duration to block anything from running.  Each of them all had to be available, and now will all be blocked.  Design your structures around this concept.  LockTimers provide "lanes" of execution that can overlap or work independently.
+    HostExecKey       string               `json:"host_exec_key"`       // Sireus Client presents this key to get commands to run
+    SetBotStates      []string             `json:"set_bot_states"`      // Will Advance all of these Bot States.  Advance can only go forward in the list, or start at the very beginning.  It can't go backwards, that is invalid data.  Only the State.Name and not the StateName.State is present, this will just advance to the next available state until it hits the final one and stay there.
+    ResetBotStates    []string             `json:"reset_bot_states"`    // Will reset all these Bot States to their first entry.  This is how Sireus handles state flow: forward-only and then reset
+    JournalTemplate   string               `json:"journal_template"`    // Templated Text formatted with variables from the Bot.VariableValues.  This is logged in JSON log-line and can be used to create Outage Reports, etc
+}
+```
+
+## type [ConditionCommandResult](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L85-L98>)
+
+When a Condition is selected for execution by its Final Score, the ConditionCommand will execute and store this result.
+
+```go
+type ConditionCommandResult struct {
+    BotGroupName  string    // Name of the BotGroup that had this Bot Condition, for easy lookup
+    BotName       string    // Name of the Bot that had this condition, for easy lookup
+    ConditionName string    // Name of the Condition that had this command, for easy lookup
+    CommandLog    string    // ConditionCommand.LogFormat gets formatted and put here for rich markup over Name field
+    ResultStatus  string    // Status of the result (success/failure)
+    ResultContent string    // Content of the result, for full inspection
+    HostExecOn    string    // Host this command was executed on, given by Sireus Client
+    Started       time.Time // Time this command started
+    Finished      time.Time // Time this command finishing
+    Score         float64   // This was the Condition Final Score
+    StatesBefore  []string  // These are the Bot.StateValues before this command was run
+    StatesAfter   []string  // These are the Bot.StateValues after this command was run
+}
+```
+
+## type [ConditionCommandType](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L39>)
+
+What will we do with this ConditionCommand?  We will only ever do 1 thing per Condition, as this is a Decision System
+
+```go
+type ConditionCommandType int64
+```
+
+```go
+const (
+    ShellCommand    ConditionCommandType = iota // Shell Command
+    WebHttps                                    // HTTPS request
+    WebHttpInsecure                             // HTTP request
+    WebRPC                                      // RPC call
+    NoOperation                                 // Do nothing
+)
+```
+
+### func \(ConditionCommandType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L50>)
+
+```go
+func (act ConditionCommandType) String() string
+```
+
+## type [ConditionConsideration](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L27-L34>)
+
+Considerations are units for scoring a State Condition.  Each creates a Score, and they are combined to create the Consideration Final Score.
+
+```go
+type ConditionConsideration struct {
+    Name       string  `json:"name"`
+    Weight     float64 `json:"weight"`
+    CurveName  string  `json:"curve"`
+    RangeStart float64 `json:"range_start"`
+    RangeEnd   float64 `json:"range_end"`
+    Evaluate   string  `json:"evaluate"`
+}
+```
 
 ## type [Duration](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L53>)
 
@@ -939,39 +949,39 @@ type OverrideBotGroup struct {
 }
 ```
 
-## type [PairBotActionData](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L37-L40>)
+## type [PairBotConditionData](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L37-L40>)
 
-Allows for sorting BotActionData by FinalScore
+Allows for sorting BotConditionData by FinalScore
 
 ```go
-type PairBotActionData struct {
+type PairBotConditionData struct {
     Key   string
-    Value BotActionData
+    Value BotConditionData
 }
 ```
 
-## type [PairBotActionDataList](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L43>)
+## type [PairBotConditionDataList](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L43>)
 
 ```go
-type PairBotActionDataList []PairBotActionData
+type PairBotConditionDataList []PairBotConditionData
 ```
 
-### func \(PairBotActionDataList\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L45>)
+### func \(PairBotConditionDataList\) [Len](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L45>)
 
 ```go
-func (p PairBotActionDataList) Len() int
+func (p PairBotConditionDataList) Len() int
 ```
 
-### func \(PairBotActionDataList\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L46>)
+### func \(PairBotConditionDataList\) [Less](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L46>)
 
 ```go
-func (p PairBotActionDataList) Less(i, j int) bool
+func (p PairBotConditionDataList) Less(i, j int) bool
 ```
 
-### func \(PairBotActionDataList\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L49>)
+### func \(PairBotConditionDataList\) [Swap](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L49>)
 
 ```go
-func (p PairBotActionDataList) Swap(i, j int)
+func (p PairBotConditionDataList) Swap(i, j int)
 ```
 
 ## type [PairFloat64](<https://github.com/ghowland/sireus/blob/main/code/data/fix_go_data.go#L11-L15>)
@@ -1303,7 +1313,7 @@ Break: Set Degraded Storage state
 func ConfigureDemoWebPrimary(webPrimary *fiber.App)
 ```
 
-## func [DemoBreakBot](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L56>)
+## func [DemoBreakBot](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L60>)
 
 ```go
 func DemoBreakBot(botGroupName string, botName string) string
@@ -1311,7 +1321,7 @@ func DemoBreakBot(botGroupName string, botName string) string
 
 Create problems in the Demo, which will cause the metrics to be updated and Sireus will respond
 
-## func [DemoFixBot](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L82>)
+## func [DemoFixBot](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L86>)
 
 ```go
 func DemoFixBot(botGroupName string, botName string) string
@@ -1349,7 +1359,7 @@ Fix the Degraded Storage
 func PerSecond(original int, seconds float64) int
 ```
 
-## func [ProcessWebDemoAction](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L34>)
+## func [ProcessWebDemoAction](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L35>)
 
 ```go
 func ProcessWebDemoAction(c *fiber.Ctx) string
@@ -1387,7 +1397,7 @@ func ReceiveTimeoutsFromDatabase(requests int)
 
 Receive request timeouts from the database.  This might feel backwards, but its a demo simulation
 
-## func [RunDemoAPIServer](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L11>)
+## func [RunDemoAPIServer](<https://github.com/ghowland/sireus/blob/main/code/demo/control_api_server.go#L12>)
 
 ```go
 func RunDemoAPIServer()
@@ -1501,8 +1511,8 @@ import "github.com/ghowland/sireus/code/extdata"
 ## Index
 
 - [func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-createformattedvariables>)
-- [func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData)](<#func-executebotaction>)
-- [func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) bool](<#func-executebotgroupactions>)
+- [func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, condition data.Condition, conditionData data.BotConditionData)](<#func-executebotcondition>)
+- [func ExecuteBotGroupConditions(session *data.InteractiveSession, botGroupIndex int) bool](<#func-executebotgroupconditions>)
 - [func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.BotGroup) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
@@ -1514,16 +1524,16 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func QueryLockClear(site *data.Site, queryKey string)](<#func-querylockclear>)
 - [func QueryLockSet(site *data.Site, queryKey string)](<#func-querylockset>)
 - [func QueryPrometheus(host string, port int, queryType data.BotQueryType, query string, timeStart time.Time, duration time.Duration) data.PrometheusResponse](<#func-queryprometheus>)
-- [func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int)](<#func-sortallvariablesandactions>)
+- [func SortAllVariablesAndConditions(session *data.InteractiveSession, botGroupIndex int)](<#func-sortallvariablesandconditions>)
 - [func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query data.BotQuery, startTime time.Time, queryResult data.QueryResult)](<#func-storequeryresult>)
-- [func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotactionconsiderations>)
+- [func UpdateBotConditionConsiderations(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotconditionconsiderations>)
 - [func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotgroupfromprometheus>)
 - [func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)](<#func-updatebotsfromqueries>)
 - [func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-updatebotswithsyntheticvariables>)
 - [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
 
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L145>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L160>)
 
 ```go
 func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -1531,19 +1541,19 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 
 Create formatted variables for all our Bots.  This adds human\-readable strings to all the sorted Pair Lists
 
-## func [ExecuteBotAction](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L92>)
+## func [ExecuteBotCondition](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L93>)
 
 ```go
-func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData)
+func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, condition data.Condition, conditionData data.BotConditionData)
 ```
 
-## func [ExecuteBotGroupActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L51>)
+## func [ExecuteBotGroupConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L52>)
 
 ```go
-func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) bool
+func ExecuteBotGroupConditions(session *data.InteractiveSession, botGroupIndex int) bool
 ```
 
-Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
+Execute the highest scoring condition for any Bot in this Bot Group, if it is Available and meets all conditions
 
 ## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L64>)
 
@@ -1553,7 +1563,7 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.Bo
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L379>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L394>)
 
 ```go
 func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
@@ -1561,7 +1571,7 @@ func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
 
 Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L363>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L378>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
@@ -1585,7 +1595,7 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeBotStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L424>)
+## func [InitializeBotStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L439>)
 
 ```go
 func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot)
@@ -1631,13 +1641,13 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndActions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L168>)
+## func [SortAllVariablesAndConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L183>)
 
 ```go
-func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int)
+func SortAllVariablesAndConditions(session *data.InteractiveSession, botGroupIndex int)
 ```
 
-Sort all the Variables by name and Actions by Final Score
+Sort all the Variables by name and Conditions by Final Score
 
 ## func [StoreQueryResult](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_query.go#L13>)
 
@@ -1647,15 +1657,15 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotActionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L192>)
+## func [UpdateBotConditionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L207>)
 
 ```go
-func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int)
+func UpdateBotConditionConsiderations(session *data.InteractiveSession, botGroupIndex int)
 ```
 
-For this BotGroup, update all the BotActionData with new ActionConsideration scores
+For this BotGroup, update all the BotConditionData with new ConditionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L391>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L406>)
 
 ```go
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1663,7 +1673,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L435>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L452>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1671,7 +1681,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L308>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L323>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -1679,7 +1689,7 @@ func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroup
 
 Update bot with Synthetic Variables.  Happens after all the Query Variables are set.  Synthetic vars can't work on each other
 
-## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L17>)
+## func [UpdateSiteBotGroups](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L18>)
 
 ```go
 func UpdateSiteBotGroups(session *data.InteractiveSession)
@@ -1799,6 +1809,7 @@ import "github.com/ghowland/sireus/code/util"
 - [func CheckPanic(e error)](<#func-checkpanic>)
 - [func Clamp(value float64, min float64, max float64) float64](<#func-clamp>)
 - [func ConvertInterfaceToFloat(value interface{}) (float64, error)](<#func-convertinterfacetofloat>)
+- [func CopyStringSlice(src []string) []string](<#func-copystringslice>)
 - [func FileExists(filename string) bool](<#func-fileexists>)
 - [func FileLoad(path string) (string, error)](<#func-fileload>)
 - [func FormatInteractiveStartTime() string](<#func-formatinteractivestarttime>)
@@ -1807,6 +1818,7 @@ import "github.com/ghowland/sireus/code/util"
 - [func HandlebarFormatData(format string, mapData map[string]interface{}) string](<#func-handlebarformatdata>)
 - [func HandlebarFormatText(format string, mapData map[string]string) string](<#func-handlebarformattext>)
 - [func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template)](<#func-handlebarsregisterpartials>)
+- [func HttpGet(url string) (string, error)](<#func-httpget>)
 - [func LockAcquire(lockKey string)](<#func-lockacquire>)
 - [func LockRelease(lockKey string)](<#func-lockrelease>)
 - [func ParseContextBody(c *fiber.Ctx) map[string]string](<#func-parsecontextbody>)
@@ -1836,7 +1848,7 @@ var (
 )
 ```
 
-## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L155>)
+## func [BoolToFloatString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L157>)
 
 ```go
 func BoolToFloatString(value bool) string
@@ -1844,7 +1856,7 @@ func BoolToFloatString(value bool) string
 
 Converts a boolean to a string of "0" or "1"
 
-## func [Check](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L17>)
+## func [Check](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L19>)
 
 ```go
 func Check(e error) bool
@@ -1852,7 +1864,7 @@ func Check(e error) bool
 
 Call Check when we want to get a boolean on the error, but dont want to log because we handle the response and it's too noisy or not useful.
 
-## func [CheckLog](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L26>)
+## func [CheckLog](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L28>)
 
 ```go
 func CheckLog(e error) bool
@@ -1860,7 +1872,7 @@ func CheckLog(e error) bool
 
 Call CheckLog when we only want to log the error and wrap error testing, but it does not require an exceptional response
 
-## func [CheckPanic](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L36>)
+## func [CheckPanic](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L38>)
 
 ```go
 func CheckPanic(e error)
@@ -1868,7 +1880,7 @@ func CheckPanic(e error)
 
 Call CheckPanic for configuration errors that can't be solved.
 
-## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L139>)
+## func [Clamp](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L141>)
 
 ```go
 func Clamp(value float64, min float64, max float64) float64
@@ -1884,7 +1896,15 @@ func ConvertInterfaceToFloat(value interface{}) (float64, error)
 
 Convert any value we can into a float64 in a predictable manner
 
-## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L44>)
+## func [CopyStringSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L211>)
+
+```go
+func CopyStringSlice(src []string) []string
+```
+
+Copy a string slice, because direct assignment is a reference
+
+## func [FileExists](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L46>)
 
 ```go
 func FileExists(filename string) bool
@@ -1892,7 +1912,7 @@ func FileExists(filename string) bool
 
 Does this file exist?  Wrap to make code shorter in situ
 
-## func [FileLoad](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L52>)
+## func [FileLoad](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L54>)
 
 ```go
 func FileLoad(path string) (string, error)
@@ -1906,7 +1926,7 @@ func FormatInteractiveStartTime() string
 
 Returns the Interaction Start Time in the Format required by the HTML datetime picker
 
-## func [FormatTimeLong](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L187>)
+## func [FormatTimeLong](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L189>)
 
 ```go
 func FormatTimeLong(t time.Time) string
@@ -1914,7 +1934,7 @@ func FormatTimeLong(t time.Time) string
 
 Format the time in ISO 8601, without the millis
 
-## func [GetTimeNow](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L196>)
+## func [GetTimeNow](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L198>)
 
 ```go
 func GetTimeNow() time.Time
@@ -1922,7 +1942,7 @@ func GetTimeNow() time.Time
 
 Returns time.Now\(\) in UTC.  Convenience wrapper, so it's never forgotten, because everything must always be in UTC
 
-## func [HandlebarFormatData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L91>)
+## func [HandlebarFormatData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L93>)
 
 ```go
 func HandlebarFormatData(format string, mapData map[string]interface{}) string
@@ -1930,7 +1950,7 @@ func HandlebarFormatData(format string, mapData map[string]interface{}) string
 
 Format Handlebars string from data, so I don't have to remember any arguments
 
-## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L62>)
+## func [HandlebarFormatText](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L64>)
 
 ```go
 func HandlebarFormatText(format string, mapData map[string]string) string
@@ -1938,10 +1958,16 @@ func HandlebarFormatText(format string, mapData map[string]string) string
 
 Format Handlebars string from strings, so I don't have to remember any arguments
 
-## func [HandlebarsRegisterPartials](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L69>)
+## func [HandlebarsRegisterPartials](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L71>)
 
 ```go
 func HandlebarsRegisterPartials(partialsDirPrefix string, removeBasePath string, template *raymond.Template)
+```
+
+## func [HttpGet](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L217>)
+
+```go
+func HttpGet(url string) (string, error)
 ```
 
 ## func [LockAcquire](<https://github.com/ghowland/sireus/blob/main/code/util/util_lock.go#L11>)
@@ -1964,7 +1990,7 @@ func ParseContextBody(c *fiber.Ctx) map[string]string
 
 Parse the HTTP request body.  Needed for API requests
 
-## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L164>)
+## func [PrintJson](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L166>)
 
 ```go
 func PrintJson(value interface{}) string
@@ -1972,7 +1998,7 @@ func PrintJson(value interface{}) string
 
 Print JSON, for debugging
 
-## func [PrintJsonData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L172>)
+## func [PrintJsonData](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L174>)
 
 ```go
 func PrintJsonData(value interface{}) string
@@ -1980,7 +2006,7 @@ func PrintJsonData(value interface{}) string
 
 Print JSON, for transport
 
-## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L180>)
+## func [PrintStringArrayCSV](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L182>)
 
 ```go
 func PrintStringArrayCSV(slice []string) string
@@ -1988,7 +2014,7 @@ func PrintStringArrayCSV(slice []string) string
 
 Print a string array.  For human readability or debugging
 
-## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L144>)
+## func [RangeMapper](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L146>)
 
 ```go
 func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
@@ -1996,7 +2022,7 @@ func RangeMapper(value float64, rangeMin float64, rangeMax float64) float64
 
 Returns clamped value between 0\-1, where the value falls between the range
 
-## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L102>)
+## func [StringInSlice](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L104>)
 
 ```go
 func StringInSlice(list []string, a string) bool
@@ -2004,7 +2030,7 @@ func StringInSlice(list []string, a string) bool
 
 Test if a string is in a slice
 
-## func [StringReplaceUnsafeChars](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L201>)
+## func [StringReplaceUnsafeChars](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L203>)
 
 ```go
 func StringReplaceUnsafeChars(value string, unsafeChars string, replace string) string
@@ -2012,7 +2038,7 @@ func StringReplaceUnsafeChars(value string, unsafeChars string, replace string) 
 
 Replace any characters in unsafeChars with the replace string.  Quickly convert into a safe string
 
-## func [StringSliceFindIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L128>)
+## func [StringSliceFindIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L130>)
 
 ```go
 func StringSliceFindIndex(slice []string, find string) (int, error)
@@ -2020,7 +2046,7 @@ func StringSliceFindIndex(slice []string, find string) (int, error)
 
 Returns the index of a string in a slice
 
-## func [StringSliceRemoveIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L122>)
+## func [StringSliceRemoveIndex](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L124>)
 
 ```go
 func StringSliceRemoveIndex(slice []string, index int) []string
@@ -2028,7 +2054,7 @@ func StringSliceRemoveIndex(slice []string, index int) []string
 
 Remove a string at index.  Wrapper for go\-ness
 
-## func [StringSliceRemoveString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L111>)
+## func [StringSliceRemoveString](<https://github.com/ghowland/sireus/blob/main/code/util/util_common.go#L113>)
 
 ```go
 func StringSliceRemoveString(slice []string, remove string) ([]string, error)
@@ -2055,6 +2081,9 @@ import "github.com/ghowland/sireus/code/webapp"
 - [func RegisterHandlebarsHelpers_IfArrayLength()](<#func-registerhandlebarshelpers_ifarraylength>)
 - [func RegisterHandlebarsHelpers_IfTests()](<#func-registerhandlebarshelpers_iftests>)
 - [func RegisterHandlebarsHelpers_WithData()](<#func-registerhandlebarshelpers_withdata>)
+- [func RegisterRoutesAPI(web *fiber.App)](<#func-registerroutesapi>)
+- [func RegisterRoutesDemo(web *fiber.App)](<#func-registerroutesdemo>)
+- [func RegisterRoutesWeb(web *fiber.App)](<#func-registerroutesweb>)
 - [func RenderRPCHtml(path string, renderMap map[string]interface{}) string](<#func-renderrpchtml>)
 
 
@@ -2124,7 +2153,7 @@ Format data, for Go and our internal data types
 func RegisterHandlebarsHelpers_GetAppData()
 ```
 
-Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
+Get AppData values.  Bot, BotGroup, Condition, BotConditionData, etc
 
 ## func [RegisterHandlebarsHelpers\_GetGoData](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L140>)
 
@@ -2157,6 +2186,30 @@ func RegisterHandlebarsHelpers_WithData()
 ```
 
 Sets current data from otherwise inaccessible data structures, because of slicing, map references, looks ups, etc
+
+## func [RegisterRoutesAPI](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_routes_api.go#L10>)
+
+```go
+func RegisterRoutesAPI(web *fiber.App)
+```
+
+Register the Routes for the Web RPC API
+
+## func [RegisterRoutesDemo](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_routes_demo.go#L9>)
+
+```go
+func RegisterRoutesDemo(web *fiber.App)
+```
+
+Register the routes for the demo, which is enabled or not in the config.  Optional.
+
+## func [RegisterRoutesWeb](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_routes_web.go#L12>)
+
+```go
+func RegisterRoutesWeb(web *fiber.App)
+```
+
+Register the routes for the web pages
 
 ## func [RenderRPCHtml](<https://github.com/ghowland/sireus/blob/main/code/webapp/params.go#L188>)
 
