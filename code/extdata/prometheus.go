@@ -72,7 +72,7 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.Bo
 			bots[name] = data.Bot{
 				Name:           name,
 				LockKey:        fmt.Sprintf("%s.%s", botGroup.LockKey, name),
-				ActionData:     map[string]data.BotActionData{},
+				ConditionData:  map[string]data.BotConditionData{},
 				StateValues:    []string{},
 				VariableValues: map[string]float64{},
 			}

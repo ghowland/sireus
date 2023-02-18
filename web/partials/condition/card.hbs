@@ -1,8 +1,8 @@
 <div class="card">
     <div class="card-content">
-        <h2 class="title is-primary">{{action.Name}}  <span class="tag is-primary">Score: {{get_bot_action_data_final_score bot action}}</span></h2>
-        <h3 class="subtitle">{{action.Info}}</h3>
-        <p>Content here: {{action.Weight}}</p>
+        <h2 class="title is-primary">{{condition.Name}}  <span class="tag is-primary">Score: {{get_bot_condition_data_final_score bot condition}}</span></h2>
+        <h3 class="subtitle">{{condition.Info}}</h3>
+        <p>Content here: {{condition.Weight}}</p>
         {{> 'partials/consider/table' }}
     </div>
     <footer class="card-footer">

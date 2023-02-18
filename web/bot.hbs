@@ -15,14 +15,14 @@
         <div class="box">
             <h1 class="title is-big">States</h1>
             <div class="content">
-            {{#each botGroup.States as |state stateIndex|}} <!-- Action:Start -->
+            {{#each botGroup.States as |state stateIndex|}} <!-- States:Start -->
                 <p>
                 <strong>{{state.Name}}</strong>:
-                {{#each state.Labels as |label labelIndex|}} <!-- Action:Start -->
+                {{#each state.Labels as |label labelIndex|}}
                     <span class="tag {{#if_slice_has_dot_strings_2 bot.StateValues state.Name label }}is-success{{else}}is-info-light{{/if_slice_has_dot_strings_2}} has-tooltip-arrow" data-tooltip="{{#if_slice_has_dot_strings_2 bot.StateValues state.Name label }}This is the Active State: {{state.Name}}.{{label}}{{else}}This state is not active.{{/if_slice_has_dot_strings_2}}" style="border-bottom: 0px solid !important;">{{label}}</span>
                 {{/each}}
                 </p>
-            {{/each}} <!-- Action:End -->
+            {{/each}} <!-- States:End -->
             </div>
 
             <h1 class="title is-big">Variables</h1>
@@ -32,22 +32,22 @@
     </div>
 
     <div class="content">
-        <p>Action gets a Final Score, on the left side of the header, and will be green or red depending on whether it
+        <p>Condition gets a Final Score, on the left side of the header, and will be green or red depending on whether it
             is Available to executed.</p>
     </div>
 
-    {{#each bot.SortedActionData as |actionData actionDataIndex|}} <!-- Action:Start -->
-        {{#with_action_from_bot botGroup bot actionDataIndex as |action|}}
-            {{> 'partials/action/card_box' }}
-        {{/with_action_from_bot}}
-    {{/each}} <!-- Action:End -->
+    {{#each bot.SortedConditionData as |conditionData conditionDataIndex|}} <!-- Condition:Start -->
+        {{#with_condition_from_bot botGroup bot conditionDataIndex as |condition|}}
+            {{> 'partials/condition/card_box' }}
+        {{/with_condition_from_bot}}
+    {{/each}} <!-- Condition:End -->
 
     <div class="content">
         <p></p>
-        <p>Actions can only be Available if their Required States are currently active.  There is a description if you
+        <p>Conditions can only be Available if their Required States are currently active.  There is a description if you
             expand them which explains the scoring in detail, up to the final score.</p>
-        <p>An Action with a score of 0 will never be executed, and there are several conditions which will force a 0 score.</p>
-        <p>When more than one Action is Available and meets all their requirements, the highest score will be executed.</p>
+        <p>An Condition with a score of 0 will never be executed, and there are several conditions which will force a 0 score.</p>
+        <p>When more than one Condition is Available and meets all their requirements, the highest score will be executed.</p>
     </div>
 </section>
 <script>

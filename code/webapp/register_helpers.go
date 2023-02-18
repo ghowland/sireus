@@ -59,20 +59,20 @@ func RegisterHandlebarsHelpers_WithData() {
 		return raymond.SafeString(options.FnWith(allCommandHistory))
 	})
 
-	// With BotActionData
-	raymond.RegisterHelper("with_bot_action", func(bot data.Bot, action data.Action, options *raymond.Options) raymond.SafeString {
-		botActionData := bot.ActionData[action.Name]
-		return raymond.SafeString(options.FnWith(botActionData))
+	// With BotConditionData
+	raymond.RegisterHelper("with_bot_condition", func(bot data.Bot, condition data.Condition, options *raymond.Options) raymond.SafeString {
+		botConditionData := bot.ConditionData[condition.Name]
+		return raymond.SafeString(options.FnWith(botConditionData))
 	})
 
-	// With Action from Bot
-	raymond.RegisterHelper("with_action_from_bot", func(botGroup data.BotGroup, bot data.Bot, actionDataIndex int, options *raymond.Options) raymond.SafeString {
+	// With Condition from Bot
+	raymond.RegisterHelper("with_condition_from_bot", func(botGroup data.BotGroup, bot data.Bot, conditionDataIndex int, options *raymond.Options) raymond.SafeString {
 
-		botActionData := bot.SortedActionData[actionDataIndex]
+		botConditionData := bot.SortedConditionData[conditionDataIndex]
 
-		botAction, err := app.GetAction(&botGroup, botActionData.Key)
+		botCondition, err := app.GetCondition(&botGroup, botConditionData.Key)
 		util.CheckLog(err)
-		return raymond.SafeString(options.FnWith(botAction))
+		return raymond.SafeString(options.FnWith(botCondition))
 	})
 
 	// With Query Server by Name from Site
@@ -153,45 +153,45 @@ func RegisterHandlebarsHelpers_GetGoData() {
 	})
 }
 
-// Get AppData values.  Bot, BotGroup, Action, BotActionData, etc
+// Get AppData values.  Bot, BotGroup, Condition, BotConditionData, etc
 func RegisterHandlebarsHelpers_GetAppData() {
 	// Consideration Scores: Final
-	raymond.RegisterHelper("get_bot_action_data_consideration_final_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_condition_data_consideration_final_score", func(bot data.Bot, condition data.Condition, consider data.ConditionConsideration) raymond.SafeString {
 		util.LockAcquire(bot.LockKey)
 		defer util.LockRelease(bot.LockKey)
-		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationFinalScores[consider.Name])
+		output := fmt.Sprintf("%.2f", bot.ConditionData[condition.Name].ConsiderationFinalScores[consider.Name])
 		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Raw (not Ranged, Curved, Weighted)
-	raymond.RegisterHelper("get_bot_action_data_consideration_raw_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_condition_data_consideration_raw_score", func(bot data.Bot, condition data.Condition, consider data.ConditionConsideration) raymond.SafeString {
 		util.LockAcquire(bot.LockKey)
 		defer util.LockRelease(bot.LockKey)
-		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRawScores[consider.Name])
+		output := fmt.Sprintf("%.2f", bot.ConditionData[condition.Name].ConsiderationRawScores[consider.Name])
 		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Ranged (not Curved, Weighted)
-	raymond.RegisterHelper("get_bot_action_data_consideration_ranged_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_condition_data_consideration_ranged_score", func(bot data.Bot, condition data.Condition, consider data.ConditionConsideration) raymond.SafeString {
 		util.LockAcquire(bot.LockKey)
 		defer util.LockRelease(bot.LockKey)
-		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationRangedScores[consider.Name])
+		output := fmt.Sprintf("%.2f", bot.ConditionData[condition.Name].ConsiderationRangedScores[consider.Name])
 		return raymond.SafeString(output)
 	})
 
 	// Consideration Scores: Curved (not Weighted)
-	raymond.RegisterHelper("get_bot_action_data_consideration_curved_score", func(bot data.Bot, action data.Action, consider data.ActionConsideration) raymond.SafeString {
+	raymond.RegisterHelper("get_bot_condition_data_consideration_curved_score", func(bot data.Bot, condition data.Condition, consider data.ConditionConsideration) raymond.SafeString {
 		util.LockAcquire(bot.LockKey)
 		defer util.LockRelease(bot.LockKey)
-		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].ConsiderationCurvedScores[consider.Name])
+		output := fmt.Sprintf("%.2f", bot.ConditionData[condition.Name].ConsiderationCurvedScores[consider.Name])
 		return raymond.SafeString(output)
 	})
 
-	// ActionData Final Score
-	raymond.RegisterHelper("get_bot_action_data_final_score", func(bot data.Bot, action data.Action) raymond.SafeString {
+	// ConditionData Final Score
+	raymond.RegisterHelper("get_bot_condition_data_final_score", func(bot data.Bot, condition data.Condition) raymond.SafeString {
 		util.LockAcquire(bot.LockKey)
 		defer util.LockRelease(bot.LockKey)
-		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore)
+		output := fmt.Sprintf("%.2f", bot.ConditionData[condition.Name].FinalScore)
 		return raymond.SafeString(output)
 	})
 
@@ -311,7 +311,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_action_length", func(items []data.Action, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_condition_length", func(items []data.Condition, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -319,7 +319,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_command_history_length", func(items []data.ActionCommandResult, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_command_history_length", func(items []data.ConditionCommandResult, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {
@@ -327,7 +327,7 @@ func RegisterHandlebarsHelpers_IfArrayLength() {
 		}
 	})
 
-	raymond.RegisterHelper("if_consider_length", func(items []data.ActionConsideration, count int, options *raymond.Options) raymond.SafeString {
+	raymond.RegisterHelper("if_consider_length", func(items []data.ConditionConsideration, count int, options *raymond.Options) raymond.SafeString {
 		if len(items) >= count {
 			return raymond.SafeString(options.Fn())
 		} else {

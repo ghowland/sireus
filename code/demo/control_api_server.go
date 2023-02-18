@@ -61,17 +61,17 @@ func DemoBreakBot(botGroupName string, botName string) string {
 		switch botName {
 		case "SFO-WAS-11":
 			BreakCircuit2()
-			message = "Breaking circuit SFO-WAS-11, please wait about 10 seconds"
+			message = "Breaking circuit SFO-WAS-11, please wait about 15 seconds and check Action History"
 			break
 		case "SFO-LAS-27":
 			BreakCircuit1()
-			message = "Breaking circuit SFO-LAS-27, please wait about 10 seconds"
+			message = "Breaking circuit SFO-LAS-27, please wait about 15 seconds and check Action History"
 			break
 		}
 		break
 	case "Database":
 		BreakStorageDegraded()
-		message = "Degrading database storage, please wait about 10 seconds"
+		message = "Degrading database storage, please wait about 15 seconds and check Action History"
 		break
 	}
 
@@ -87,17 +87,17 @@ func DemoFixBot(botGroupName string, botName string) string {
 		switch botName {
 		case "SFO-WAS-11":
 			FixCircuit2()
-			message = "Fixing circuit SFO-WAS-11, please wait about 10 seconds"
+			message = "Fixing circuit SFO-WAS-11, please wait about 15 seconds and check Edge States"
 			break
 		case "SFO-LAS-27":
 			FixCircuit1()
-			message = "Fixing circuit SFO-LAS-27, please wait about 10 seconds"
+			message = "Fixing circuit SFO-LAS-27, please wait about 15 seconds and check Edge States"
 			break
 		}
 		break
 	case "Database":
 		FixStorageDegraded()
-		message = "Fixing database storage, please wait about 10 seconds"
+		message = "Fixing database storage, please wait about 15 seconds and check Edge States"
 		break
 	}
 

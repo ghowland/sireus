@@ -128,14 +128,14 @@ func GetQuery(botGroup *data.BotGroup, queryName string) (data.BotQuery, error) 
 	return data.BotQuery{}, errors.New(fmt.Sprintf("Bot Group: %s  Query missing: %s", botGroup.Name, queryName))
 }
 
-// Get an Action from a BotGroup, by name
-func GetAction(botGroup *data.BotGroup, actionName string) (data.Action, error) {
-	for _, action := range botGroup.Actions {
+// Get a Condition from a BotGroup, by name
+func GetCondition(botGroup *data.BotGroup, actionName string) (data.Condition, error) {
+	for _, action := range botGroup.Conditions {
 		if action.Name == actionName {
 			return action, nil
 		}
 	}
-	return data.Action{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Action: %s", botGroup.Name, actionName))
+	return data.Condition{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Condition: %s", botGroup.Name, actionName))
 }
 
 // Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
@@ -148,42 +148,42 @@ func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, err
 	return data.BotVariable{}, errors.New(fmt.Sprintf("Bot Group: %s  Missing Variable: %s", botGroup.Name, varName))
 }
 
-// Get an ActionConsideration from an Action, by name
-func GetActionConsideration(action data.Action, considerName string) (data.ActionConsideration, error) {
+// Get a ConditionConsideration from a Condition, by name
+func GetConditionConsideration(action data.Condition, considerName string) (data.ConditionConsideration, error) {
 	for _, consider := range action.Considerations {
 		if consider.Name == considerName {
 			return consider, nil
 		}
 	}
-	return data.ActionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
+	return data.ConditionConsideration{}, errors.New(fmt.Sprintf("Missing Consideration: %s", considerName))
 }
 
-func GetActionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, stopLookingAfter data.Duration) (time.Time, error) {
+func GetConditionLastExecuteTime(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Condition, stopLookingAfter data.Duration) (time.Time, error) {
 	// If we have no history, then this hasn't been run before
 	if len(bot.CommandHistory) == 0 {
-		return time.Time{}, errors.New(fmt.Sprintf("This command has never been run: %d  Bot Group: %s  Bot: %s  Action: %s", session.UUID, botGroup.Name, bot.Name, action.Name))
+		return time.Time{}, errors.New(fmt.Sprintf("This command has never been run: %d  Bot Group: %s  Bot: %s  Condition: %s", session.UUID, botGroup.Name, bot.Name, action.Name))
 	}
 
-	// Loop backwards over the command history, looking for this Action
+	// Loop backwards over the command history, looking for this Condition
 	for i := len(bot.CommandHistory) - 1; i >= 0; i-- {
 		commandResult := bot.CommandHistory[i]
 
 		// If this is a match, return successfully
-		if commandResult.ActionName == action.Name {
+		if commandResult.ConditionName == action.Name {
 			return commandResult.Started, nil
 		}
 
 		// If this is past our time to stop looking, then this hasn't been run in the time we care about
 		if util.GetTimeNow().Sub(commandResult.Started) > time.Duration(stopLookingAfter) {
-			return time.Time{}, errors.New(fmt.Sprintf("This command has not been run since the timeout: %d  Bot Group: %s  Bot: %s  Action: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
+			return time.Time{}, errors.New(fmt.Sprintf("This command has not been run since the timeout: %d  Bot Group: %s  Bot: %s  Condition: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
 		}
 	}
 
-	return time.Time{}, errors.New(fmt.Sprintf("This command has not been in the entire command history: %d  Bot Group: %s  Bot: %s  Action: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
+	return time.Time{}, errors.New(fmt.Sprintf("This command has not been in the entire command history: %d  Bot Group: %s  Bot: %s  Condition: %s  Timeout: %v", session.UUID, botGroup.Name, bot.Name, action.Name, stopLookingAfter))
 }
 
-// For a given Action, does this Bot have all the RequiredStates active?
-func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
+// For a given Condition, does this Bot have all the RequiredStates active?
+func AreAllConditionStatesActive(action data.Condition, bot *data.Bot) bool {
 	for _, state := range action.RequiredStates {
 		if !util.StringInSlice(bot.StateValues, state) {
 			return false
@@ -192,12 +192,12 @@ func AreAllActionStatesActive(action data.Action, bot *data.Bot) bool {
 	return true
 }
 
-// For a given Action, does this Bot Group have all the Lock Timers available to be locked?
-func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup) bool {
+// For a given Condition, does this Bot Group have all the Lock Timers available to be locked?
+func AreAllConditionLockTimersAvailable(action data.Condition, botGroup *data.BotGroup) bool {
 	for _, lockTimerName := range action.RequiredLockTimers {
 		lockTimer, err := GetLockTimer(botGroup, lockTimerName)
 		if util.Check(err) {
-			log.Printf("Missing Lock Timer: %s  Invalid configuration, will never activate Action: %s  Bot Group: %s", lockTimerName, action.Name, botGroup.Name)
+			log.Printf("Missing Lock Timer: %s  Invalid configuration, will never activate Condition: %s  Bot Group: %s", lockTimerName, action.Name, botGroup.Name)
 			return false
 		}
 
@@ -209,8 +209,8 @@ func AreAllActionLockTimersAvailable(action data.Action, botGroup *data.BotGroup
 	return true
 }
 
-// When executing an Action, we will set all the Lock Timers that Action required, for the duration specified in the ActionCommand
-func SetAllActionLockTimers(action data.Action, botGroup *data.BotGroup, duration data.Duration) {
+// When executing a Condition, we will set all the Lock Timers that Condition required, for the duration specified in the ConditionCommand
+func SetAllConditionLockTimers(action data.Condition, botGroup *data.BotGroup, duration data.Duration) {
 	for _, lockTimerName := range action.RequiredLockTimers {
 		SetLockTimer(botGroup, lockTimerName, duration)
 	}
@@ -239,7 +239,7 @@ func ResetBotState(botGroup *data.BotGroup, bot *data.Bot, stateBase string) err
 	return nil
 }
 
-// When executing an Action, we want to update the Bots States, to move it forward
+// When executing a Condition, we want to update the Bots States, to move it forward
 func SetBotStates(botGroup *data.BotGroup, bot *data.Bot, setStates []string) error {
 	// Update the states
 	for _, state := range setStates {
@@ -420,8 +420,8 @@ func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string
 	return bots
 }
 
-func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ActionCommandResult {
-	history := []data.ActionCommandResult{}
+func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ConditionCommandResult {
+	history := []data.ConditionCommandResult{}
 
 	for _, botGroup := range session.BotGroups {
 		for _, bot := range botGroup.Bots {

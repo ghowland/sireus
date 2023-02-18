@@ -44,7 +44,7 @@ func SortMapStringFloat64ByValue(input map[string]float64, sortForward bool) dat
 	if sortForward {
 		sort.Sort(pairList)
 	} else {
-		sort.Reverse(pairList)
+		sort.Sort(sort.Reverse(pairList))
 	}
 
 	//log.Printf("Sorted: %v", pairList)

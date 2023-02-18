@@ -25,9 +25,9 @@
     </div>
 
     <div class="columns">
-        {{#each botGroup.Actions as |action actionIndex|}} <!-- Action:Start -->
+        {{#each botGroup.Actions as |condition conditionIndex|}} <!-- Action:Start -->
         <div class="column"> <!-- Column:Start -->
-            {{> 'partials/action/card' }}
+            {{> 'partials/condition/card' }}
         </div> <!-- Column:End -->
         {{/each}} <!-- Action:End -->
     </div>

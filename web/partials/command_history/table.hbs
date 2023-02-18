@@ -5,9 +5,9 @@
         <tr>
             <th><span class="has-tooltip-arrow" data-tooltip="Bot Group is group of agents">Group</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Bots are agents of a Bot Group">Bot</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Actions are scored and executed, per Bot">Action</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Time Action was initiated">Started</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Score of the Action to make it execute">Score</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="State Conditions are scored and executed, per Bot">Condition</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Time Condition was initiated">Started</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="Score of the Condition to make it execute">Score</span></th>
         </tr>
         </thead>
         {{#if_command_history_length commandHistory 20}}
@@ -15,9 +15,9 @@
             <tr>
                 <th><span class="has-tooltip-arrow" data-tooltip="Bot Group is group of agents">Group</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Bots are agents of a Bot Group">Bot</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Actions are scored and executed, per Bot">Action</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Time Action was initiated">Started</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Score of the Action to make it execute">Score</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="State Conditions are scored and executed, per Bot">Condition</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Time Condition was initiated">Started</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Score of the Condition to make it execute">Score</span></th>
             </tr>
             </tfoot>
         {{/if_command_history_length}}
@@ -28,7 +28,7 @@
         <tr>
             <td><a href="bot_group?bot_group_id={{command.BotGroupName}}">{{command.BotGroupName}}</a></td>
             <td><a href="bot?bot_id={{command.BotName}}&bot_group_id={{command.BotGroupName}}">{{command.BotName}}</a></td>
-            <td>{{command.ActionName}}</td>
+            <td>{{command.ConditionName}}</td>
             <td>{{format_time command.Started}}</td>
             <td>{{command.Score}}</td>
         </tr>

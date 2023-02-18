@@ -23,23 +23,23 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		UpdateBotsFromQueries(session, &data.SireusData.Site, index)
 
 		// Update Bot Variables from other Query Variables.  Creates Synthetic Variables.
-		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ActionData
+		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ConditionData
 		UpdateBotsWithSyntheticVariables(session, index)
 
-		// Update all the ActionConsiderations for each bot, so we have all the BotActionData.FinalScore values
-		UpdateBotActionConsiderations(session, index)
+		// Update all the ConditionConsiderations for each bot, so we have all the BotConditionData.FinalScore values
+		UpdateBotConditionConsiderations(session, index)
 
 		// Sort alpha, so they print consistently
-		SortAllVariablesAndActions(session, index)
+		SortAllVariablesAndConditions(session, index)
 
-		// Execute Actions (lock and delay testing inside)
-		executedActions := ExecuteBotGroupActions(session, index)
+		// Execute Conditions (lock and delay testing inside)
+		executedConditions := ExecuteBotGroupConditions(session, index)
 
 		// If we executed actions, we need to make sure things are updated and sorted again, because they have changed
-		if executedActions {
-			// Repeat this, to ensure things that are now Inactive after a state change from Executing Actions
-			UpdateBotActionConsiderations(session, index)
-			SortAllVariablesAndActions(session, index)
+		if executedConditions {
+			// Repeat this, to ensure things that are now Inactive after a state change from Executing Conditions
+			UpdateBotConditionConsiderations(session, index)
+			SortAllVariablesAndConditions(session, index)
 		}
 
 		// Format vars are human-readable, and we show the raw data in popups so the evaluations are clear
@@ -48,36 +48,36 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 }
 
 // Execute the highest scoring action for any Bot in this Bot Group, if it is Available and meets all conditions
-func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int) bool {
+func ExecuteBotGroupConditions(session *data.InteractiveSession, botGroupIndex int) bool {
 	botGroup := &session.BotGroups[botGroupIndex]
 
-	executedActions := false
+	executedConditions := false
 
 	for botIndex := range botGroup.Bots {
 		bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
 
-		// Lock the bot, as we are accessing the Action map
+		// Lock the bot, as we are accessing the Condition map
 		util.LockAcquire(bot.LockKey)
 
 		// Take the top scoring item only and see if it is available and meets any additional requirements
-		if bot.SortedActionData.Len() > 0 {
-			actionDataName := bot.SortedActionData[0].Key
-			actionData := bot.SortedActionData[0].Value
+		if bot.SortedConditionData.Len() > 0 {
+			actionDataName := bot.SortedConditionData[0].Key
+			actionData := bot.SortedConditionData[0].Value
 
-			action, err := app.GetAction(botGroup, actionDataName)
+			action, err := app.GetCondition(botGroup, actionDataName)
 			if util.Check(err) {
-				log.Printf("Missing Action: %s   Bot Group: %s  Bot: %s", actionDataName, botGroup.Name, bot.Name)
+				log.Printf("Missing Condition: %s   Bot Group: %s  Bot: %s", actionDataName, botGroup.Name, bot.Name)
 				continue
 			}
 
 			// If the action is available, and the final score is over the threshold, test next steps
-			if actionData.IsAvailable && actionData.FinalScore > botGroup.ActionThreshold {
+			if actionData.IsAvailable && actionData.FinalScore > botGroup.ConditionThreshold {
 				timeAvailable := time.Now().Sub(actionData.AvailableStartTime)
 
-				// If we have been available for long enough, this should be the final check, we can execute this Action
+				// If we have been available for long enough, this should be the final check, we can execute this Condition
 				if timeAvailable.Seconds() > time.Duration(action.RequiredAvailable).Seconds() {
-					ExecuteBotAction(session, botGroup, bot, action, actionData)
-					executedActions = true
+					ExecuteBotCondition(session, botGroup, bot, action, actionData)
+					executedConditions = true
 				}
 			}
 		}
@@ -86,39 +86,39 @@ func ExecuteBotGroupActions(session *data.InteractiveSession, botGroupIndex int)
 		util.LockRelease(bot.LockKey)
 	}
 
-	return executedActions
+	return executedConditions
 }
 
-func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Action, actionData data.BotActionData) {
+func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, action data.Condition, actionData data.BotConditionData) {
 	// Lock this session for execution.  We want to be able to delay them, and ensure they aren't racing, because HTTP requests trigger this
 	util.LockAcquire(fmt.Sprintf("session.%d.execute_action.%s", session.UUID, action.Name))
 	defer util.LockRelease(fmt.Sprintf("session.%d.execute_action.%s", session.UUID, action.Name))
 
-	// Get the last time this Action executed, so we can enforce a repeat execution delay
-	actionLastExecuteTime, err := app.GetActionLastExecuteTime(session, botGroup, bot, action, action.ExecuteRepeatDelay)
+	// Get the last time this Condition executed, so we can enforce a repeat execution delay
+	actionLastExecuteTime, err := app.GetConditionLastExecuteTime(session, botGroup, bot, action, action.ExecuteRepeatDelay)
 
 	// Return early if we executed within the delay threshold.  In this case, err means it wasn't executed, so we will perform the execution.  err is not a failure case here
 	if !util.Check(err) && util.GetTimeNow().Sub(actionLastExecuteTime) < time.Duration(action.ExecuteRepeatDelay) {
-		log.Printf(fmt.Sprintf("Session Bot Execute Actions returning early because called too soon: %d  Last: %v  Cur: %v", session.UUID, util.GetTimeNow(), util.GetTimeNow()))
+		log.Printf(fmt.Sprintf("Session Bot Execute Conditions returning early because called too soon: %d  Last: %v  Cur: %v", session.UUID, util.GetTimeNow(), util.GetTimeNow()))
 		return
 	}
 
-	// Create the Action Command Result which will go into the Bot Command History
-	commandResult := data.ActionCommandResult{
-		BotGroupName: botGroup.Name,
-		BotName:      bot.Name,
-		ActionName:   action.Name,
-		Started:      util.GetTimeNow(),
-		Score:        actionData.FinalScore,
+	// Create the Condition Command Result which will go into the Bot Command History
+	commandResult := data.ConditionCommandResult{
+		BotGroupName:  botGroup.Name,
+		BotName:       bot.Name,
+		ConditionName: action.Name,
+		Started:       util.GetTimeNow(),
+		Score:         actionData.FinalScore,
 	}
 
 	// Set the Lock Timers
-	app.SetAllActionLockTimers(action, botGroup, action.Command.LockTimerDuration)
+	app.SetAllConditionLockTimers(action, botGroup, action.Command.LockTimerDuration)
 
 	// Update the states
 	err = app.SetBotStates(botGroup, bot, action.Command.SetBotStates)
 	if util.Check(err) {
-		log.Printf("Aborting action execution, can't set state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
+		log.Printf("Aborting action execution, can't set state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Condition: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
 		return
 	}
 
@@ -126,13 +126,13 @@ func ExecuteBotAction(session *data.InteractiveSession, botGroup *data.BotGroup,
 	for _, resetState := range action.Command.ResetBotStates {
 		err := app.ResetBotState(botGroup, bot, resetState)
 		if util.Check(err) {
-			log.Printf("Aborting action execution, can't reset state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Action: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
+			log.Printf("Aborting action execution, can't reset state: Invalid configuration, states were not successfully updated and may be out of sync with each other now: Bot Group: %s  Bot: %s  Condition: %s  Error: %s", botGroup.Name, bot.Name, action.Name, err.Error())
 			return
 		}
 	}
 
 	// Execute command
-	//log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Action: %s", botGroup.Name, bot.Name, action.Name)
+	//log.Printf("TODO: Execute command.  And log this action too.  Bot Group: %s  Bot: %s  Condition: %s", botGroup.Name, bot.Name, action.Name)
 
 	// Mark our completion time
 	commandResult.Finished = util.GetTimeNow()
@@ -164,8 +164,8 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 	}
 }
 
-// Sort all the Variables by name and Actions by Final Score
-func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex int) {
+// Sort all the Variables by name and Conditions by Final Score
+func SortAllVariablesAndConditions(session *data.InteractiveSession, botGroupIndex int) {
 	for botIndex := range session.BotGroups[botGroupIndex].Bots {
 		// Cant use defer, because we are processing many in 1 action
 		util.LockAcquire(session.BotGroups[botGroupIndex].Bots[botIndex].LockKey)
@@ -176,20 +176,20 @@ func SortAllVariablesAndActions(session *data.InteractiveSession, botGroupIndex 
 		sortedVars := fixgo.SortMapStringFloat64ByKey(bot.VariableValues)
 		session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues = sortedVars
 
-		// Sort ActionData
-		sortedActions := app.SortMapStringActionDataByFinalScore(bot.ActionData, false)
-		session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData = sortedActions
+		// Sort ConditionData
+		sortedConditions := app.SortMapStringConditionDataByFinalScore(bot.ConditionData, false)
+		session.BotGroups[botGroupIndex].Bots[botIndex].SortedConditionData = sortedConditions
 
 		// Cant use defer, because we are processing many in 1 action
 		util.LockRelease(session.BotGroups[botGroupIndex].Bots[botIndex].LockKey)
 
 		//log.Printf("Bot Vars: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues))
-		//log.Printf("Bot Action Data: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedActionData))
+		//log.Printf("Bot Condition Data: %s  Vars: %v", bot.Name, util.PrintJson(session.BotGroups[botGroupIndex].Bots[botIndex].SortedConditionData))
 	}
 }
 
-// For this BotGroup, update all the BotActionData with new ActionConsideration scores
-func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupIndex int) {
+// For this BotGroup, update all the BotConditionData with new ConditionConsideration scores
+func UpdateBotConditionConsiderations(session *data.InteractiveSession, botGroupIndex int) {
 	botGroup := &session.BotGroups[botGroupIndex]
 
 	for botIndex := range botGroup.Bots {
@@ -199,10 +199,10 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 
 		evalMap := GetBotEvalMapAllVariables(bot)
 
-		for _, action := range botGroup.Actions {
-			// If we don't have this ActionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
-			if _, ok := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]; !ok {
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = data.BotActionData{
+		for _, action := range botGroup.Conditions {
+			// If we don't have this ConditionData yet, add it.  This will stay with the Bot for its lifetime, tracking ActiveStateTime and LastExecutionTime.
+			if _, ok := session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name]; !ok {
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name] = data.BotConditionData{
 					ConsiderationFinalScores:  map[string]float64{},
 					ConsiderationCurvedScores: map[string]float64{},
 					ConsiderationRangedScores: map[string]float64{},
@@ -216,10 +216,10 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				util.CheckLog(err)
 
 				// Start assuming the data is invalid, and then mark it valid later
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationCurvedScores[consider.Name] = math.SmallestNonzeroFloat64
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRangedScores[consider.Name] = math.SmallestNonzeroFloat64
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRawScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationFinalScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationCurvedScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationRangedScores[consider.Name] = math.SmallestNonzeroFloat64
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationRawScores[consider.Name] = math.SmallestNonzeroFloat64
 
 				resultInt, err := expression.Evaluate(evalMap)
 				if util.Check(err) {
@@ -229,7 +229,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				}
 
 				resultRaw, err := util.ConvertInterfaceToFloat(resultInt)
-				if util.Check(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Action
+				if util.Check(err) { //TODO(ghowland): Need to handle these invalid values, so that this Bot is marked as Invalid, because the scoring cannot be done properly for every Condition
 					// Invalidate this consideration, result was invalid
 					//log.Printf("Set Consideration Invalid: %s", consider.Name)
 					continue
@@ -250,44 +250,44 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 				considerationScore := resultCurved * consider.Weight
 
 				// Set the value.  Only valid values will exist.
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationCurvedScores[consider.Name] = resultCurved
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRangedScores[consider.Name] = resultRanged
-				session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name].ConsiderationRawScores[consider.Name] = resultRaw
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationFinalScores[consider.Name] = considerationScore
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationCurvedScores[consider.Name] = resultCurved
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationRangedScores[consider.Name] = resultRanged
+				session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name].ConsiderationRawScores[consider.Name] = resultRaw
 			}
 
-			// Get a Final Score for this Action
-			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name])
+			// Get a Final Score for this Condition
+			calculatedScore, details := app.CalculateScore(action, session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name])
 			finalScore := calculatedScore * action.Weight
 
-			details = append(details, fmt.Sprintf("All Consider Scores: %0.2f * Action Weight: %0.2f = Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
+			details = append(details, fmt.Sprintf("All Consider Scores: %0.2f * Condition Weight: %0.2f = Final Score: %0.2f", calculatedScore, action.Weight, finalScore))
 
-			// Copy out the ActionData struct, updated it, and assign it back into the map.
-			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name]
+			// Copy out the ConditionData struct, updated it, and assign it back into the map.
+			actionData := session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name]
 			actionData.FinalScore = finalScore
 
-			allActionStatesAreActive := app.AreAllActionStatesActive(action, bot)
+			allConditionStatesAreActive := app.AreAllConditionStatesActive(action, bot)
 
-			allActionRequiredLocksTimersAvailable := app.AreAllActionLockTimersAvailable(action, botGroup)
+			allConditionRequiredLocksTimersAvailable := app.AreAllConditionLockTimersAvailable(action, botGroup)
 
-			// Action.WeightThreshold determines if an Action is available for possible execution
-			if finalScore >= action.WeightThreshold && allActionStatesAreActive && allActionRequiredLocksTimersAvailable {
+			// Condition.WeightThreshold determines if a Condition is available for possible execution
+			if finalScore >= action.WeightThreshold && allConditionStatesAreActive && allConditionRequiredLocksTimersAvailable {
 				if !actionData.IsAvailable {
 					actionData.IsAvailable = true
 					actionData.AvailableStartTime = util.GetTimeNow()
 				}
 			} else {
-				if !allActionStatesAreActive {
+				if !allConditionStatesAreActive {
 					actionData.FinalScore = 0
 					details = append(details, fmt.Sprintf("Setting Final Score to 0.  Missing required states: %s", util.PrintStringArrayCSV(action.RequiredStates)))
 				}
 
-				if !allActionRequiredLocksTimersAvailable {
+				if !allConditionRequiredLocksTimersAvailable {
 					details = append(details, fmt.Sprintf("Not available.  Missing required Lock Timers: %s", util.PrintStringArrayCSV(action.RequiredLockTimers)))
 				}
 
 				if finalScore < action.WeightThreshold {
-					details = append(details, fmt.Sprintf("Final Score (%.2f) less than Action Weight Threshold (%.2f)", finalScore, action.WeightThreshold))
+					details = append(details, fmt.Sprintf("Final Score (%.2f) less tha Condition Weight Threshold (%.2f)", finalScore, action.WeightThreshold))
 				}
 
 				actionData.IsAvailable = false
@@ -296,7 +296,7 @@ func UpdateBotActionConsiderations(session *data.InteractiveSession, botGroupInd
 
 			// Details explain what happen in text, so users can better understand their results
 			actionData.Details = details
-			session.BotGroups[botGroupIndex].Bots[botIndex].ActionData[action.Name] = actionData
+			session.BotGroups[botGroupIndex].Bots[botIndex].ConditionData[action.Name] = actionData
 		}
 
 		// Cant use defer, because we are processing many in 1 action

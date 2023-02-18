@@ -87,8 +87,8 @@
     {{#equal bot.Name "Bot Service X"}}<p class="content is-small">Botname is Service X</p>{{/equal}}
 
 
-    {{#each bot.Actions as |action actionIndex|}}
-        {{#each action.Considerations as |consider considerIndex|}}
+    {{#each bot.Actions as |condition conditionIndex|}}
+        {{#each condition.Considerations as |consider considerIndex|}}
             <p class="content is-medium">Consider: {{consider.Name}} ID: {{considerIndex}}</p>
         {{/each}}
     {{/each}}

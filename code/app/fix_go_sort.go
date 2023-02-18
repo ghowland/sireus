@@ -6,12 +6,12 @@ import (
 )
 
 // Go doesnt handle map sorting easily, so this is the fix-up
-func SortMapStringActionDataByFinalScore(input map[string]data.BotActionData, sortForward bool) data.PairBotActionDataList {
-	pairList := data.PairBotActionDataList{}
+func SortMapStringConditionDataByFinalScore(input map[string]data.BotConditionData, sortForward bool) data.PairBotConditionDataList {
+	pairList := data.PairBotConditionDataList{}
 
 	// Create the PairList
 	for key, value := range input {
-		newPair := data.PairBotActionData{
+		newPair := data.PairBotConditionData{
 			Key:   key,
 			Value: value,
 		}

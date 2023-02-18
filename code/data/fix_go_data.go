@@ -33,20 +33,20 @@ func (p PairFloat64List) Less(i, j int) bool {
 func (p PairFloat64List) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 type (
-	// Allows for sorting BotActionData by FinalScore
-	PairBotActionData struct {
+	// Allows for sorting BotConditionData by FinalScore
+	PairBotConditionData struct {
 		Key   string
-		Value BotActionData
+		Value BotConditionData
 	}
 )
 
-type PairBotActionDataList []PairBotActionData
+type PairBotConditionDataList []PairBotConditionData
 
-func (p PairBotActionDataList) Len() int { return len(p) }
-func (p PairBotActionDataList) Less(i, j int) bool {
+func (p PairBotConditionDataList) Len() int { return len(p) }
+func (p PairBotConditionDataList) Less(i, j int) bool {
 	return p[i].Value.FinalScore < p[j].Value.FinalScore
 }
-func (p PairBotActionDataList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
+func (p PairBotConditionDataList) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
 
 type (
 	// Cant unmarshal JSON into time.Duration, so wrapping it

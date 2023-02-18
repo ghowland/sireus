@@ -6,8 +6,8 @@ import (
 	"github.com/ghowland/sireus/code/util"
 )
 
-// Calculate the Utility Score for a given Action using a Bots BotActionData
-func CalculateScore(action data.Action, actionData data.BotActionData) (float64, []string) {
+// Calculate the Utility Score for a given Condition using a Bots BotConditionData
+func CalculateScore(action data.Condition, actionData data.BotConditionData) (float64, []string) {
 	var runningScore float64 = 1
 	var considerCount int = 0
 
@@ -26,7 +26,7 @@ func CalculateScore(action data.Action, actionData data.BotActionData) (float64,
 			return 0, details
 		}
 
-		consider, err := GetActionConsideration(action, considerName)
+		consider, err := GetConditionConsideration(action, considerName)
 		if util.CheckLog(err) {
 			details = append(details, fmt.Sprintf("Missing Consideration, aborting: %s", considerName))
 			return 0, details
@@ -57,8 +57,8 @@ func CalculateScore(action data.Action, actionData data.BotActionData) (float64,
 }
 
 // This is the heuristic we use to get a good "modified average" of the Considerations to a Consideration Final Score
-// This works well when all the ActionConsideration.Weight values are ~1.0, so that they have relative importance
-// to each other.  Try to keep ActionConsideration.Weight values between 0.1 and 10.0 for a good result.
+// This works well when all the ConditionConsideration.Weight values are ~1.0, so that they have relative importance
+// to each other.  Try to keep ConditionConsideration.Weight values between 0.1 and 10.0 for a good result.
 func AverageAndFixup(runningScore float64, considerCount int) (float64, []string) {
 	var details []string
 
@@ -72,10 +72,10 @@ func AverageAndFixup(runningScore float64, considerCount int) (float64, []string
 	var modFactor float64 = 1.0 - (1.0 / float64(considerCount))
 
 	// This is our fudge, that makes the numbers look better.  Especially if Consideration Scores aim between 0-1.
-	//NOTE(g): Use Action.Weight to make them much higher for final sorting.  Here in Consideration-land they are better
+	//NOTE(g): Use Condition.Weight to make them much higher for final sorting.  Here in Consideration-land they are better
 	//		   between 0 and 1.  It makes reasoning about them easier as well, as all the ranges are normalized.
 	//		   Highly recommended to keep the Consideration scores at 0-1, or low numbers like 10 at the highest, then
-	//		   use the Action.Weight to massively modify the numbers into different ranges for the Final Score sort.
+	//		   use the Condition.Weight to massively modify the numbers into different ranges for the Final Score sort.
 	var makeUpValue float64 = (1.0 - runningScore) * modFactor
 
 	// Apply the average and fixup to the running score

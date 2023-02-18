@@ -32,17 +32,17 @@
         <tbody>
         </tbody>
 
-        {{#each action.Considerations as |consider considerIndex|}} <!-- Action Consideration:Start -->
+        {{#each condition.Considerations as |consider considerIndex|}} <!-- Action Consideration:Start -->
             <tr>
                 <th><span class="has-tooltip-arrow" data-tooltip="{{consider.Evaluate}}">{{consider.Name}}</span></th>
                 <td>{{consider.Weight}}</td>
                 <td>{{consider.RangeStart}}</td>
                 <td>{{consider.RangeEnd}}</td>
                 <td><button class="button is-small" onclick="GetPlot('{{consider.CurveName}}')">{{consider.CurveName}}</button></td>
-                <td>{{get_bot_action_data_consideration_raw_score bot action consider}}</td>
-                <td>{{get_bot_action_data_consideration_ranged_score bot action consider}}</td>
-                <td>{{get_bot_action_data_consideration_curved_score bot action consider}}</td>
-                <td><strong>{{get_bot_action_data_consideration_final_score bot action consider}}</strong></td>
+                <td>{{get_bot_condition_data_consideration_raw_score bot condition consider}}</td>
+                <td>{{get_bot_condition_data_consideration_ranged_score bot condition consider}}</td>
+                <td>{{get_bot_condition_data_consideration_curved_score bot condition consider}}</td>
+                <td><strong>{{get_bot_condition_data_consideration_final_score bot condition consider}}</strong></td>
             </tr>
 
         {{/each}} <!-- Action Consideration:End -->

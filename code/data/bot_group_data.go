@@ -13,25 +13,25 @@ type (
 		BotExtractor           BotExtractorQueryKey      `json:"bot_extractor"`             // This is the information we use to create the ephemeral Bots, but taking their names from this query's metric key
 		States                 []BotForwardSequenceState `json:"states"`                    // States can only advance from the start to the end, they can never go backwards.  It's a sequence, but you can skip steps forward.  Using several of these, many situations can be modelled.
 		LockTimers             []BotLockTimer            `json:"lock_timers"`               // Lock timers work at BotGroup or Bot level, and block any execution for a period of time, so the previous action's results can be evaluated
-		BotTimeoutStale        Duration                  `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Actions from a State named "Stale", so that you can respond, but no other states actions will apply.
+		BotTimeoutStale        Duration                  `json:"bot_timeout_stale"`         // Duration since Bot.VariableValues was last updated until this Bot is marked as Stale.  Stale bots only execute Conditions from a State named "Stale", so that you can respond, but no other states actions will apply.
 		BotTimeoutRemove       Duration                  `json:"bot_timeout_remove"`        // Duration since Bot.VariableValues was last updated until this bot is removed.  Bots are ephemeral.
 		BotRemoveStoreDuration Duration                  `json:"bot_remove_store_duration"` // Duration since removal that a Bot is stored for inspection, so that you don't lose access to useful information.  If the bot returns before this duration is over, it will be resumed.  Resumption can be refused setting BotGroup.RefuseBotResumption
 		RefuseBotResumption    bool                      `json:"refuse_bot_resumption"`     // If true, once a bot is removed, while it is being stored for inspect, if it returns it will not be resumed.  Instead a new bot will be created to disconnect their history, even though they share the same BotKey
-		ActionThreshold        float64                   `json:"action_threshold"`          // Minimum Action Final Score to execute a command.  Allows ignoring lower scoring Actions for testing or troubleshooting
-		CommandHistoryDuration Duration                  `json:"command_history_duration"`  // How long we keep history for ActionCommandResult values
+		ConditionThreshold     float64                   `json:"action_threshold"`          // Minimum Condition Final Score to execute a command.  Allows ignoring lower scoring Conditions for testing or troubleshooting
+		CommandHistoryDuration Duration                  `json:"command_history_duration"`  // How long we keep history for ConditionCommandResult values
 		JournalRollupStates    []string                  `json:"journal_rollup_states"`     // If any of these states become Active, then they will be rolled up into Journal collection, example: Outage Report
 		JournalRollupDuration  Duration                  `json:"journal_rollup_duration"`   // Time between a Journal Rollup ending, and another Journal Rollup beginning, so that they are grouped together.  This collects flapping outages together.
 		Queries                []BotQuery                `json:"queries"`                   // Queries used to populate the Variables
-		Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ActionConsideration evaluations to score the Action
-		Actions                []Action                  `json:"actions"`                   // Actions get scored using ActionConsideration and the highest scored Action that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Actions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Actions based on the BotState.
-		Bots                   []Bot                     // These are the ephemeral workers of Sireus.  In an Action, the Queries populate VariableValues and then the ActionConsiderations are scored to determine if an action IsAvailable.
+		Variables              []BotVariable             `json:"variables"`                 // Variables get their data from Queries, and are used in ConditionConsideration evaluations to score the Condition
+		Conditions             []Condition               `json:"actions"`                   // Conditions get scored using ConditionConsideration and the highest scored Condition that IsAvailable will be executed.  Excecution also requires no LockTimers or other blocking factors.  The biggest factor is that Conditions only are tested and execute when certain BotStates are set, so there is a built-in grouping of available Conditions based on the BotState.
+		Bots                   []Bot                     // These are the ephemeral workers of Sireus.  In a Condition, the Queries populate VariableValues and then the ConditionConsiderations are scored to determine if an action IsAvailable.
 
 		// Invalid = Isn't getting all the information.  Stale = Information out of data.  Removed = No data for too long, removing.
-		InvalidBots   []string
-		StaleBots     []string
-		RemovedBots   []string
-		FreezeActions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
-		LockKey       string // Formatted with: (Site.Name).(BotGroup.Name)
+		InvalidBots      []string
+		StaleBots        []string
+		RemovedBots      []string
+		FreezeConditions bool   // If true, no actions will be taken for this BotGroup.  Allows group level control.
+		LockKey          string // Formatted with: (Site.Name).(BotGroup.Name)
 	}
 )
 
@@ -52,10 +52,10 @@ type (
 	// In this way you can create a State Machine for investigating problems, trying to solve them, checking for
 	// resolution, and finally escalating and waiting for someone else to fix it.
 	//
-	// If a resolution is detected by an Action, the action can Reset this state, starting the States process over again.
+	// If a resolution is detected by a Condition, the action can Reset this state, starting the States process over again.
 	//
-	// States are used to exclude Actions from being tested, so that Actions can be targetted at a specific State of a
-	// Bot's operation.  This allows segmenting logic.  Actions use Action.RequiredStates to limit when they can execute.
+	// States are used to exclude Conditions from being tested, so that Conditions can be targetted at a specific State of a
+	// Bot's operation.  This allows segmenting logic.  Conditions use Condition.RequiredStates to limit when they can execute.
 	BotForwardSequenceState struct {
 		Name   string   `json:"name"`
 		Info   string   `json:"info"`
@@ -94,7 +94,7 @@ type (
 )
 
 type (
-	// Scope for locking Actions
+	// Scope for locking Conditions
 	BotLockTimerType int64
 )
 
@@ -115,9 +115,9 @@ func (bltt BotLockTimerType) String() string {
 }
 
 type (
-	// BotLockTimer is used to both block an Action from being executed, if the BotLockTimer.IsActive and has not
-	// reached the Timeout yet.  Actions can use multiple BotLockTimers which essentially act as execution "channels"
-	// where Actions execute 1 at a time.
+	// BotLockTimer is used to both block a Condition from being executed, if the BotLockTimer.IsActive and has not
+	// reached the Timeout yet.  Conditions can use multiple BotLockTimers which essentially act as execution "channels"
+	// where Conditions execute 1 at a time.
 	//
 	// BotLockTimeType specifies the scope of the lock.  Is it locked at the Bot level or the BotGroup level?
 	// BotGroup level locks (LockBotGroup) are essentially global level locks, as BotGroups do not interact with each
@@ -128,7 +128,7 @@ type (
 		Info           string           `json:"info"`
 		IsActive       bool
 		Timeout        time.Time
-		ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Actions
+		ActivatedByBot string // Bot.Name of who set this Lock Timer, so we can track Conditions
 	}
 )
 
@@ -172,7 +172,7 @@ func (bvt BotVariableType) String() string {
 }
 
 type (
-	// BotVariable is what is used for the ActionConsideration scoring process.
+	// BotVariable is what is used for the ConditionConsideration scoring process.
 	//
 	// BotVariable is assigned in the BotGroup, which is the definition of what will be queried or synthesized into
 	// each Bot.
