@@ -52,6 +52,10 @@ A Decision System being used in SRE and DevOps land is a new tool, and how to re
 - Developement
 	* A small plugin-system, so that custom functions could be called throughtout the pipeline of the system.
 		+ I (ghowland) think it's best to start this small with a minimal interface, and it can be kept as a legacy implementation when we find out what all the additional requirements we learn from use.  It needs a good first start to be a useful feedback tool so that users can spend the time to develop the experitise needed to push the system to it's current limits, and get our feature set for the more mature plugin-system.  Because it's golang, I think it is best to just have them compile the plugins in, so can also avoid the expense of dynamic plugins.
+- Organizing Documentation
+	* I (ghowland) will create as much documentation as I think is needed to cover explaining the various areas and use cases, but I could use help organizing it.  Often as the primary author it's unclear what is confusing or understandable, or what information should be presented first.
+		+ There are pretty good standards for this from other projects, so it would probably be best to just pick a successful project and model Sireus documentation's organization after theirs.  This decision hasn't been made yet for who to copy.
+		+ A big help would just be suggestions or pull requests on re-organizing any existing documents to be easier to understand, please give the reason why it would make it easier to understand in the PR.
 - Feedback
 	* Sireus is in the Design RFC phase.  I want to get feedback on whether it is understandable, if not what are areas that lack clarity.  "What is it for?"  "Why should I use this?"  "How would I implement it?"  I have some of this information here now, but I (ghowland) don't know what is clear and what is unclear without more feedback.  [Please file questions, comments and requests here.](https://github.com/ghowland/sireus/issues).
 
