@@ -9,6 +9,7 @@ import (
 	"github.com/ghowland/sireus/code/data"
 	"github.com/ghowland/sireus/code/util"
 	"log"
+	"sort"
 	"strings"
 	"time"
 )
@@ -50,12 +51,6 @@ func RegisterHandlebarsHelpers_WithData() {
 	raymond.RegisterHelper("with_bots_in_state", func(botGroup data.BotGroup, stateName string, stateLabel string, options *raymond.Options) raymond.SafeString {
 		bots := app.GetBotsInState(&botGroup, stateName, stateLabel)
 		return raymond.SafeString(options.FnWith(bots))
-	})
-
-	// With Count of Bots in specified state
-	raymond.RegisterHelper("with_bots_in_state_len", func(botGroup data.BotGroup, stateName string, stateLabel string, options *raymond.Options) raymond.SafeString {
-		bots := app.GetBotsInState(&botGroup, stateName, stateLabel)
-		return raymond.SafeString(options.FnWith(len(bots)))
 	})
 
 	// With Count of Bots in specified state
@@ -198,6 +193,21 @@ func RegisterHandlebarsHelpers_GetAppData() {
 		defer util.LockRelease(bot.LockKey)
 		output := fmt.Sprintf("%.2f", bot.ActionData[action.Name].FinalScore)
 		return raymond.SafeString(output)
+	})
+
+	// Get Count of Bot slice
+	raymond.RegisterHelper("get_len_array_bot", func(bots []data.Bot, options *raymond.Options) raymond.SafeString {
+		return raymond.SafeString(options.FnWith(len(bots)))
+	})
+
+	// Get a slice of names from a slice of Bots
+	raymond.RegisterHelper("get_array_bot_names", func(bots []data.Bot, options *raymond.Options) raymond.SafeString {
+		botNames := []string{}
+		for _, bot := range bots {
+			botNames = append(botNames, bot.Name)
+		}
+		sort.Strings(botNames)
+		return raymond.SafeString(options.FnWith(botNames))
 	})
 }
 
