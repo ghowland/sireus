@@ -4,7 +4,7 @@ title:  "A Sireus Start"
 date:   2023-02-08 19:27:19 +0700
 categories: sireus news
 ---
-Hi, I'm (Geoff Howland)[linkedin-gh], and this is the first entry on the Sireus project's development.
+Hi, I'm [Geoff Howland][linkedin-gh], and this is the first entry on the Sireus project's development.
 
 Sireus is a Decision System for SRE and DevOps, and sits between your Monitoring and Alerting.  It can run commands and 
 export state  information back into your monitoring system, so you can use the information to make further decisions or 
