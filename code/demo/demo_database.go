@@ -128,10 +128,12 @@ func AddDatabaseRequests(requests int) {
 }
 
 // Fix the Degraded Storage
-func FixStorageDegraded() {
+func FixStorageDegraded() bool {
 	if CurrentDatabaseState == DatabaseStorageDegraded {
 		CurrentDatabaseState = DatabaseNormal
+		return true
 	}
+	return false
 }
 
 // Break: Set Degraded Storage state

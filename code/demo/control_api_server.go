@@ -30,8 +30,12 @@ func RunDemoAPIServer() {
 	})
 
 	app.Get("/fix/database_storage_degraded", func(c *fiber.Ctx) error {
-		FixStorageDegraded()
-		return c.SendString("{\"status\": 200}")
+		success := FixStorageDegraded()
+		if success {
+			return c.SendString("{\"status\": 200}")
+		} else {
+			return c.SendString("{\"status\": 505}")
+		}
 	})
 
 	_ = app.Listen(fmt.Sprintf(":%d", data.SireusData.AppConfig.DemoApiPort))

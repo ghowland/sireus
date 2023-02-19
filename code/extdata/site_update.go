@@ -154,10 +154,10 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 		body, err := util.HttpGet(url)
 		if util.Check(err) {
 			commandResult.ResultContent = fmt.Sprintf("Error: %s", err.Error())
-			log.Printf(fmt.Sprintf("%s: %s: %s == Error: %s", botGroup.Name, bot.Name, url, err.Error()))
+			//log.Printf(fmt.Sprintf("%s: %s: %s == Error: %s", botGroup.Name, bot.Name, url, err.Error()))
 		} else {
 			commandResult.ResultContent = body
-			log.Printf(fmt.Sprintf("%s: %s: %s == %s", botGroup.Name, bot.Name, url, body))
+			//log.Printf(fmt.Sprintf("%s: %s: %s == %s", botGroup.Name, bot.Name, url, body))
 		}
 	}
 
