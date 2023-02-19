@@ -426,6 +426,7 @@ func GetBotsInState(botGroup *data.BotGroup, stateName string, stateLabel string
 	return bots
 }
 
+// Returns all the ConditionCommandResults for all Bots in the BotGroups in this Session, sorted by time, descending
 func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.ConditionCommandResult {
 	history := []data.ConditionCommandResult{}
 
@@ -448,7 +449,12 @@ func GetCommandHistoryAll(session *data.InteractiveSession, count int) []data.Co
 	return history
 }
 
+// ADMIN: Clear the Command History to make the demo look nicer.  Only available if Demo is enabled
 func AdminClearCommandHistory() {
+	if !data.SireusData.AppConfig.EnableDemo {
+		log.Printf("Clearing the command history is not allowed when the Demo is not active.  It is not suitable for a production use case.")
+	}
+
 	session := GetInteractiveSession(data.SireusData.Site.ProductionControl, &data.SireusData.Site)
 	for botGroupIndex := range session.BotGroups {
 		for botIndex := range session.BotGroups[botGroupIndex].Bots {
@@ -458,6 +464,7 @@ func AdminClearCommandHistory() {
 	}
 }
 
+// Returns an array of maps, formatted with the BotVariable name and value
 func GetBotGroupAllBotVariablesByName(botGroup data.BotGroup, varName string) []map[string]string {
 	varMaps := []map[string]string{}
 
@@ -469,10 +476,21 @@ func GetBotGroupAllBotVariablesByName(botGroup data.BotGroup, varName string) []
 					"bot_group_name": botGroup.Name,
 					"name":           value.Key,
 					"value":          value.Formatted,
+					"value_raw":      fmt.Sprintf("%.2f", value.Value),
 				}
 				varMaps = append(varMaps, varMap)
 			}
 		}
 	}
 	return varMaps
+}
+
+// Returns a BotGroup variable, by name
+func GetBotVariableData(botGroup *data.BotGroup, varName string) (data.BotVariable, error) {
+	for _, varData := range botGroup.Variables {
+		if varData.Name == varName {
+			return varData, nil
+		}
+	}
+	return data.BotVariable{}, errors.New(fmt.Sprintf("Missing variable: %s  Bot Group: %s", varName, botGroup.Name))
 }

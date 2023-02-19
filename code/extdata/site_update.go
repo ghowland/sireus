@@ -166,6 +166,9 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 
 	// Append the Command Result to the Bots Command History
 	bot.CommandHistory = append(bot.CommandHistory, commandResult)
+
+	// Increment the Metric Counter, that we executed this Condition's Command
+	app.AddToMetricCounter(app.GetMetricBotKey("execute", botGroup, bot), 1, "A Condition met all the requirements and had the highest score, so was executed", app.GetMetricLabelsAndInfo_Condition(botGroup, bot, condition))
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
