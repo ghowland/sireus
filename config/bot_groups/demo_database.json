@@ -130,17 +130,17 @@
       "required_available": "4s",
       "considerations": [
         {
-          "name": "Wait Queue over 2000",
+          "name": "Long Wait Queue",
           "weight": 1.0,
           "curve": "inc_smooth",
           "range_start": 0,
-          "range_end": 1000,
-          "evaluate": "wait_queue - 2000"
+          "range_end": 500,
+          "evaluate": "wait_queue"
         }
       ],
       "command": {
         "name": "Long wait queue.  Set state to Problem.",
-        "log_format": "{{condition.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
         "success_status": 0,
@@ -151,6 +151,127 @@
           "Operation.Problem"
         ],
         "reset_bot_states": []
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Normal Operation",
+      "info": "Things are back to normal",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Problem"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "Timeout Rate over 100",
+          "weight": 1.0,
+          "curve": "inc_boolean",
+          "range_start": 200,
+          "range_end": 0,
+          "evaluate": "timeout_rate + wait_queue"
+        }
+      ],
+      "command": {
+        "name": "Reverted to normal, no action.",
+        "log_format": "{{conditionCommand.Name}}: Timeouts: {{timeout_rate}}  Waiting: {{wait_queue}}  Reset states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Operation"]
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Is database storage degraded?",
+      "info": "There is a problem, maybe the storage is degraded",
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Problem"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "Long Wait Queue",
+          "weight": 1.0,
+          "curve": "inc_smooth",
+          "range_start": 0,
+          "range_end": 500,
+          "evaluate": "wait_queue"
+        }
+      ],
+      "command": {
+        "name": "Attempt to fix degraded storage.",
+        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 0,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+          "Operation.Evaluate"
+        ],
+        "reset_bot_states": []
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Processing Fixed",
+      "info": "The database is processing normally again",
+      "is_disabled": false,
+      "weight": 2.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Evaluate"
+      ],
+      "required_available": "4s",
+      "considerations": [
+        {
+          "name": "Wait Queue over 2000",
+          "weight": 1.0,
+          "curve": "inc_smooth",
+          "range_start": 500,
+          "range_end": 0,
+          "evaluate": "wait_queue"
+        }
+      ],
+      "command": {
+        "name": "Reset Operation to Default State.",
+        "log_format": "{{condition.Name}}.  Reset forward states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
+        "type": 2,
+        "content": "http://localhost:{{appConfig.DemoApiPort}}/fix/database_storage_degraded?name={{bot.Name}}",
+        "success_status": 200,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Operation"]
       }
     }
   ]

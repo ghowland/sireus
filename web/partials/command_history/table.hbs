@@ -7,6 +7,7 @@
             <th><span class="has-tooltip-arrow" data-tooltip="Bots are agents of a Bot Group">Bot</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Log of the command run, hover for Condition name">Command Log</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Time Condition was initiated">Started</span></th>
+            <th><span class="has-tooltip-arrow" data-tooltip="If a command was run, this is the result">Result</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Score of the Condition to make it execute">Score</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Hover the icons for the Bot States, before and after executing command">States</span></th>
         </tr>
@@ -18,7 +19,9 @@
                 <th><span class="has-tooltip-arrow" data-tooltip="Bots are agents of a Bot Group">Bot</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Log of the command run, hover for Condition name">Command Log</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Time Condition was initiated">Started</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="If a command was run, this is the result">Result</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Score of the Condition to make it execute">Score</span></th>
+                <th><span class="has-tooltip-arrow" data-tooltip="Hover the icons for the Bot States, before and after executing command">States</span></th>
             </tr>
             </tfoot>
         {{/if_command_history_length}}
@@ -31,6 +34,7 @@
             <td><a href="bot?bot_id={{command.BotName}}&bot_group_id={{command.BotGroupName}}">{{command.BotName}}</a></td>
             <td><span class="has-tooltip-arrow" data-tooltip="Condition: {{command.ConditionName}}">{{command.CommandLog}}</span></td>
             <td>{{format_time command.Started}}</td>
+            <td>{{format_string_substring command.ResultContent 0 18}}</td>
             <td>{{format_float64 "%0.2f" command.Score}}</td>
             <td><span class="has-tooltip-arrow" data-tooltip="Before: {{format_array_string_csv command.StatesBefore}}"><i class="fa-solid fa-arrow-left"></i></span> <span class="has-tooltip-arrow" data-tooltip="After: {{format_array_string_csv command.StatesAfter}}"><i class="fa-solid fa-arrow-right"></i></span></td>
         </tr>

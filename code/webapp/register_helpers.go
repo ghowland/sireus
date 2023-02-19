@@ -275,6 +275,25 @@ func RegisterHandlebarsHelpers_FormatData() {
 	raymond.RegisterHelper("format_array_string_csv", func(item []string) string {
 		return strings.Join(item, ", ")
 	})
+
+	// Format a substring slice of this string
+	raymond.RegisterHelper("format_string_substring", func(value string, start int, end int) string {
+		if len(value) == 0 {
+			return ""
+		}
+
+		if end >= len(value) {
+			end = len(value)
+		}
+		if start >= end {
+			start = end - 1
+		}
+		if start < 0 {
+			start = 0
+		}
+		return value[start:end]
+	})
+
 }
 
 // Testing Length of Arrays for the different structs

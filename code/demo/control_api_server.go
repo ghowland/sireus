@@ -14,14 +14,19 @@ func RunDemoAPIServer() {
 	app := fiber.New(fiber.Config{})
 
 	// Fixing issues in the demo
-	app.Get("/fix/circuit1", func(c *fiber.Ctx) error {
-		FixCircuit1()
-		return c.SendString("{\"status\": 201}")
-	})
-
-	app.Get("/fix/circuit2", func(c *fiber.Ctx) error {
-		FixCircuit2()
-		return c.SendString("{\"status\": 202}")
+	app.Get("/fix/circuit", func(c *fiber.Ctx) error {
+		name := c.Query("name", "")
+		//log.Printf("Demo API: Fix Circuit: '%s'", name)
+		switch name {
+		case "SFO-WAS-11":
+			FixCircuit2()
+			return c.SendString("{\"status\": 201}")
+		case "SFO-LAS-27":
+			//FixCircuit1()		// Must be fixed manually by the user for the demo
+			return c.SendString("{\"status\": 501}") // Failure
+		default:
+			return c.SendString("{\"status\": 404}") // Failure
+		}
 	})
 
 	app.Get("/fix/database_storage_degraded", func(c *fiber.Ctx) error {

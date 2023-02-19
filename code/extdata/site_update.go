@@ -115,14 +115,15 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 	}
 
 	// Format the CommandLog so we have a rich version
-	logMap := map[string]interface{}{
+	formatMap := map[string]interface{}{
 		"botGroup":         botGroup,
 		"bot":              bot,
 		"condition":        condition,
 		"conditionCommand": condition.Command,
 		"conditionData":    conditionData,
+		"appConfig":        data.SireusData.AppConfig,
 	}
-	commandResult.CommandLog = util.HandlebarFormatData(condition.Command.LogFormat, logMap)
+	commandResult.CommandLog = util.HandlebarFormatData(condition.Command.LogFormat, formatMap)
 
 	// Set the Lock Timers
 	app.SetAllConditionLockTimers(condition, botGroup, condition.Command.LockTimerDuration)
@@ -147,7 +148,18 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 	commandResult.StatesAfter = util.CopyStringSlice(bot.StateValues)
 
 	// Execute command
-	//log.Printf("TODO: Execute command.  And log this condition too.  Bot Group: %s  Bot: %s  Condition: %s", botGroup.Name, bot.Name, condition.Name)
+	//TODO(ghowland): Move this to the Sireus Client, so it can be run in different locations to get different access
+	if condition.Command.Type == 1 || condition.Command.Type == 2 {
+		url := util.HandlebarFormatData(condition.Command.Content, formatMap)
+		body, err := util.HttpGet(url)
+		if util.Check(err) {
+			commandResult.ResultContent = fmt.Sprintf("Error: %s", err.Error())
+			log.Printf(fmt.Sprintf("%s: %s: %s == Error: %s", botGroup.Name, bot.Name, url, err.Error()))
+		} else {
+			commandResult.ResultContent = body
+			log.Printf(fmt.Sprintf("%s: %s: %s == %s", botGroup.Name, bot.Name, url, body))
+		}
+	}
 
 	// Mark our completion time
 	commandResult.Finished = util.GetTimeNow()
