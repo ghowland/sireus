@@ -153,7 +153,7 @@
         }
       ],
       "command": {
-        "name": "Long wait queue.  Set state to Problem.",
+        "name": "Long wait queue.  Set state to Problem",
         "log_format": "{{condition.Name}}: {{wait_queue}}  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
@@ -194,7 +194,7 @@
         }
       ],
       "command": {
-        "name": "Many requesting timing out.",
+        "name": "Many requesting timing out",
         "log_format": "{{conditionCommand.Name}}: {{timeout_rate}}  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
@@ -235,7 +235,7 @@
         }
       ],
       "command": {
-        "name": "Reverted to normal, no action.",
+        "name": "Reverted to normal, no action",
         "log_format": "{{conditionCommand.Name}}: Timeouts: {{timeout_rate}}  Waiting: {{wait_queue}}  Reset states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
         "type": 0,
         "content": "",

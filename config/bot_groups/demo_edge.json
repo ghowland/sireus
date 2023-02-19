@@ -161,7 +161,7 @@
         }
       ],
       "command": {
-        "name": "Link is down.  Set state to Problem.",
+        "name": "Link is down.  Set state to Problem",
         "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",

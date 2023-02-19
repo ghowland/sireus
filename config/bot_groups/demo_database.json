@@ -234,7 +234,7 @@
         }
       ],
       "command": {
-        "name": "Attempt to fix degraded storage.",
+        "name": "Attempt to fix degraded storage",
         "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 2,
         "content": "http://localhost:{{appConfig.DemoApiPort}}/fix/database_storage_degraded?name={{bot.Name}}",
@@ -275,7 +275,7 @@
         }
       ],
       "command": {
-        "name": "Reset Operation to Default State.",
+        "name": "Reset Operation to Default State",
         "log_format": "{{conditionCommand.Name}}.  Reset forward states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
         "type": 0,
         "content": "",
