@@ -37,6 +37,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
 - Scalable to large amounts of tests and commands, with deterministic execution, and inspectable with historical or test data to aid in configuration and adjusting values to better respond to future events.
 - Locking commands per Bot or Bot Group, to stop conflicting commands from running at once, or within a window to verify results of previous commands.
 - Uses the ["Utility AI" or "Utility System" behavior system](https://en.wikipedia.org/wiki/Utility_system), which provides a sophisticated method scoring for N conditions per command, to prioritize execution based on collected Bot information.  Scales to large numbers of commands, allowing for complex reactions in large environments.
+- Limited scope.  A key goal of Sireus is a limited scope, so it remains a focused tool.  The goal is to run commands based on States and Conditions that are met, and then log that and make all the information visible.  There is some depth and complexity, but there is also a natural stopping point where Sireus should never go beyond, so it becomes stable and trustworthy in it's original mission.
 
 
 ## Links
