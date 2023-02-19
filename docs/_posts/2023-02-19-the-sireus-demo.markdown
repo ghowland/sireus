@@ -14,4 +14,4 @@ I'm also (looking for help)[help-wanted] if you have web page, data visualizatio
 
 [sireus]:   https://sireus.cloud/
 [sireus-gh]:   https://github.com/ghowland/sireus
-[help-wanter]:   https://github.com/ghowland/sireus
+[help-wanted]:   https://github.com/ghowland/sireus#help-wanted
