@@ -69,7 +69,6 @@
   ],
   "variables": [
     {
-      "type": 0,
       "name": "wait_queue",
       "format": 11,
       "bot_key": "job",
@@ -83,7 +82,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "timeout_rate",
       "format": 10,
       "bot_key": "job",
@@ -97,7 +95,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "processed",
       "format": 10,
       "bot_key": "job",
@@ -111,7 +108,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "request_problem",
       "format": 0,
       "bot_key": "job",

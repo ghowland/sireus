@@ -133,16 +133,6 @@ type (
 )
 
 type (
-	// This is the raw input data type.  It will still be turned into a float64, but it is best to know the origin type
-	BotVariableType int64
-)
-
-const (
-	Boolean BotVariableType = iota
-	Float
-)
-
-type (
 	// This is for formatting the data we got raw from BotVariableType.  This uses Humanize and other readability funcs
 	BotVariableFormat int64
 )
@@ -162,13 +152,33 @@ const (
 	FormatInteger
 )
 
-// Format the BotVariableType for human readability
-func (bvt BotVariableType) String() string {
+// Format the BotVariableFormat for human readability
+func (bvt BotVariableFormat) String() string {
 	switch bvt {
-	case Boolean:
-		return "Boolean"
-	case Float:
+	case FormatFloat:
 		return "Float"
+	case FormatBool:
+		return "Boolean"
+	case FormatBytes:
+		return "Bytes"
+	case FormatBandwidth:
+		return "Bandwidth"
+	case FormatTime:
+		return "Time"
+	case FormatDuration:
+		return "Duration"
+	case FormatPercent:
+		return "Percent"
+	case FormatOrdinal:
+		return "Ordinal"
+	case FormatComma:
+		return "Comma"
+	case FormatMetricPrefix:
+		return "Metric Prefix"
+	case FormatRequestsPerSecond:
+		return "Requests per Second"
+	case FormatInteger:
+		return "Integer"
 	}
 	return "Unknown"
 }
@@ -191,7 +201,6 @@ type (
 	// If QueryKey is set, only query results that have a value with their Metric Name of QueryKey which matches
 	// QueryKeyValue will be set.
 	BotVariable struct {
-		Type           BotVariableType   `json:"type"`
 		Name           string            `json:"name"`
 		Format         BotVariableFormat `json:"format"`
 		BotKey         string            `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries

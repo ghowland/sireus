@@ -43,7 +43,6 @@
   ],
   "variables": [
     {
-      "type": 0,
       "name": "bot_count",
       "format": 11,
       "bot_key": "bot_group",

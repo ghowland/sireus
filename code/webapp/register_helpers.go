@@ -266,8 +266,8 @@ func RegisterHandlebarsHelpers_FormatData() {
 		return raymond.SafeString(nameId)
 	})
 
-	// Variables
-	raymond.RegisterHelper("format_variable_type", func(item data.BotVariableType) string {
+	// Format the Formatting
+	raymond.RegisterHelper("format_variable_format", func(item data.BotVariableFormat) string {
 		return item.String()
 	})
 

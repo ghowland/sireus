@@ -77,7 +77,6 @@
   ],
   "variables": [
     {
-      "type": 0,
       "name": "demo_app_requests",
       "format": 10,
       "bot_key": "circuit",
@@ -91,7 +90,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "octets_in",
       "format": 3,
       "bot_key": "circuit",
@@ -105,7 +103,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "octets_out",
       "format": 3,
       "bot_key": "circuit",
@@ -119,7 +116,6 @@
       "export": false
     },
     {
-      "type": 0,
       "name": "link_state",
       "format": 1,
       "bot_key": "circuit",
