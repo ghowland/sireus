@@ -27,6 +27,9 @@ func UpdateSiteBotGroups(session *data.InteractiveSession) {
 		//NOTE(ghowland): These can be exported to Prometheus to be used in other apps, as well as Bot.ConditionData
 		UpdateBotsWithSyntheticVariables(session, index)
 
+		// Export Metrics on Variables marked for export
+		ExportMetricsOnVariables(session, index)
+
 		// Update all the ConditionConsiderations for each bot, so we have all the BotConditionData.FinalScore values
 		UpdateBotConditionConsiderations(session, index)
 
@@ -168,7 +171,7 @@ func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGro
 	bot.CommandHistory = append(bot.CommandHistory, commandResult)
 
 	// Increment the Metric Counter, that we executed this Condition's Command
-	app.AddToMetricCounter(app.GetMetricBotKey("execute", botGroup, bot), 1, "A Condition met all the requirements and had the highest score, so was executed", app.GetMetricLabelsAndInfo_Condition(botGroup, bot, condition))
+	app.AddToMetricCounter("sireus_execute_condition", 1, "A Condition met all the requirements and had the highest score, so was executed", app.GetMetricLabelsAndInfo_Condition(botGroup, bot, condition))
 }
 
 // Create formatted variables for all our Bots.  This adds human-readable strings to all the sorted Pair Lists
@@ -192,6 +195,27 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 			session.BotGroups[botGroupIndex].Bots[botIndex].SortedVariableValues[varIndex] = newPair
 		}
 	}
+}
+
+func ExportMetricsOnVariables(session *data.InteractiveSession, botGroupIndex int) {
+	botGroup := &session.BotGroups[botGroupIndex]
+
+	// For all the BotGroup variables that are marked for Export...
+	for _, varData := range botGroup.Variables {
+		if varData.Export {
+			// Export them for every bot that has them
+			for botIndex := range botGroup.Bots {
+				bot := &session.BotGroups[botGroupIndex].Bots[botIndex]
+				value, ok := bot.VariableValues[varData.Name]
+				if !ok {
+					continue
+				}
+
+				app.SetMetricGauge("sireus_variable", value, "A Bot variable marked for exporting, probably synthesized", app.GetMetricLabelsAndInfo_BotVariable(botGroup, bot, varData.Name))
+			}
+		}
+	}
+
 }
 
 // Sort all the Variables by name and Conditions by Final Score

@@ -47,7 +47,7 @@
       "query_type": 0,
       "name": "App Wait Queue",
       "info": "Current waiting requests",
-      "query": "demo_app_req_queue_wait",
+      "query": "demo_req_queue_wait{bot_group=\"App\"}",
       "interval": "5s"
     },
     {
@@ -55,7 +55,7 @@
       "query_type": 0,
       "name": "App Timeouts",
       "info": "Rate of timeouts over time",
-      "query": "irate(demo_app_req_timeout[30s])",
+      "query": "irate(demo_req_timeout{bot_group=\"App\"}[30s])",
       "interval": "5s"
     },
     {
@@ -63,7 +63,7 @@
       "query_type": 0,
       "name": "App Processed",
       "info": "Rate of successful requests over time",
-      "query": "irate(demo_app_req_success[30s])",
+      "query": "irate(demo_req_success{bot_group=\"App\"}[30s])",
       "interval": "5s"
     }
   ],
@@ -71,7 +71,7 @@
     {
       "type": 0,
       "name": "wait_queue",
-      "format": 0,
+      "format": 11,
       "bot_key": "job",
       "query_name": "App Wait Queue",
       "query_key": "",
@@ -85,7 +85,7 @@
     {
       "type": 0,
       "name": "timeout_rate",
-      "format": 0,
+      "format": 10,
       "bot_key": "job",
       "query_name": "App Timeouts",
       "query_key": "",
@@ -99,7 +99,7 @@
     {
       "type": 0,
       "name": "processed",
-      "format": 0,
+      "format": 10,
       "bot_key": "job",
       "query_name": "App Processed",
       "query_key": "",
@@ -109,6 +109,20 @@
       "bool_range_end": 1,
       "bool_invert": false,
       "export": false
+    },
+    {
+      "type": 0,
+      "name": "request_problem",
+      "format": 0,
+      "bot_key": "job",
+      "query_name": "",
+      "query_key": "",
+      "query_key_value": "",
+      "evaluate": "timeout_rate + wait_queue",
+      "bool_range_start": 1,
+      "bool_range_end": 1,
+      "bool_invert": false,
+      "export": true
     }
   ],
   "actions": [

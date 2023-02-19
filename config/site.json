@@ -4,7 +4,8 @@
   "bot_group_paths": [
     "config/bot_groups/demo_edge.json",
     "config/bot_groups/demo_app.json",
-    "config/bot_groups/demo_database.json"
+    "config/bot_groups/demo_database.json",
+    "config/bot_groups/demo_sireus.json"
   ],
   "query_servers": [
     {

@@ -47,7 +47,7 @@
       "query_type": 0,
       "name": "Demo App Requests",
       "info": "Demo-only information, simulation of requests from the Internet, outside the edge",
-      "query": "irate(demo_edge_requests[30s])",
+      "query": "irate(demo_requests[30s])",
       "interval": "5s"
     },
     {
@@ -55,7 +55,7 @@
       "query_type": 0,
       "name": "Edge Octets In",
       "info": "Rate of octet ingress",
-      "query": "irate(demo_edge_if_in_octets[30s])",
+      "query": "irate(demo_if_in_octets{bot_group=\"Edge\"}[30s])",
       "interval": "5s"
     },
     {
@@ -63,7 +63,7 @@
       "query_type": 0,
       "name": "Edge Octets Out",
       "info": "Rate of octet egress",
-      "query": "irate(demo_edge_if_out_octets[30s])",
+      "query": "irate(demo_if_out_octets{bot_group=\"Edge\"}[30s])",
       "interval": "5s"
     },
     {
@@ -71,7 +71,7 @@
       "query_type": 0,
       "name": "Circuit Link State",
       "info": "Is the circuit up or not?",
-      "query": "demo_edge_if_link_state",
+      "query": "demo_if_link_state{bot_group=\"Edge\"}",
       "interval": "5s"
     }
   ],
@@ -79,7 +79,7 @@
     {
       "type": 0,
       "name": "demo_app_requests",
-      "format": 0,
+      "format": 10,
       "bot_key": "circuit",
       "query_name": "Demo App Requests",
       "query_key": "",
@@ -93,7 +93,7 @@
     {
       "type": 0,
       "name": "octets_in",
-      "format": 2,
+      "format": 3,
       "bot_key": "circuit",
       "query_name": "Edge Octets In",
       "query_key": "",
@@ -107,7 +107,7 @@
     {
       "type": 0,
       "name": "octets_out",
-      "format": 2,
+      "format": 3,
       "bot_key": "circuit",
       "query_name": "Edge Octets Out",
       "query_key": "",

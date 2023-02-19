@@ -17,23 +17,29 @@ const (
 var (
 	// App simulation: Wait Queue
 	appWaiting = promauto.NewGauge(prometheus.GaugeOpts{
-		Name:        "demo_app_req_queue_wait",
-		Help:        "The current requests waiting to be processed",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_queue_wait",
+		Help: "The current requests waiting to be processed",
+		ConstLabels: map[string]string{
+			"bot_group": "App",
+		},
 	})
 
 	// App simulation: Timeouts
 	appTimeout = promauto.NewCounter(prometheus.CounterOpts{
-		Name:        "demo_app_req_timeout",
-		Help:        "The total requests that have timed out",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_timeout",
+		Help: "The total requests that have timed out",
+		ConstLabels: map[string]string{
+			"bot_group": "App",
+		},
 	})
 
 	// App simulation: Success
 	appSuccess = promauto.NewCounter(prometheus.CounterOpts{
-		Name:        "demo_app_req_success",
-		Help:        "The total requests that have been processed successfully",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_success",
+		Help: "The total requests that have been processed successfully",
+		ConstLabels: map[string]string{
+			"bot_group": "App",
+		},
 	})
 )
 

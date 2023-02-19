@@ -12,7 +12,7 @@
             <div class="divider">Traffic Control Slider: {{demo_current_request_per_second}} Requests Per Second</div>
         </div>
 
-        <input class="slider is-fullwidth is-info" step="1" min="0" max="4000" value="{{demo_current_request_per_second}}" type="range" id="demo_traffic_control" onchange="RPC('/demo/action', {'action': 'set_edge_traffic', 'value': $(this).val()})">
+        <input class="slider is-fullwidth is-info" step="1" min="0" max="2000" value="{{demo_current_request_per_second}}" type="range" id="demo_traffic_control" onchange="RPC('/demo/action', {'action': 'set_edge_traffic', 'value': $(this).val()})">
 
     </div>
     <div class="columns">

@@ -35,6 +35,10 @@ func FormatBotVariable(format data.BotVariableFormat, value float64) string {
 		} else {
 			return "True"
 		}
+	case data.FormatRequestsPerSecond:
+		return fmt.Sprintf("%.0f/s", value)
+	case data.FormatInteger:
+		return fmt.Sprintf("%.0f", value)
 	default:
 		return fmt.Sprintf("%.2f", value)
 	}

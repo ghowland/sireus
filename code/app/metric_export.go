@@ -10,11 +10,7 @@ import (
 	"strings"
 )
 
-// Get the Metric Key for this Bot
-func GetMetricBotKey(contextInfo string, botGroup *data.BotGroup, bot *data.Bot) string {
-	return CleanMetricKeyString(fmt.Sprintf("bot_%s_%s_%s", contextInfo, botGroup.Name, bot.Name))
-}
-
+// For dynamic metric keys, this will clean them for Prometheus
 func CleanMetricKeyString(key string) string {
 	key = strings.ToLower(key)
 	key = util.StringReplaceUnsafeChars(key, " [](){}=-!@#$%^&*()+<>,./?;:'\"`~", "_")
@@ -24,11 +20,27 @@ func CleanMetricKeyString(key string) string {
 	return key
 }
 
+func IsEqualMapStringString(m1 map[string]string, m2 map[string]string) bool {
+	// Must be the same size maps to be equal
+	if len(m1) != len(m2) {
+		return false
+	}
+
+	for key1, value1 := range m1 {
+		value2, ok := m2[key1]
+		if !ok || value1 != value2 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Get an existing Metric Counter
-func GetMetricGauge(key string) (*data.PrometheusMetricGauge, error) {
+func GetMetricGauge(key string, labels map[string]string) (*data.PrometheusMetricGauge, error) {
 	for index := range data.SireusData.MetricExport.Gauges {
 		metric := &data.SireusData.MetricExport.Gauges[index]
-		if metric.Key == key {
+		if metric.Key == key && IsEqualMapStringString(metric.Labels, labels) {
 			return metric, nil
 		}
 	}
@@ -36,10 +48,10 @@ func GetMetricGauge(key string) (*data.PrometheusMetricGauge, error) {
 }
 
 // Get an existing Metric Counter
-func GetMetricCounter(key string) (*data.PrometheusMetricCounter, error) {
-	for index := range data.SireusData.MetricExport.Gauges {
+func GetMetricCounter(key string, labels map[string]string) (*data.PrometheusMetricCounter, error) {
+	for index := range data.SireusData.MetricExport.Counters {
 		metric := &data.SireusData.MetricExport.Counters[index]
-		if metric.Key == key {
+		if metric.Key == key && IsEqualMapStringString(metric.Labels, labels) {
 			return metric, nil
 		}
 	}
@@ -48,10 +60,11 @@ func GetMetricCounter(key string) (*data.PrometheusMetricCounter, error) {
 
 // Set a Metric Gauge, and create it if it doesn/t already exist
 func SetMetricGauge(key string, value float64, info string, labels map[string]string) {
-	gauge, err := GetMetricGauge(key)
+	gauge, err := GetMetricGauge(key, labels)
 	if util.Check(err) {
 		gauge = &data.PrometheusMetricGauge{
-			Key: key,
+			Key:    key,
+			Labels: labels,
 			Metric: promauto.NewGauge(prometheus.GaugeOpts{
 				Name:        key,
 				Help:        info,
@@ -67,10 +80,11 @@ func SetMetricGauge(key string, value float64, info string, labels map[string]st
 
 // Set a Metric Counter, and create it if it doesn/t already exist
 func AddToMetricCounter(key string, value float64, info string, labels map[string]string) {
-	counter, err := GetMetricCounter(key)
+	counter, err := GetMetricCounter(key, labels)
 	if util.Check(err) {
 		counter = &data.PrometheusMetricCounter{
-			Key: key,
+			Key:    key,
+			Labels: labels,
 			Metric: promauto.NewCounter(prometheus.CounterOpts{
 				Name:        key,
 				Help:        info,
@@ -101,6 +115,7 @@ func GetMetricLabelsAndInfo_Condition(botGroup *data.BotGroup, bot *data.Bot, co
 		"bot":       bot.Name,
 		"bot_group": botGroup.Name,
 		"condition": condition.Name,
+		"states":    util.PrintStringArrayCSV(condition.RequiredStates),
 	}
 	return labels
 }

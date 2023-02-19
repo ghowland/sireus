@@ -6,14 +6,16 @@ import (
 
 // Dynamically creates Guage metric exporters
 type PrometheusMetricGauge struct {
-	Key    string           // String to look up this metric
-	Metric prometheus.Gauge // This is what we export with, created with ConstLabels at start, which cant change
+	Key    string            // String to look up this metric
+	Metric prometheus.Gauge  // This is what we export with, created with ConstLabels at start, which cant change
+	Labels map[string]string // Labels, so we can match this on them later.  Prometheus hides these
 }
 
 // Dynamically creates Counter metric exporters
 type PrometheusMetricCounter struct {
 	Key    string             // String to look up this metric
 	Metric prometheus.Counter // This is what we export with, created with ConstLabels at start, which cant change
+	Labels map[string]string  // Labels, so we can match this on them later.  Prometheus hides these
 }
 
 // Managed the dynamically created Gauges and Counters

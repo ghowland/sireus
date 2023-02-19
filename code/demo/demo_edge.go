@@ -23,64 +23,71 @@ const (
 var (
 	// Demo only data, simulation of Internet requests.  Wouldn't normally be in edge data, but putting it here for demo
 	edgeRequests = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "demo_edge_requests",
+		Name: "demo_requests",
 		Help: "The total number of requests sent on the Internet to this service.  This is demo info, not simulation.",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-LAS-27",
+			"bot_group": "Edge",
+			"circuit":   "SFO-LAS-27",
 		},
 	})
 
 	// Circuit 1: SFO-LAS-27: Octets In
 	edgeDataIn1 = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "demo_edge_if_in_octets",
+		Name: "demo_if_in_octets",
 		Help: "The total number of bytes received",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-LAS-27",
+			"bot_group": "Edge",
+			"circuit":   "SFO-LAS-27",
 		},
 	})
 
 	// Circuit 1: SFO-LAS-27: Octets Out
 	edgeDataOut1 = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "demo_edge_if_out_octets",
+		Name: "demo_if_out_octets",
 		Help: "The total number of bytes sent",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-LAS-27",
+			"bot_group": "Edge",
+			"circuit":   "SFO-LAS-27",
 		},
 	})
 
 	// Circuit 1: SFO-LAS-27: Link State
 	edgeLinkState1 = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "demo_edge_if_link_state",
+		Name: "demo_if_link_state",
 		Help: "The link state of this connection",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-LAS-27",
+			"bot_group": "Edge",
+			"circuit":   "SFO-LAS-27",
 		},
 	})
 
 	// Circuit 2: SFO-LAS-27: Octets In
 	edgeDataIn2 = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "demo_edge_if_in_octets",
+		Name: "demo_if_in_octets",
 		Help: "The total number of bytes received",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-WAS-11",
+			"bot_group": "Edge",
+			"circuit":   "SFO-WAS-11",
 		},
 	})
 
 	// Circuit 2: SFO-LAS-27: Octets Out
 	edgeDataOut2 = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "demo_edge_if_out_octets",
+		Name: "demo_if_out_octets",
 		Help: "The total number of bytes sent",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-WAS-11",
+			"bot_group": "Edge",
+			"circuit":   "SFO-WAS-11",
 		},
 	})
 
 	// Circuit 2: SFO-LAS-27: Link State
 	edgeLinkState2 = promauto.NewGauge(prometheus.GaugeOpts{
-		Name: "demo_edge_if_link_state",
+		Name: "demo_if_link_state",
 		Help: "The link state of this connection",
 		ConstLabels: map[string]string{
-			"circuit": "SFO-WAS-11",
+			"bot_group": "Edge",
+			"circuit":   "SFO-WAS-11",
 		},
 	})
 )

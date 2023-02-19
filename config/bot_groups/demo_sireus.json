@@ -1,21 +1,11 @@
 {
-  "name": "Database",
-  "info": "Example Database, to simulate requests that can back up and timeout if in a degraded state or too much traffic",
+  "name": "Sireus in Sireus",
+  "info": "Import data from Prometheus that we exported, so we can monitor and execute commands on ourself",
   "states": [
     {
-      "name": "Operation",
-      "info": "Basic operational states, to group Actions",
-      "labels": ["Default", "Problem", "Evaluate", "Escalate", "EscalateWait"]
-    },
-    {
-      "name": "Traffic",
-      "info": "What does our traffic situation look like?",
-      "labels": ["Default", "High", "Low", "None"]
-    },
-    {
-      "name": "Attack Risk",
-      "info": "What is the likelihood we are under attack now?",
-      "labels": ["Default", "Low", "High", "Critical"]
+      "name": "In Use",
+      "info": "Is there at least 1 user using the demo?",
+      "labels": ["Default", "In Use", "Abandoned"]
     }
   ],
   "lock_timers": [
@@ -35,19 +25,19 @@
   "bot_remove_store_duration": "24h",
   "refuse_bot_resumption": false,
   "action_threshold": 0.5,
-  "journal_rollup_states": ["Operation.Problem", "Operation.Evaluate", "Operation.Escalate", "Operation.EscalateWait"],
+  "journal_rollup_states": [],
   "journal_rollup_duration": "30m",
   "bot_extractor": {
-    "query_name": "Database Wait Queue",
+    "query_name": "Sireus Bot Execute Condition",
     "key": "job"
   },
   "queries": [
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Database Wait Queue",
+      "name": "Sireus Bot Execute Condition",
       "info": "Current waiting requests",
-      "query": "demo_req_queue_wait{bot_group=\"Database\"}",
+      "query": "bot_execute_app_sireus",
       "interval": "5s"
     },
     {
@@ -55,7 +45,7 @@
       "query_type": 0,
       "name": "Database Timeouts",
       "info": "Rate of timeouts over time",
-      "query": "irate(demo_req_timeout{bot_group=\"Database\"}[30s])",
+      "query": "irate(demo_database_req_timeout[30s])",
       "interval": "5s"
     },
     {
@@ -63,7 +53,7 @@
       "query_type": 0,
       "name": "Database Processed",
       "info": "Rate of successful requests over time",
-      "query": "irate(demo_req_success{bot_group=\"Database\"}[30s])",
+      "query": "irate(demo_database_req_success[30s])",
       "interval": "5s"
     }
   ],

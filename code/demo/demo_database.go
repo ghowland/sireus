@@ -20,23 +20,29 @@ const (
 var (
 	// Database simulation: Wait Queue
 	databaseWaiting = promauto.NewGauge(prometheus.GaugeOpts{
-		Name:        "demo_database_req_queue_wait",
-		Help:        "The current requests waiting to be processed",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_queue_wait",
+		Help: "The current requests waiting to be processed",
+		ConstLabels: map[string]string{
+			"bot_group": "Database",
+		},
 	})
 
 	// Database simulation: Timeouts
 	databaseTimeout = promauto.NewCounter(prometheus.CounterOpts{
-		Name:        "demo_database_req_timeout",
-		Help:        "The total requests that have timed out",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_timeout",
+		Help: "The total requests that have timed out",
+		ConstLabels: map[string]string{
+			"bot_group": "Database",
+		},
 	})
 
 	// Database simulation: Requests Successful
 	databaseSuccess = promauto.NewCounter(prometheus.CounterOpts{
-		Name:        "demo_database_req_success",
-		Help:        "The total requests that have been processed successfully",
-		ConstLabels: map[string]string{},
+		Name: "demo_req_success",
+		Help: "The total requests that have been processed successfully",
+		ConstLabels: map[string]string{
+			"bot_group": "Database",
+		},
 	})
 )
 

@@ -158,6 +158,8 @@ const (
 	FormatOrdinal
 	FormatComma
 	FormatMetricPrefix
+	FormatRequestsPerSecond
+	FormatInteger
 )
 
 // Format the BotVariableType for human readability
