@@ -4,7 +4,6 @@
         <thead>
         <tr>
             <th><span class="has-tooltip-arrow" data-tooltip="Bot name, extracted from Metric metadata">Name</span></th>
-            <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
             <th><span class="has-tooltip-arrow" data-tooltip="Active States">States</span></th>
         </tr>
         </thead>
@@ -12,7 +11,6 @@
             <tfoot>
             <tr>
                 <th><span class="has-tooltip-arrow" data-tooltip="Bot name, extracted from Metric metadata">Name</span></th>
-                <th><span class="has-tooltip-arrow" data-tooltip="Description">Info</span></th>
                 <th><span class="has-tooltip-arrow" data-tooltip="Active States">States</span></th>
             </tr>
             </tfoot>
@@ -24,7 +22,6 @@
 
             <tr>
                 <th><a href="/bot?bot_id={{bot.Name}}&bot_group_id={{botGroup.Name}}">{{bot.Name}}</a></th>
-                <td>{{bot.Info}}</td>
                 <td>{{format_array_string_csv bot.StateValues}}</td>
             </tr>
 

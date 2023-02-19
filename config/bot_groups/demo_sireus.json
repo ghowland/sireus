@@ -28,42 +28,26 @@
   "journal_rollup_states": [],
   "journal_rollup_duration": "30m",
   "bot_extractor": {
-    "query_name": "Sireus Bot Execute Condition",
-    "key": "job"
+    "query_name": "Sireus Bot Group Counts",
+    "key": "bot_group"
   },
   "queries": [
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Sireus Bot Execute Condition",
-      "info": "Current waiting requests",
-      "query": "bot_execute_app_sireus",
-      "interval": "5s"
-    },
-    {
-      "query_server": "prometheus_primary",
-      "query_type": 0,
-      "name": "Database Timeouts",
-      "info": "Rate of timeouts over time",
-      "query": "irate(demo_database_req_timeout[30s])",
-      "interval": "5s"
-    },
-    {
-      "query_server": "prometheus_primary",
-      "query_type": 0,
-      "name": "Database Processed",
-      "info": "Rate of successful requests over time",
-      "query": "irate(demo_database_req_success[30s])",
+      "name": "Sireus Bot Group Counts",
+      "info": "How many Bots are in each Bot Group in Sireus?",
+      "query": "sum(sireus_bot_exists) by (bot_group)",
       "interval": "5s"
     }
   ],
   "variables": [
     {
       "type": 0,
-      "name": "wait_queue",
+      "name": "bot_count",
       "format": 11,
-      "bot_key": "job",
-      "query_name": "Database Wait Queue",
+      "bot_key": "bot_group",
+      "query_name": "Sireus Bot Group Counts",
       "query_key": "",
       "query_key_value": "",
       "evaluate": "",
@@ -71,293 +55,8 @@
       "bool_range_end": 1,
       "bool_invert": false,
       "export": false
-    },
-    {
-      "type": 0,
-      "name": "timeout_rate",
-      "format": 10,
-      "bot_key": "job",
-      "query_name": "Database Timeouts",
-      "query_key": "",
-      "query_key_value": "",
-      "evaluate": "",
-      "bool_range_start": 1,
-      "bool_range_end": 1,
-      "bool_invert": false,
-      "export": false
-    },
-    {
-      "type": 0,
-      "name": "processed",
-      "format": 10,
-      "bot_key": "job",
-      "query_name": "Database Processed",
-      "query_key": "",
-      "query_key_value": "",
-      "evaluate": "",
-      "bool_range_start": 1,
-      "bool_range_end": 1,
-      "bool_invert": false,
-      "export": false
-    },
-    {
-      "type": 0,
-      "name": "request_problem",
-      "format": 0,
-      "bot_key": "job",
-      "query_name": "",
-      "query_key": "",
-      "query_key_value": "",
-      "evaluate": "timeout_rate + wait_queue",
-      "bool_range_start": 1,
-      "bool_range_end": 1,
-      "bool_invert": false,
-      "export": true
     }
   ],
   "actions": [
-    {
-      "is_launched": true,
-      "name": "Long Wait Queue",
-      "info": "The wait queue is long and indicates a problem",
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Default"
-      ],
-      "required_available": "4s",
-      "considerations": [
-        {
-          "name": "Long Wait Queue",
-          "weight": 1.0,
-          "curve": "inc_smooth",
-          "range_start": 0,
-          "range_end": 500,
-          "evaluate": "wait_queue"
-        }
-      ],
-      "command": {
-        "name": "Long wait queue.  Set state to Problem.",
-        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
-        "type": 0,
-        "content": "",
-        "success_status": 0,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-          "Operation.Problem"
-        ],
-        "reset_bot_states": []
-      }
-    },
-    {
-      "is_launched": true,
-      "name": "Normal Operation",
-      "info": "Things are back to normal",
-      "is_disabled": false,
-      "weight": 5.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Problem"
-      ],
-      "required_available": "4s",
-      "considerations": [
-        {
-          "name": "Timeout Rate over 100",
-          "weight": 1.0,
-          "curve": "inc_boolean",
-          "range_start": 200,
-          "range_end": 0,
-          "evaluate": "timeout_rate + wait_queue"
-        }
-      ],
-      "command": {
-        "name": "Reverted to normal, no action.",
-        "log_format": "{{conditionCommand.Name}}: Timeouts: {{timeout_rate}}  Waiting: {{wait_queue}}  Reset states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
-        "type": 0,
-        "content": "",
-        "success_status": 0,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-        ],
-        "reset_bot_states": ["Operation"]
-      }
-    },
-    {
-      "is_launched": true,
-      "name": "Is database storage degraded?",
-      "info": "There is a problem, maybe the storage is degraded",
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Problem"
-      ],
-      "required_available": "4s",
-      "considerations": [
-        {
-          "name": "Long Wait Queue",
-          "weight": 1.0,
-          "curve": "inc_smooth",
-          "range_start": 0,
-          "range_end": 500,
-          "evaluate": "wait_queue"
-        }
-      ],
-      "command": {
-        "name": "Attempt to fix degraded storage.",
-        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
-        "type": 2,
-        "content": "http://localhost:{{appConfig.DemoApiPort}}/fix/database_storage_degraded?name={{bot.Name}}",
-        "success_status": 200,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-          "Operation.Evaluate"
-        ],
-        "reset_bot_states": []
-      }
-    },
-    {
-      "is_launched": true,
-      "name": "Processing Fixed",
-      "info": "The database is processing normally again",
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Evaluate"
-      ],
-      "required_available": "4s",
-      "considerations": [
-        {
-          "name": "Wait Queue over 2000",
-          "weight": 1.0,
-          "curve": "inc_smooth",
-          "range_start": 500,
-          "range_end": 0,
-          "evaluate": "wait_queue"
-        }
-      ],
-      "command": {
-        "name": "Reset Operation to Default State.",
-        "log_format": "{{conditionCommand.Name}}.  Reset forward states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
-        "type": 0,
-        "content": "",
-        "success_status": 200,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-        ],
-        "reset_bot_states": ["Operation"]
-      }
-    },
-    {
-      "is_launched": true,
-      "name": "Processing Bad After Fix Attempt",
-      "info": "We tried to fix it, but it didn't improve",
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Evaluate"
-      ],
-      "required_available": "10s",
-      "considerations": [
-        {
-          "name": "Always True after 10s",
-          "weight": 1.0,
-          "curve": "inc_boolean",
-          "range_start": 0,
-          "range_end": 1,
-          "evaluate": "1"
-        }
-      ],
-      "command": {
-        "name": "Escalate to On-Call",
-        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
-        "type": 0,
-        "content": "",
-        "success_status": 0,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-          "Operation.Escalate"
-        ],
-        "reset_bot_states": []
-      }
-    },
-    {
-      "is_launched": true,
-      "name": "Waiting for On-Call",
-      "info": "Escalated and waiting for on-call to fix the problem",
-      "is_disabled": false,
-      "weight": 2.0,
-      "weight_min": 0.5,
-      "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
-      "required_lock_timers": [
-        "Single Bot Lock"
-      ],
-      "required_states": [
-        "Operation.Escalate"
-      ],
-      "required_available": "10s",
-      "considerations": [
-        {
-          "name": "Always True after 10s",
-          "weight": 1.0,
-          "curve": "inc_boolean",
-          "range_start": 0,
-          "range_end": 1,
-          "evaluate": "1"
-        }
-      ],
-      "command": {
-        "name": "Waited 10s for On-Call, Reset State and Try Again",
-        "log_format": "{{conditionCommand.Name}}.  Reset forward states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
-        "type": 0,
-        "content": "",
-        "success_status": 0,
-        "success_content": "",
-        "lock_timer_duration": "1s",
-        "host_exec_key": "",
-        "set_bot_states": [
-        ],
-        "reset_bot_states": ["Operation"]
-      }
-    }
   ]
 }

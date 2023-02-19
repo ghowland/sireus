@@ -471,6 +471,9 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 			// Add it into the botGroup slice
 			session.BotGroups[botGroupIndex].Bots = append(session.BotGroups[botGroupIndex].Bots, botNew)
 		}
+
+		// Export that this bot exists, so we can track when they come and go
+		app.SetMetricGauge("sireus_bot_exists", 1, "As long as Sireus sees this bot in the metrics, it will set this to 1, can verify Sireus could see this information", app.GetMetricLabelsAndInfo_Bot(&session.BotGroups[botGroupIndex], &botNew))
 	}
 }
 
