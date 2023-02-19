@@ -294,6 +294,29 @@ func RegisterHandlebarsHelpers_FormatData() {
 		return value[start:end]
 	})
 
+	// Formats a config file, so we can show it to the user.  Comes our from HTML Handlebars
+	raymond.RegisterHelper("format_config_file", func(path string) string {
+		// Don't allow pathing operations
+		if strings.HasPrefix(path, ".") {
+			return fmt.Sprintf("Forbidden: %s", path)
+		} else if strings.HasPrefix(path, "/") {
+			return fmt.Sprintf("Forbidden: %s", path)
+		} else if strings.HasPrefix(path, "~") {
+			return fmt.Sprintf("Forbidden: %s", path)
+		}
+
+		// Don't allow backtracking or any modification of path, or looking for "hidden files"
+		if strings.Contains(path, "/.") {
+			return fmt.Sprintf("Forbidden: %s", path)
+		}
+
+		content, err := util.FileLoad(path)
+		if util.Check(err) {
+			return fmt.Sprintf("Missing path: %s", path)
+		}
+		return content
+	})
+
 }
 
 // Testing Length of Arrays for the different structs

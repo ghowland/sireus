@@ -1,34 +1,39 @@
 <section class="section">
 {{> 'partials/breadcrumbs_common' }}
     <h1 class="title is-1">
-        Show Config
+        Show JSON Configs
     </h1>
     <p class="subtitle">
-        Prints the JSON config for this server
+        Shows the JSON configs for this server configuration
     </p>
 
     <div class="block">
         <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-users"></i> Interactive Sessions</h1>
+            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-server"></i> Sireus Config: config.json</h1>
 
-            {{> 'partials/interactive/table_session' }}
+            <code class="is-family-code" style="white-space: pre ; display: block;">{{{format_config_file "config/config.json"}}}</code>
+
         </div>
     </div>
 
     <div class="block">
         <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-database"></i> Query Cache</h1>
+            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-sitemap"></i> Site Config: site.json</h1>
 
-            {{> 'partials/query/table_site_query_result_cache_pool_item' }}
+            <code class="is-family-code" style="white-space: pre ; display: block;">{{{format_config_file "config/site.json"}}}</code>
+
         </div>
     </div>
 
-    <div class="block">
-        <div class="box">
-            <h1 class="title is-3 has-text-info"><i class="fa-solid fa-lock"></i> Query Request Locks</h1>
+    {{#each site.BotGroupPaths as |path|}}
+        <div class="block">
+            <div class="box">
+                <h1 class="title is-3 has-text-info"><i class="fa-solid fa-robot"></i> Bot Group: {{path}}</h1>
 
-            {{> 'partials/query/table_site_query_result_lock' }}
+                <code class="is-family-code" style="white-space: pre ; display: block;">{{{format_config_file path}}}</code>
+
+            </div>
         </div>
-    </div>
+    {{/each}}
 
 </section>

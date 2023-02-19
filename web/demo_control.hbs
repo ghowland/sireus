@@ -60,7 +60,7 @@
     <div class="block">
         <div class="box">
             <div class="content">
-                {{#with_command_history_all_latest session 15 as |commandHistory|}}
+                {{#with_command_history_all_latest session 10 as |commandHistory|}}
                     {{> 'partials/command_history/table' }}
                 {{/with_command_history_all_latest}}
             </div>

@@ -27,7 +27,6 @@ var (
 		Help: "The total number of requests sent on the Internet to this service.  This is demo info, not simulation.",
 		ConstLabels: map[string]string{
 			"bot_group": "Edge",
-			"circuit":   "SFO-LAS-27",
 		},
 	})
 
