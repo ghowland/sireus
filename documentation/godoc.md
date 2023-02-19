@@ -44,9 +44,8 @@ import "github.com/ghowland/sireus/code/app"
 - [func GetCurveValue(curveData CurveData, x float64) float64](<#func-getcurvevalue>)
 - [func GetInteractiveSession(interactiveControl data.InteractiveControl, site *data.Site) data.InteractiveSession](<#func-getinteractivesession>)
 - [func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockTimer, error)](<#func-getlocktimer>)
-- [func GetMetricBotKey(contextInfo string, botGroup *data.BotGroup, bot *data.Bot) string](<#func-getmetricbotkey>)
-- [func GetMetricCounter(key string) (*data.PrometheusMetricCounter, error)](<#func-getmetriccounter>)
-- [func GetMetricGauge(key string) (*data.PrometheusMetricGauge, error)](<#func-getmetricgauge>)
+- [func GetMetricCounter(key string, labels map[string]string) (*data.PrometheusMetricCounter, error)](<#func-getmetriccounter>)
+- [func GetMetricGauge(key string, labels map[string]string) (*data.PrometheusMetricGauge, error)](<#func-getmetricgauge>)
 - [func GetMetricLabelsAndInfo_Bot(botGroup *data.BotGroup, bot *data.Bot) map[string]string](<#func-getmetriclabelsandinfo_bot>)
 - [func GetMetricLabelsAndInfo_BotVariable(botGroup *data.BotGroup, bot *data.Bot, varName string) map[string]string](<#func-getmetriclabelsandinfo_botvariable>)
 - [func GetMetricLabelsAndInfo_Condition(botGroup *data.BotGroup, bot *data.Bot, condition data.Condition) map[string]string](<#func-getmetriclabelsandinfo_condition>)
@@ -57,6 +56,7 @@ import "github.com/ghowland/sireus/code/app"
 - [func GetRawMetricsJSON(c *fiber.Ctx) string](<#func-getrawmetricsjson>)
 - [func GetStateIndex(botGroup *data.BotGroup, state string) (int, error)](<#func-getstateindex>)
 - [func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, error)](<#func-getvariable>)
+- [func IsEqualMapStringString(m1 map[string]string, m2 map[string]string) bool](<#func-isequalmapstringstring>)
 - [func LoadBotGroupConfig(path string) data.BotGroup](<#func-loadbotgroupconfig>)
 - [func LoadConfig(path string) data.AppConfig](<#func-loadconfig>)
 - [func LoadSiteConfig(appConfig data.AppConfig) data.Site](<#func-loadsiteconfig>)
@@ -79,7 +79,7 @@ var (
 )
 ```
 
-## func [AddToMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L69>)
+## func [AddToMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L82>)
 
 ```go
 func AddToMetricCounter(key string, value float64, info string, labels map[string]string)
@@ -127,11 +127,13 @@ func CalculateScore(action data.Condition, actionData data.BotConditionData) (fl
 
 Calculate the Utility Score for a given Condition using a Bots BotConditionData
 
-## func [CleanMetricKeyString](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L18>)
+## func [CleanMetricKeyString](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L14>)
 
 ```go
 func CleanMetricKeyString(key string) string
 ```
+
+For dynamic metric keys, this will clean them for Prometheus
 
 ## func [FormatBotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/format_human.go#L12>)
 
@@ -271,31 +273,23 @@ func GetLockTimer(botGroup *data.BotGroup, lockTimerName string) (*data.BotLockT
 
 Get a BotLockTimer from the BotGroup
 
-## func [GetMetricBotKey](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L14>)
+## func [GetMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L51>)
 
 ```go
-func GetMetricBotKey(contextInfo string, botGroup *data.BotGroup, bot *data.Bot) string
-```
-
-Get the Metric Key for this Bot
-
-## func [GetMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L39>)
-
-```go
-func GetMetricCounter(key string) (*data.PrometheusMetricCounter, error)
+func GetMetricCounter(key string, labels map[string]string) (*data.PrometheusMetricCounter, error)
 ```
 
 Get an existing Metric Counter
 
-## func [GetMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L28>)
+## func [GetMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L40>)
 
 ```go
-func GetMetricGauge(key string) (*data.PrometheusMetricGauge, error)
+func GetMetricGauge(key string, labels map[string]string) (*data.PrometheusMetricGauge, error)
 ```
 
 Get an existing Metric Counter
 
-## func [GetMetricLabelsAndInfo\_Bot](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L88>)
+## func [GetMetricLabelsAndInfo\_Bot](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L102>)
 
 ```go
 func GetMetricLabelsAndInfo_Bot(botGroup *data.BotGroup, bot *data.Bot) map[string]string
@@ -303,7 +297,7 @@ func GetMetricLabelsAndInfo_Bot(botGroup *data.BotGroup, bot *data.Bot) map[stri
 
 Returns the map used for Labels in a Metric, for a Bot
 
-## func [GetMetricLabelsAndInfo\_BotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L109>)
+## func [GetMetricLabelsAndInfo\_BotVariable](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L124>)
 
 ```go
 func GetMetricLabelsAndInfo_BotVariable(botGroup *data.BotGroup, bot *data.Bot, varName string) map[string]string
@@ -311,7 +305,7 @@ func GetMetricLabelsAndInfo_BotVariable(botGroup *data.BotGroup, bot *data.Bot, 
 
 Returns the map used for Labels in a Metric, for a Bot's Variable
 
-## func [GetMetricLabelsAndInfo\_Condition](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L98>)
+## func [GetMetricLabelsAndInfo\_Condition](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L112>)
 
 ```go
 func GetMetricLabelsAndInfo_Condition(botGroup *data.BotGroup, bot *data.Bot, condition data.Condition) map[string]string
@@ -371,6 +365,12 @@ func GetVariable(botGroup *data.BotGroup, varName string) (data.BotVariable, err
 
 Get a Variable defintion from BotGroup, by name.  Not the Variable Value, which is stored in Bot.
 
+## func [IsEqualMapStringString](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L23>)
+
+```go
+func IsEqualMapStringString(m1 map[string]string, m2 map[string]string) bool
+```
+
 ## func [LoadBotGroupConfig](<https://github.com/ghowland/sireus/blob/main/code/app/bot_group.go#L18>)
 
 ```go
@@ -423,7 +423,7 @@ When executing a Condition, we want to update the Bots States, to move it forwar
 func SetLockTimer(botGroup *data.BotGroup, lockTimerName string, duration data.Duration)
 ```
 
-## func [SetMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L50>)
+## func [SetMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/app/metric_export.go#L62>)
 
 ```go
 func SetMetricGauge(key string, value float64, info string, labels map[string]string)
@@ -488,8 +488,7 @@ import "github.com/ghowland/sireus/code/data"
   - [func (bqt BotQueryType) String() string](<#func-botquerytype-string>)
 - [type BotVariable](<#type-botvariable>)
 - [type BotVariableFormat](<#type-botvariableformat>)
-- [type BotVariableType](<#type-botvariabletype>)
-  - [func (bvt BotVariableType) String() string](<#func-botvariabletype-string>)
+  - [func (bvt BotVariableFormat) String() string](<#func-botvariableformat-string>)
 - [type Condition](<#type-condition>)
 - [type ConditionCommand](<#type-conditioncommand>)
 - [type ConditionCommandResult](<#type-conditioncommandresult>)
@@ -759,7 +758,7 @@ func (bqt BotQueryType) String() string
 
 Format the BotQueryType to a string usable for building the request
 
-## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L191-L204>)
+## type [BotVariable](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L203-L215>)
 
 BotVariable is what is used for the ConditionConsideration scoring process.
 
@@ -777,7 +776,6 @@ If QueryKey is set, only query results that have a value with their Metric Name 
 
 ```go
 type BotVariable struct {
-    Type           BotVariableType   `json:"type"`
     Name           string            `json:"name"`
     Format         BotVariableFormat `json:"format"`
     BotKey         string            `json:"bot_key"` // Determines which Metric matches a Bot, may change between queries
@@ -792,7 +790,7 @@ type BotVariable struct {
 }
 ```
 
-## type [BotVariableFormat](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L147>)
+## type [BotVariableFormat](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L137>)
 
 This is for formatting the data we got raw from BotVariableType.  This uses Humanize and other readability funcs
 
@@ -812,31 +810,18 @@ const (
     FormatOrdinal
     FormatComma
     FormatMetricPrefix
+    FormatRequestsPerSecond
+    FormatInteger
 )
 ```
 
-## type [BotVariableType](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L137>)
-
-This is the raw input data type.  It will still be turned into a float64, but it is best to know the origin type
+### func \(BotVariableFormat\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L156>)
 
 ```go
-type BotVariableType int64
+func (bvt BotVariableFormat) String() string
 ```
 
-```go
-const (
-    Boolean BotVariableType = iota
-    Float
-)
-```
-
-### func \(BotVariableType\) [String](<https://github.com/ghowland/sireus/blob/main/code/data/bot_group_data.go#L164>)
-
-```go
-func (bvt BotVariableType) String() string
-```
-
-Format the BotVariableType for human readability
+Format the BotVariableFormat for human readability
 
 ## type [Condition](<https://github.com/ghowland/sireus/blob/main/code/data/condition_data.go#L7-L21>)
 
@@ -1134,7 +1119,7 @@ func (p PairFloat64List) Less(i, j int) bool
 func (p PairFloat64List) Swap(i, j int)
 ```
 
-## type [PrometheusExportData](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L20-L23>)
+## type [PrometheusExportData](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L22-L25>)
 
 Managed the dynamically created Gauges and Counters
 
@@ -1145,7 +1130,7 @@ type PrometheusExportData struct {
 }
 ```
 
-## type [PrometheusMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L14-L17>)
+## type [PrometheusMetricCounter](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L15-L19>)
 
 Dynamically creates Counter metric exporters
 
@@ -1153,17 +1138,19 @@ Dynamically creates Counter metric exporters
 type PrometheusMetricCounter struct {
     Key    string             // String to look up this metric
     Metric prometheus.Counter // This is what we export with, created with ConstLabels at start, which cant change
+    Labels map[string]string  // Labels, so we can match this on them later.  Prometheus hides these
 }
 ```
 
-## type [PrometheusMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L8-L11>)
+## type [PrometheusMetricGauge](<https://github.com/ghowland/sireus/blob/main/code/data/metric_export_data.go#L8-L12>)
 
 Dynamically creates Guage metric exporters
 
 ```go
 type PrometheusMetricGauge struct {
-    Key    string           // String to look up this metric
-    Metric prometheus.Gauge // This is what we export with, created with ConstLabels at start, which cant change
+    Key    string            // String to look up this metric
+    Metric prometheus.Gauge  // This is what we export with, created with ConstLabels at start, which cant change
+    Labels map[string]string // Labels, so we can match this on them later.  Prometheus hides these
 }
 ```
 
@@ -1422,7 +1409,7 @@ var (
 )
 ```
 
-## func [AddDatabaseRequests](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L126>)
+## func [AddDatabaseRequests](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L132>)
 
 ```go
 func AddDatabaseRequests(requests int)
@@ -1430,7 +1417,7 @@ func AddDatabaseRequests(requests int)
 
 Receive demo requests from the App server
 
-## func [BreakCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L196>)
+## func [BreakCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L202>)
 
 ```go
 func BreakCircuit1() string
@@ -1438,7 +1425,7 @@ func BreakCircuit1() string
 
 Break Circuit 1, setting it to the down state
 
-## func [BreakCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L215>)
+## func [BreakCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L221>)
 
 ```go
 func BreakCircuit2() string
@@ -1446,7 +1433,7 @@ func BreakCircuit2() string
 
 Break Circuit 2, setting it to the down state
 
-## func [BreakStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L140>)
+## func [BreakStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L146>)
 
 ```go
 func BreakStorageDegraded() string
@@ -1478,7 +1465,7 @@ func DemoFixBot(botGroupName string, botName string) string
 
 Fix the problems in the Demo, which will cause the metrics to be updated and Sireus will respond
 
-## func [FixCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L178>)
+## func [FixCircuit1](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L184>)
 
 ```go
 func FixCircuit1()
@@ -1486,7 +1473,7 @@ func FixCircuit1()
 
 Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
 
-## func [FixCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L187>)
+## func [FixCircuit2](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L193>)
 
 ```go
 func FixCircuit2()
@@ -1494,7 +1481,7 @@ func FixCircuit2()
 
 Dont delay, as would be normal, just immediately bring the circuit up to make the interactive demo move faster
 
-## func [FixStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L131>)
+## func [FixStorageDegraded](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L137>)
 
 ```go
 func FixStorageDegraded() bool
@@ -1502,7 +1489,7 @@ func FixStorageDegraded() bool
 
 Fix the Degraded Storage
 
-## func [PerSecond](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L63>)
+## func [PerSecond](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L69>)
 
 ```go
 func PerSecond(original int, seconds float64) int
@@ -1516,7 +1503,7 @@ func ProcessWebDemoAction(c *fiber.Ctx) string
 
 Process RPC requests from the web app to wrap Demo functionality.  This is a different path than the Sireus Client uses with RunDemoAPIServer\(\)
 
-## func [ReceiveRequestsFromEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L77>)
+## func [ReceiveRequestsFromEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L83>)
 
 ```go
 func ReceiveRequestsFromEdge(requests int)
@@ -1524,13 +1511,13 @@ func ReceiveRequestsFromEdge(requests int)
 
 Receive requests from the edge.
 
-## func [ReceiveSuccessFromApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L157>)
+## func [ReceiveSuccessFromApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L163>)
 
 ```go
 func ReceiveSuccessFromApp(requests int)
 ```
 
-## func [ReceiveSuccessFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L62>)
+## func [ReceiveSuccessFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L68>)
 
 ```go
 func ReceiveSuccessFromDatabase(requests int)
@@ -1538,7 +1525,7 @@ func ReceiveSuccessFromDatabase(requests int)
 
 Receive request successes from the database.  This might feel backwards, but its a demo simulation
 
-## func [ReceiveTimeoutsFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L50>)
+## func [ReceiveTimeoutsFromDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L56>)
 
 ```go
 func ReceiveTimeoutsFromDatabase(requests int)
@@ -1562,7 +1549,7 @@ func RunDemoForever(webPrimary *fiber.App)
 
 If AppConfig.EnableDemo is true, this will be run in the background forever producing Prometheus data to server demonstration and educational purposes
 
-## func [UpdateApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L45>)
+## func [UpdateApp](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_app.go#L51>)
 
 ```go
 func UpdateApp(seconds float64)
@@ -1570,7 +1557,7 @@ func UpdateApp(seconds float64)
 
 Update the Demo App
 
-## func [UpdateDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L70>)
+## func [UpdateDatabase](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_database.go#L76>)
 
 ```go
 func UpdateDatabase(seconds float64)
@@ -1578,7 +1565,7 @@ func UpdateDatabase(seconds float64)
 
 Update the Demo Database
 
-## func [UpdateEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L110>)
+## func [UpdateEdge](<https://github.com/ghowland/sireus/blob/main/code/demo/demo_edge.go#L116>)
 
 ```go
 func UpdateEdge(seconds float64)
@@ -1670,6 +1657,7 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-createformattedvariables>)
 - [func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, condition data.Condition, conditionData data.BotConditionData)](<#func-executebotcondition>)
 - [func ExecuteBotGroupConditions(session *data.InteractiveSession, botGroupIndex int) bool](<#func-executebotgroupconditions>)
+- [func ExportMetricsOnVariables(session *data.InteractiveSession, botGroupIndex int)](<#func-exportmetricsonvariables>)
 - [func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.BotGroup) []data.Bot](<#func-extractbotsfrompromdata>)
 - [func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}](<#func-getbotevalmapallvariables>)
 - [func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}](<#func-getbotevalmaponlyqueries>)
@@ -1690,7 +1678,7 @@ import "github.com/ghowland/sireus/code/extdata"
 - [func UpdateSiteBotGroups(session *data.InteractiveSession)](<#func-updatesitebotgroups>)
 
 
-## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L175>)
+## func [CreateFormattedVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L178>)
 
 ```go
 func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -1698,19 +1686,25 @@ func CreateFormattedVariables(session *data.InteractiveSession, botGroupIndex in
 
 Create formatted variables for all our Bots.  This adds human\-readable strings to all the sorted Pair Lists
 
-## func [ExecuteBotCondition](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L93>)
+## func [ExecuteBotCondition](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L96>)
 
 ```go
 func ExecuteBotCondition(session *data.InteractiveSession, botGroup *data.BotGroup, bot *data.Bot, condition data.Condition, conditionData data.BotConditionData)
 ```
 
-## func [ExecuteBotGroupConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L52>)
+## func [ExecuteBotGroupConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L55>)
 
 ```go
 func ExecuteBotGroupConditions(session *data.InteractiveSession, botGroupIndex int) bool
 ```
 
 Execute the highest scoring condition for any Bot in this Bot Group, if it is Available and meets all conditions
+
+## func [ExportMetricsOnVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L200>)
+
+```go
+func ExportMetricsOnVariables(session *data.InteractiveSession, botGroupIndex int)
+```
 
 ## func [ExtractBotsFromPromData](<https://github.com/ghowland/sireus/blob/main/code/extdata/prometheus.go#L64>)
 
@@ -1720,7 +1714,7 @@ func ExtractBotsFromPromData(response data.PrometheusResponse, botGroup *data.Bo
 
 Extract our ephemeral Bots from the Prometheus response, using the BotKey extractor information
 
-## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L409>)
+## func [GetBotEvalMapAllVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L433>)
 
 ```go
 func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
@@ -1728,7 +1722,7 @@ func GetBotEvalMapAllVariables(bot *data.Bot) map[string]interface{}
 
 Returns the map for doing the Evaluate with a Bots VariableValues.  Uses Govaluate.Evaluate\(\) NOTE\(ghowland\): bot.AccessLock should already be locked before we come here, because we are accessing a map
 
-## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L393>)
+## func [GetBotEvalMapOnlyQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L417>)
 
 ```go
 func GetBotEvalMapOnlyQueries(bot data.Bot, queryVariableNames []string) map[string]interface{}
@@ -1752,7 +1746,7 @@ func GetQueryKey(session *data.InteractiveSession, query data.BotQuery) string
 
 GetQueryKey returns "\(QueryServer\).\(Query\)", so it can be shared by any BotGroup
 
-## func [InitializeBotStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L454>)
+## func [InitializeBotStates](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L481>)
 
 ```go
 func InitializeBotStates(botGroup *data.BotGroup, bot *data.Bot)
@@ -1798,7 +1792,7 @@ func QueryPrometheus(host string, port int, queryType data.BotQueryType, query s
 
 Query the Prometheus metric server
 
-## func [SortAllVariablesAndConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L198>)
+## func [SortAllVariablesAndConditions](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L222>)
 
 ```go
 func SortAllVariablesAndConditions(session *data.InteractiveSession, botGroupIndex int)
@@ -1814,7 +1808,7 @@ func StoreQueryResult(session *data.InteractiveSession, site *data.Site, query d
 
 StoreQueryResult will store a QueryResult in the cache
 
-## func [UpdateBotConditionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L222>)
+## func [UpdateBotConditionConsiderations](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L246>)
 
 ```go
 func UpdateBotConditionConsiderations(session *data.InteractiveSession, botGroupIndex int)
@@ -1822,7 +1816,7 @@ func UpdateBotConditionConsiderations(session *data.InteractiveSession, botGroup
 
 For this BotGroup, update all the BotConditionData with new ConditionConsideration scores
 
-## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L421>)
+## func [UpdateBotGroupFromPrometheus](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L445>)
 
 ```go
 func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1830,7 +1824,7 @@ func UpdateBotGroupFromPrometheus(session *data.InteractiveSession, site *data.S
 
 Runs Queries against Prometheus for a BotGroup
 
-## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L467>)
+## func [UpdateBotsFromQueries](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L494>)
 
 ```go
 func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, botGroupIndex int)
@@ -1838,7 +1832,7 @@ func UpdateBotsFromQueries(session *data.InteractiveSession, site *data.Site, bo
 
 Update all the Bot VariableValues from our Queries
 
-## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L338>)
+## func [UpdateBotsWithSyntheticVariables](<https://github.com/ghowland/sireus/blob/main/code/extdata/site_update.go#L362>)
 
 ```go
 func UpdateBotsWithSyntheticVariables(session *data.InteractiveSession, botGroupIndex int)
@@ -2320,7 +2314,7 @@ func RegisterHandlebarsHelpers_GetGoData()
 
 Get Go data values.  Slices, maps, etc
 
-## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L300>)
+## func [RegisterHandlebarsHelpers\_IfArrayLength](<https://github.com/ghowland/sireus/blob/main/code/webapp/register_helpers.go#L323>)
 
 ```go
 func RegisterHandlebarsHelpers_IfArrayLength()
