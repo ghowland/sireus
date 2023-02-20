@@ -69,7 +69,7 @@
     {
       "query_server": "prometheus_primary",
       "query_type": 0,
-      "name": "Circuit Link State",
+      "name": "Circuit Circuit State",
       "info": "Is the circuit up or not?",
       "query": "demo_if_link_state{bot_group=\"Edge\"}",
       "interval": "5s"
@@ -119,7 +119,7 @@
       "name": "link_state",
       "format": 1,
       "bot_key": "circuit",
-      "query_name": "Circuit Link State",
+      "query_name": "Circuit Circuit State",
       "query_key": "",
       "query_key_value": "",
       "evaluate": "",
@@ -132,23 +132,23 @@
   "actions": [
     {
       "is_launched": true,
-      "name": "Link Down",
-      "info": "Circuit shows Link Status down",
+      "name": "Circuit Down",
+      "info": "Circuit shows Circuit Status down",
       "is_disabled": false,
       "weight": 2.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Default"
       ],
-      "required_available": "4s",
       "considerations": [
         {
-          "name": "Link Down",
+          "name": "Circuit Down",
           "weight": 1.0,
           "curve": "dec_boolean",
           "range_start": 0,
@@ -157,7 +157,7 @@
         }
       ],
       "command": {
-        "name": "Link is down.  Set state to Problem",
+        "name": "Circuit is down.  Set state to Problem",
         "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 0,
         "content": "",
@@ -173,23 +173,23 @@
     },
     {
       "is_launched": true,
-      "name": "Attempt Link Repair via API",
+      "name": "Circuit could be repaired via API",
       "info": "This is the fastest way to fix the link state, but it only works in some cases.  Best to try this first.",
       "is_disabled": false,
       "weight": 5.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
+      "execute_repeat_delay": "25s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Problem"
       ],
-      "required_available": "4s",
       "considerations": [
         {
-          "name": "Link Down",
+          "name": "Circuit Down",
           "weight": 1.0,
           "curve": "dec_boolean",
           "range_start": 0,
@@ -198,7 +198,7 @@
         }
       ],
       "command": {
-        "name": "Attempt to Automatic Link Repair",
+        "name": "Attempt to Automatic Circuit Repair",
         "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
         "type": 2,
         "content": "http://localhost:{{appConfig.DemoApiPort}}/fix/circuit?name={{bot.Name}}",
@@ -214,23 +214,104 @@
     },
     {
       "is_launched": true,
-      "name": "Link Is Repaired",
-      "info": "Is this link repaired?  Then reset",
+      "name": "Circuit has not been fixed",
+      "info": "We waited to see if anything could automatically fix the circuit, but nothing could.",
       "is_disabled": false,
-      "weight": 5.0,
+      "weight": 4.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
-      "execute_repeat_delay": "5s",
+      "execute_repeat_delay": "25s",
+      "required_available": "15s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Evaluate"
       ],
-      "required_available": "4s",
       "considerations": [
         {
-          "name": "Link Down",
+          "name": "Circuit Down",
+          "weight": 1.0,
+          "curve": "dec_boolean",
+          "range_start": 0,
+          "range_end": 1,
+          "evaluate": "link_state"
+        }
+      ],
+      "command": {
+        "name": "Escalate to on-call",
+        "log_format": "{{conditionCommand.Name}}.  Set forward states: {{format_array_string_csv conditionCommand.SetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 201,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+          "Operation.Escalate"
+        ],
+        "reset_bot_states": []
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Escalation has not fixed the circuit",
+      "info": "We waited for on-call to fix the problem, but they have not yet.",
+      "is_disabled": false,
+      "weight": 4.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "25s",
+      "required_available": "15s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Escalate"
+      ],
+      "considerations": [
+        {
+          "name": "Circuit Down",
+          "weight": 1.0,
+          "curve": "dec_boolean",
+          "range_start": 0,
+          "range_end": 1,
+          "evaluate": "link_state"
+        }
+      ],
+      "command": {
+        "name": "Reset to Default",
+        "log_format": "{{conditionCommand.Name}}.  Reset forward states: {{format_array_string_csv conditionCommand.ResetBotStates}}",
+        "type": 0,
+        "content": "",
+        "success_status": 201,
+        "success_content": "",
+        "lock_timer_duration": "1s",
+        "host_exec_key": "",
+        "set_bot_states": [
+        ],
+        "reset_bot_states": ["Operation"]
+      }
+    },
+    {
+      "is_launched": true,
+      "name": "Circuit Is Repaired",
+      "info": "Is this link repaired?  Then reset",
+      "is_disabled": false,
+      "weight": 5.0,
+      "weight_min": 0.5,
+      "weight_threshold": 0.5,
+      "execute_repeat_delay": "5s",
+      "required_available": "4s",
+      "required_lock_timers": [
+        "Single Bot Lock"
+      ],
+      "required_states": [
+        "Operation.Evaluate"
+      ],
+      "considerations": [
+        {
+          "name": "Circuit Down",
           "weight": 1.0,
           "curve": "inc_boolean",
           "range_start": 0,
@@ -254,23 +335,23 @@
     },
     {
       "is_launched": true,
-      "name": "Link Is Repaired Without Command",
+      "name": "Circuit Is Repaired Without Command",
       "info": "Is this link repaired without waiting for a command?  Then reset",
       "is_disabled": false,
       "weight": 5.0,
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Problem"
       ],
-      "required_available": "4s",
       "considerations": [
         {
-          "name": "Link Down",
+          "name": "Circuit Down",
           "weight": 1.0,
           "curve": "inc_boolean",
           "range_start": 0,
@@ -301,13 +382,13 @@
       "weight_min": 0.5,
       "weight_threshold": 3.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Traffic.Default"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "High Traffic",
@@ -342,13 +423,13 @@
       "weight_min": 1.3,
       "weight_threshold": 3.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Traffic.High"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "No Longer High Traffic",
@@ -382,13 +463,13 @@
       "weight_min": 0.5,
       "weight_threshold": 3.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Traffic.Default"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "No Traffic",
@@ -423,13 +504,13 @@
       "weight_min": 1.3,
       "weight_threshold": 3.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Traffic.None"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "Has Traffic",
