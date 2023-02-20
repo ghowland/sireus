@@ -131,13 +131,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Default"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "Long Wait Queue",
@@ -172,13 +172,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Problem"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "Timeout Rate over 100",
@@ -212,13 +212,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Problem"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "Long Wait Queue",
@@ -253,13 +253,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Evaluate"
       ],
-      "required_available": "4s",
       "considerations": [
         {
           "name": "Wait Queue over 2000",
@@ -293,13 +293,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "4s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Evaluate"
       ],
-      "required_available": "10s",
       "considerations": [
         {
           "name": "Always True after 10s",
@@ -334,13 +334,13 @@
       "weight_min": 0.5,
       "weight_threshold": 0.5,
       "execute_repeat_delay": "5s",
+      "required_available": "10s",
       "required_lock_timers": [
         "Single Bot Lock"
       ],
       "required_states": [
         "Operation.Escalate"
       ],
-      "required_available": "10s",
       "considerations": [
         {
           "name": "Always True after 10s",
