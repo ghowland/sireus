@@ -22,7 +22,7 @@ title: Sireus
 email: geoff@sireus.cloud
 description: >- # this means to ignore newlines until "baseurl:"
   Sireus - SRE Utility System
-  - Decision System and dynamic bot manager for executing SRE and DevOps commands conditionally
+  - Decision System for tracking SRE and DevOps operational state and executing commands
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site, e.g. http://example.com
 linkedin_username: ghowland
