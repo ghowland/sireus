@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-This is the blog site for Sireus.  Take a look at the interactive demo on [sireus.cloud](https://sireus.cloud/)
+This is the blog site for Sireus.  Take a look at the **interactive demo** on [sireus.cloud](https://sireus.cloud/)
 
 For more information [check out the Github page](https://github.com/ghowland/sireus).
 
