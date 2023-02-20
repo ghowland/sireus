@@ -162,6 +162,7 @@ These are a few planned features which are not in the current demo, but will be 
 
 - Authorization Sources: Per Site, like Query Servers.  These will call a shell command or URL to collect authorization information (bearer tokens, etc), which can be used in shell commands or URL calls for Condition Commands.  There will be a separate version of the values for URLs or commands printed for logging, so that this is designed to log safely.
 - Sireus Client: An internal (goroutine) or stand alone client that will connect to the Sireus server, and present a set of "Host Keys" which determine what kind of shell commands or URLs can be run by this client.  This allows remote distribution of execution, and being able to target which jobs are run where.  Example: running a different shell command in AWS versus Google Cloud by Host Key "aws_host" or "gcloud_host" in the Condition Command config.
+- Performance improvements: I implemented the initial prototype using maps in Go Lang, which require a lot of locking.  This delays serving pages, so I will switch all of those to slices to fix the performance issues when many queries are being made.
 
 ## Sireus Portrait
 
