@@ -24,6 +24,7 @@ Sireus is a Decision System, made to collect information from Monitoring or othe
     + [State Condition Final Scores from Multiple Considerations](#state-condition-final-scores-from-multiple-considerations)
     + [Why so many steps to get to a Final State Condition Score?](#why-so-many-steps-to-get-to-a-final-state-condition-score)
 - [Help Wanted... in many areas including Data Visualization and Web Design](#help-wanted)
+- [Planned Features](#planned-features)
 - [Sireus Portrait](#sireus-portrait)
 
 ### Sireus Goals
@@ -154,6 +155,13 @@ A Decision System being used in SRE and DevOps land is a new tool, and how to re
 		+ A big help would just be suggestions or pull requests on re-organizing any existing documents to be easier to understand, please give the reason why it would make it easier to understand in the PR.
 - Feedback
 	* Sireus is in the Design RFC phase.  I want to get feedback on whether it is understandable, if not what are areas that lack clarity.  "What is it for?"  "Why should I use this?"  "How would I implement it?"  I have some of this information here now, but I (ghowland) don't know what is clear and what is unclear without more feedback.  [Please file questions, comments and requests here](https://github.com/ghowland/sireus/issues).
+
+## Planned Features
+
+These are a few planned features which are not in the current demo, but will be in the next version which is made to run in production sites:
+
+- Authorization Sources: Per Site, like Query Servers.  These will call a shell command or URL to collect authorization information (bearer tokens, etc), which can be used in shell commands or URL calls for Condition Commands.  There will be a separate version of the values for URLs or commands printed for logging, so that this is designed to log safely.
+- Sireus Client: An internal (goroutine) or stand alone client that will connect to the Sireus server, and present a set of "Host Keys" which determine what kind of shell commands or URLs can be run by this client.  This allows remote distribution of execution, and being able to target which jobs are run where.  Example: running a different shell command in AWS versus Google Cloud by Host Key "aws_host" or "gcloud_host" in the Condition Command config.
 
 ## Sireus Portrait
 
