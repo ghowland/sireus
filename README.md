@@ -78,7 +78,7 @@ The data structure image above shows the relation between these terms:
 - **State Condition**: This is the wrapper for conditions to create a Score, and the Command to execute if it is selected.
 - **State Condition Score**: This is the priority of execution.  Given a set of potential State Conditions, we rank them from highest to lowest score, executing the highest score, and never execute State Conditions with a score of 0.
 - **State Condition Consideration**: These are essentially conditions, but are floats to provide a range of data, instead of only boolean.
-- **State Condition Command**: Executing 1 or more bash-type OS level commands or a service or web API calls.  Generalizing all of these to a "State Condition Command".
+- **State Condition Command**: Executing a single bash-type OS level commands or a service or web API calls.
 
 ### How a Utility System or Utility AI works
 
